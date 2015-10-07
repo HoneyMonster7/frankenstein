@@ -9,7 +9,7 @@
 #include<fstream>
 
 
-struct reaction{
+class reaction{
 	std::string type;
 	int substrateIndex;
         int productIndex;
@@ -17,20 +17,32 @@ struct reaction{
 	int nrNADH;
 	double freeEChange;
 	std::string humanReadable;	
+	public:
+
+	static void readReactions (std::string fileName, std::vector<reaction> &reacPointer);
+	reaction(std::string tmpType,int tmpsubI, int tmpProdI, int tmpnrATP, int tmpnrNADH, double tmpfreeE, std::string tmpHumRead);
+
 };
 
-void readReactions (std::string fileName); 
 
 int main (int argc, char* argv[]){
 using namespace boost;
 
 
 std::cout<<"Tests begin."<<std::endl;
-readReactions("reactions__4C_v3_2_2_ext_100.dat");
+
+std::vector<reaction> reacVector;
+
+
+	 std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
+	 reaction::readReactions("reactions__4C_v3_2_2_ext_100.dat", reacVector);
+	 std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
 std::cout<<"Tests completed."<<std::endl;
 }
 
-void readReactions (std::string fileName){
+
+
+void reaction::readReactions (std::string fileName, std::vector<reaction> &reacPointer){
 	std::ifstream inFile(fileName);
 	std::string tmpType, tmpHumRead,line,tmpstring;
 	int tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH;
@@ -45,12 +57,23 @@ void readReactions (std::string fileName){
 	        iss>>tmpfreeE;	
 		std::getline(iss, tmpHumRead);
 
+	 	reacPointer.emplace_back(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);	
 
-
-		std::cout<<"Type: "<<tmpType<<std::endl;
-		std::cout<<"Numbers: "<<tmpsubI<<" "<<tmpProdI<<" "<<tmpnrATP<<" "<<tmpnrNADH<<" "<<tmpfreeE<<std::endl;
-		std::cout<<"Humanreadable: "<<tmpHumRead<<std::endl;
+		//std::cout<<"Type: "<<tmpType<<std::endl;
+		//std::cout<<"Numbers: "<<tmpsubI<<" "<<tmpProdI<<" "<<tmpnrATP<<" "<<tmpnrNADH<<" "<<tmpfreeE<<std::endl;
+		//std::cout<<"Humanreadable: "<<tmpHumRead<<std::endl;
 
 	}
 
 }
+
+reaction::reaction(std::string tmpType,int tmpsubI, int tmpProdI, int tmpnrATP, int tmpnrNADH, double tmpfreeE, std::string tmpHumRead) {
+	type=tmpType;
+	substrateIndex=tmpsubI;
+	productIndex=tmpProdI;
+	nrATP=tmpnrATP;
+	nrNADH=tmpnrNADH;
+	freeEChange=tmpfreeE;
+	humanReadable=tmpHumRead;
+}
+
