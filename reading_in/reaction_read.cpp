@@ -21,7 +21,13 @@ class reaction{
 
 	static void readReactions (std::string fileName, std::vector<reaction> &reacPointer);
 	reaction(std::string tmpType,int tmpsubI, int tmpProdI, int tmpnrATP, int tmpnrNADH, double tmpfreeE, std::string tmpHumRead);
-
+	void printReaction ();
+	double freeEchange();
+	int getsubstrateIndex();
+	int getproductIndex();
+	int getnrATP();
+	int getnrNADH();
+	std::string gettype();
 };
 
 
@@ -37,6 +43,10 @@ std::vector<reaction> reacVector;
 	 std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
 	 reaction::readReactions("reactions__4C_v3_2_2_ext_100.dat", reacVector);
 	 std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
+	 reacVector[13].printReaction();
+	 reacVector[299].printReaction();
+
+
 std::cout<<"Tests completed."<<std::endl;
 }
 
@@ -77,3 +87,15 @@ reaction::reaction(std::string tmpType,int tmpsubI, int tmpProdI, int tmpnrATP, 
 	humanReadable=tmpHumRead;
 }
 
+void reaction::printReaction(){
+	std::cout<<"Type: "<<type<<std::endl;
+	std::cout<<"Numbers: "<<substrateIndex<<" "<<productIndex<<" "<<nrATP<<" "<<nrNADH<<" "<<freeEChange<<std::endl;
+	
+}
+
+double reaction::freeEchange(){ return freeEChange;}
+int reaction::getsubstrateIndex(){return substrateIndex;}
+int reaction::getproductIndex(){return productIndex;}
+int reaction::getnrATP(){return nrATP;}
+int reaction::getnrNADH(){return nrNADH;}
+std::string reaction::gettype(){return type;}
