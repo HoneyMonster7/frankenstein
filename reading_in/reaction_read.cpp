@@ -58,7 +58,8 @@ class reaction{
 	double currentFreeEChange=0;
 	public:
 
-	static void readReactions (std::string fileName, std::vector<reaction> &reacPointer, ReactionNetwork &lofasz,  std::vector<Vertex> &vertexList);
+	static void readReactions (std::string fileName, std::vector<reaction> &reacPointer, ReactionNetwork &lofasz,  std::vector<Vertex> &vertexList, const std::vector<Vertex> &compoundVList);
+	static void readCompounds (std::string fileName, ReactionNetwork &lofasz, std::vector<Vertex> &compoundlist);
 	reaction(std::string tmpType,int tmpsubI, int tmpProdI, int tmpnrATP, int tmpnrNADH, double tmpfreeE, std::string tmpHumRead);
 	reaction();
 	void printReaction ();
@@ -89,15 +90,27 @@ std::vector<reaction> reacVector;
 
 
 
-	 std::vector<Vertex> vertexList;
+	 std::vector<Vertex> reacVList,compoundVList;
 	 ReactionNetwork lofasz;
 
+
+         reaction::readCompounds("compounds_list__4C_v3_2_2_ext_100.dat",lofasz,compoundVList);
+
 	 std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
-	 reaction::readReactions("reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,vertexList);
+	 reaction::readReactions("reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,reacVList,compoundVList);
 	 std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
 	 reacVector[13].printReaction();
 	 reacVector[299].printReaction();
 	
+	 
+
+	 graph_traits<ReactionNetwork>::vertex_iterator vi, vi_end;
+	 int count=0;
+	 for (boost::tie(vi, vi_end)=vertices(lofasz); vi!=vi_end; ++vi){
+	 count++;
+	 }
+
+	 std::cout<<"The graph has "<<count<<" vertices."<<std::endl;
 
 	 reaction newreaction(" ",0,0,0,0,0," ");
 
@@ -107,15 +120,35 @@ std::vector<reaction> reacVector;
 
 	 newreaction.printReaction();
 	 evennewer.printReaction();
+	 std::cin.ignore();
 
 
 
 std::cout<<"Tests completed."<<std::endl;
 }
 
-
-
-void reaction::readReactions (std::string fileName, std::vector<reaction> &reacPointer,ReactionNetwork  &graph,std::vector<Vertex> &vertexList){
+void reaction::readCompounds (std::string fileName, ReactionNetwork  &graph,std::vector<Vertex> &vertexList){
+	  
+	  
+	  
+	  
+	          //lofasz[vertexList[vertexList.size()-1]].reac=newreaction;
+		   
+		  std::ifstream inFile(fileName);
+		  std::string line,nameChem,namenorm;
+		  int index, charge; 
+		  double formFreeE;
+		  while (std::getline(inFile,line)){
+		  	std::stringstream iss(line);
+		  	iss>>index;
+		  	iss>>formFreeE;
+		  	iss>>nameChem;
+		  	iss>>namenorm;
+		  	iss>>charge;
+		 vertexList.emplace_back(boost::add_vertex(graph));
+			}
+}
+void reaction::readReactions (std::string fileName, std::vector<reaction> &reacPointer,ReactionNetwork  &graph,std::vector<Vertex> &vertexList,const std::vector<Vertex> &compoundVList){
 
 
 
@@ -126,6 +159,9 @@ void reaction::readReactions (std::string fileName, std::vector<reaction> &reacP
 	std::string tmpType, tmpHumRead,line,tmpstring;
 	int tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH;
 	double tmpfreeE;
+
+	typedef boost::graph_traits<ReactionNetwork>::edge_descriptor Edge;
+
 	while (std::getline(inFile,line)){
 		std::stringstream iss(line);
 		iss>>tmpType;
@@ -141,6 +177,12 @@ void reaction::readReactions (std::string fileName, std::vector<reaction> &reacP
 
 		vertexList.emplace_back(boost::add_vertex(graph));
 		graph[vertexList[vertexList.size()-1]].reac=reaction(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);
+
+
+		Edge e1;
+		e1=(boost::add_edge(compoundVList[tmpsubI],vertexList[vertexList.size()-1],graph)).first;
+
+
 
 
 //		tmpSR.reac=new reaction(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);
