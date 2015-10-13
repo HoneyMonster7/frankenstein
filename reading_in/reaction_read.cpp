@@ -79,6 +79,7 @@ reaction reac;
 };
 
 
+	 template <typename Graph >
 
 int main (int argc, char* argv[]){
 using namespace boost;
@@ -111,6 +112,15 @@ std::vector<reaction> reacVector;
 	 }
 
 	 std::cout<<"The graph has "<<count<<" vertices."<<std::endl;
+
+
+	 typedef graph_traits <Graph> traits;
+	   typename traits::vertex_iterator vertex_iter, vertex_end;
+		 
+	   bool bipartiteee = boost::is_bipartite(lofasz);
+
+	 if (bipartiteee) {std::cout<<"The graph is bipartite"<<std::endl;}
+	 else {std::cout<<"The graph is not bipartite."<<std::endl;}
 
 	 reaction newreaction(" ",0,0,0,0,0," ");
 
