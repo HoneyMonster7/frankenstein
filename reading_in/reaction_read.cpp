@@ -38,6 +38,14 @@ struct substrate{
 	int charge;
 };
 
+
+
+	struct SubReac; 	
+
+	 typedef boost::adjacency_list<boost::listS,boost::vecS,boost::directedS,SubReac,bool> ReactionNetwork;
+	 typedef boost::graph_traits<ReactionNetwork>::vertex_descriptor Vertex;
+
+
 class reaction{
 	//properties of each reaction, should include an int (possible shorter) for each internal metabolite to aid the recalculation of freeEchange for different environments
 	std::string type;
@@ -50,7 +58,7 @@ class reaction{
 	double currentFreeEChange=0;
 	public:
 
-	static void readReactions (std::string fileName, std::vector<reaction> &reacPointer);
+	static void readReactions (std::string fileName, std::vector<reaction> &reacPointer, ReactionNetwork &lofasz,  std::vector<Vertex> &vertexList);
 	reaction(std::string tmpType,int tmpsubI, int tmpProdI, int tmpnrATP, int tmpnrNADH, double tmpfreeE, std::string tmpHumRead);
 	reaction();
 	void printReaction ();
@@ -61,12 +69,14 @@ class reaction{
 	int getnrNADH();
 	std::string gettype();
 	void recalcEchange(environment env);
+//	~reaction();
 };
 
 struct SubReac{
 substrate sub;
 reaction reac;
 };
+
 
 
 int main (int argc, char* argv[]){
@@ -78,8 +88,12 @@ std::cout<<"Tests begin."<<std::endl;
 std::vector<reaction> reacVector;
 
 
+
+	 std::vector<Vertex> vertexList;
+	 ReactionNetwork lofasz;
+
 	 std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
-	 reaction::readReactions("reactions__4C_v3_2_2_ext_100.dat", reacVector);
+	 reaction::readReactions("reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,vertexList);
 	 std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
 	 reacVector[13].printReaction();
 	 reacVector[299].printReaction();
@@ -88,35 +102,25 @@ std::vector<reaction> reacVector;
 	 reaction newreaction(" ",0,0,0,0,0," ");
 
 	 reaction evennewer;
-
+	 evennewer.printReaction();
 	 evennewer=newreaction;
 
 	 newreaction.printReaction();
 	 evennewer.printReaction();
+
+
 
 std::cout<<"Tests completed."<<std::endl;
 }
 
 
 
-void reaction::readReactions (std::string fileName, std::vector<reaction> &reacPointer){
-
-	//defining the boost graph (to be biparite)
-	typedef boost::adjacency_list<boost::listS,boost::vecS,boost::directedS,SubReac,bool> ReactionNetwork;
-	reaction emptyReac("Empty reaction",0,0,0,0,0,"Empty Humanreadable");
-	substrate emptySubstrate;
-	emptySubstrate.molecule="EmptyMolecule";
-	emptySubstrate.index=0;
-	emptySubstrate.charge=0;
-	emptySubstrate.name="EmptyMolecule name";
-	emptySubstrate.freeOfCreation=0;
-
-	SubReac emptySubReac;
-	emptySubReac.reac=emptyReac;
-	emptySubReac.sub=emptySubstrate;
+void reaction::readReactions (std::string fileName, std::vector<reaction> &reacPointer,ReactionNetwork  &graph,std::vector<Vertex> &vertexList){
 
 
 
+
+	//lofasz[vertexList[vertexList.size()-1]].reac=newreaction;
 
 	std::ifstream inFile(fileName);
 	std::string tmpType, tmpHumRead,line,tmpstring;
@@ -134,8 +138,11 @@ void reaction::readReactions (std::string fileName, std::vector<reaction> &reacP
 
 	 	reacPointer.emplace_back(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);	
 
-		SubReac tmpSR;
-		tmpSR.sub=emptySubstrate;
+
+		vertexList.emplace_back(boost::add_vertex(graph));
+		graph[vertexList[vertexList.size()-1]].reac=reaction(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);
+
+
 //		tmpSR.reac=new reaction(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);
 
 
@@ -191,3 +198,17 @@ reaction::reaction(){
 	humanReadable="EmptyHuman";
 
 }
+
+/*reaction::~reaction(){
+	delete &type;
+	delete &substrateIndex;
+	delete &productIndex;
+	delete &nrATP;
+	delete &nrNADH;
+	delete &freeEChange;
+	delete &humanReadable;
+
+
+
+}*/
+
