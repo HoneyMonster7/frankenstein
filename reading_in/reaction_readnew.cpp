@@ -10,7 +10,7 @@
 #include<iostream>
 #include<fstream>
 #include<utility>
-
+#include<algorithm>
 
 struct environment{
 
@@ -50,19 +50,20 @@ struct substrate{
 
 class reaction{
 	//properties of each reaction, should include an int (possible shorter) for each internal metabolite to aid the recalculation of freeEchange for different environments
-	std::string type;
-	int substrateIndex;
-        int productIndex;
-	int nrATP;
-	int nrNADH;
+//	std::string type;
+	std::vector<int> substrates;
+	std::vector<int> products;
+	int [9] internalMets;
 	double freeEChange;
-	std::string humanReadable;	
+	//std::string humanReadable;	
 	double currentFreeEChange=0;
 	public:
 
 	static void readReactions (std::string fileName, std::vector<reaction> &reacPointer, ReactionNetwork &lofasz,  std::vector<Vertex> &vertexList, const std::vector<Vertex> &compoundVList);
+
 	static void readCompounds (std::string fileName, ReactionNetwork &lofasz, std::vector<Vertex> &compoundlist);
-	reaction(std::string tmpType,int tmpsubI, int tmpProdI, int tmpnrATP, int tmpnrNADH, double tmpfreeE, std::string tmpHumRead);
+
+	reaction(std::vector<int> tmpsubstrates, std::vector<int> tmproducts, int [] internalMets ); 
 	reaction();
 	void printReaction ();
 	double freeEchange();
@@ -169,31 +170,56 @@ void reaction::readReactions (std::string fileName, std::vector<reaction> &reacP
 	//lofasz[vertexList[vertexList.size()-1]].reac=newreaction;
 
 	std::ifstream inFile(fileName);
-	std::string tmpType, tmpHumRead,line,tmpstring;
-	int tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH;
+	std::string line,tmpsubs,tmpprods;
+
+	std::vector<int> tmpsubstrates, tmproducts;
+       	int tmpnrATP=0, tmpnrPPi=0, tmpnrPi=0 ,  tmpnrADP=0,tmpnrNAD_red=0,tmpnrNAD_ox=0, tmpnrCO2=0,tmpnrH2O=0;
+	int [9] tmpinternalMets= {};
+
 	double tmpfreeE;
 
 	typedef boost::graph_traits<ReactionNetwork>::edge_descriptor Edge;
 
 	while (std::getline(inFile,line)){
 		std::stringstream iss(line);
-		iss>>tmpType;
-		iss>>tmpsubI;	
-	        iss>>tmpProdI;	
-	        iss>>tmpnrATP;	
-	        iss>>tmpnrNADH;	
-	        iss>>tmpfreeE;	
-		std::getline(iss, tmpHumRead);
+		iss>>tmpfreeE;
+		std::getline(iss,tmpsubs, '>');
+		std::getline(iss,tmpprods);
+		
+		std::istringstream subss(tmpsubs);
+		std::istringstream prodss(tmpprods);	
 
-	 	reacPointer.emplace_back(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);	
+		for (int tmp; subss>>tmp;){
+
+			tmpsubstrates.push_back(tmp);
+		}
+
+		for (int tmp; prodss>>tmp;){
+			tmproducts.push_back(tmp);
+		}
+
+		//finding if any of the internal metabolites appear on any side of the reaction
+		for (int interMIndex=-9; i<0; i++){
+			if(std::find(tmpsubstrates.begin(), tmpsubstrates.end(),i)){
+				tmpinternalMets[i+9]--;
+			}
+	
+			if(std::find(tmproducts.begin(), tmproducts.end(),i)){
+				tmpinternalMets[i+9]++;
+			}
+		}
+
+
+	 	reacPointer.emplace_back(tmpsubstrates,tmproducts,tmpinternalMets);	
 
 
 		vertexList.emplace_back(boost::add_vertex(graph));
-		graph[vertexList[vertexList.size()-1]].reac=reaction(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);
+		graph[vertexList[vertexList.size()-1]].reac=reaction(tmpsubstrates,tmproducts,tmpinternalMets);
 
 
 		Edge e1;
-		e1=(boost::add_edge(compoundVList[tmpsubI],vertexList[vertexList.size()-1],graph)).first;
+		//not adding edges yet
+		//e1=(boost::add_edge(compoundVList[tmpsubI],vertexList[vertexList.size()-1],graph)).first;
 
 
 
@@ -215,20 +241,25 @@ void reaction::readReactions (std::string fileName, std::vector<reaction> &reacP
 
 }
 
-reaction::reaction(std::string tmpType,int tmpsubI, int tmpProdI, int tmpnrATP, int tmpnrNADH, double tmpfreeE, std::string tmpHumRead) {
-	type=tmpType;
-	substrateIndex=tmpsubI;
-	productIndex=tmpProdI;
-	nrATP=tmpnrATP;
-	nrNADH=tmpnrNADH;
-	freeEChange=tmpfreeE;
-	humanReadable=tmpHumRead;
-}
+reaction::reaction(std::vector<int> tmpsubstrates, std::vector<int> tmproducts, int [9] tmpInternalMets )  {
 
+	substrates=tmpsubstrates;
+	products=tmproducts;
+
+	internalMets=tmpinternalMets;
+
+
+
+}
 void reaction::printReaction(){
-	std::cout<<"Type: "<<type<<std::endl;
-	std::cout<<"Numbers: "<<substrateIndex<<" "<<productIndex<<" "<<nrATP<<" "<<nrNADH<<" "<<freeEChange<<std::endl;
-	
+	std::cout<<"From: ";
+	for(auto i =substrates.begin(); i!=substrates.end(); ++i) std::cout<<*i<<' ';
+	std::cout<<std::endl;
+	std::cout<<"To: ";
+	for(auto i=products.begin(); i!=products.end(); ++i) std::cout<<*i<<' ';
+	std::cout<<std::endl;
+	std::cout<<"Free energy change: "<<freeEChange<<std::endl;
+
 }
 
 double reaction::freeEchange(){ return freeEChange;}
@@ -244,14 +275,11 @@ void recalcEchange(environment env){
 
 }
 reaction::reaction(){
-	type="Empty";
-	substrateIndex=0;
-	productIndex=0;
-	nrATP=0;
-	nrNADH=0;
-	freeEChange=0;
-	humanReadable="EmptyHuman";
+	substrates=new std::vector<int>;
+	products=new std::vector<int>;
 
+	int [9] tmpint={};
+	internalMets=tmpint;
 }
 
 /*reaction::~reaction(){
