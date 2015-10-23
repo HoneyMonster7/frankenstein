@@ -28,6 +28,11 @@ void reaction::readCompounds(std::string fileName, ReactionNetwork& graph, std::
 	int index, charge;
 	double formFreeE;
 
+	if(!inFile)
+	{
+		throw std::runtime_error("Can't open input file " + fileName);
+	}
+
 	while (std::getline(inFile, line))
 	{
 		std::stringstream iss(line);
@@ -50,6 +55,11 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 	double tmpfreeE;
 
 	typedef boost::graph_traits<ReactionNetwork>::edge_descriptor Edge;
+
+	if(!inFile)
+	{
+		throw std::runtime_error("Can't open input file " + fileName);
+	}
 
 	while(std::getline(inFile, line))
 	{
