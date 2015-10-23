@@ -1,82 +1,69 @@
-  #include <boost/graph/adjacency_list.hpp>
-  #include <boost/graph/visitors.hpp>
-  #include <boost/graph/breadth_first_search.hpp>
-  #include <cstdlib>
-  #include <boost/graph/bipartite.hpp>
-  
-  #include<string>
-  #include<iostream>
-  #include<fstream>
-  #include<utility>
-  #include<algorithm>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/visitors.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <cstdlib>
+#include <boost/graph/bipartite.hpp>
 
-  #include"reaction.h"
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <utility>
+#include <algorithm>
+
+#include "reaction.h"
+
+using namespace boost;
+
+int main (int argc, char* argv[])
+{
+	std::cout<<"Tests begin."<<std::endl;
+
+	std::vector<reaction> reacVector;
+
+	std::vector<Vertex> reacVList, compoundVList;
+	ReactionNetwork lofasz;
+
+	//reaction::readCompounds(DATA_PATH "compounds_list__4C_v3_2_2_ext_100.dat",lofasz,compoundVList);
+	reaction::readCompounds(DATA_PATH "newsortedcompounds.txt", lofasz, compoundVList);
+
+	std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
+	//reaction::readReactions(DATA_PATH "reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,reacVList,compoundVList);
+	reaction::readReactions(DATA_PATH "newreactions.txt", reacVector, lofasz, reacVList, compoundVList);
+	std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
+
+	if(reacVector.size() < 300)
+	{
+		std::cout << "not enough data read." << std::endl;
+		return 1;
+	}
+
+	reacVector[13].printReaction();
+	reacVector[299].printReaction();
 
 
+	auto verts = vertices(lofasz);
+	size_t count = std::distance(verts.first, verts.second);
+
+	std::cout<<"The graph has "<<count<<" vertices."<<std::endl;
 
 
-int main (int argc, char* argv[]){
-  using namespace boost;
-  
-  
-  std::cout<<"Tests begin."<<std::endl;
-  
-  std::vector<reaction> reacVector;
-  
-  
-  
-           std::vector<Vertex> reacVList,compoundVList;
-           ReactionNetwork lofasz;
-  
-  
-           //reaction::readCompounds(DATA_PATH "compounds_list__4C_v3_2_2_ext_100.dat",lofasz,compoundVList);
-           reaction::readCompounds(DATA_PATH "newsortedcompounds.txt",lofasz,compoundVList);
-  
-           std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
-           //reaction::readReactions(DATA_PATH "reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,reacVList,compoundVList);
-           reaction::readReactions(DATA_PATH "newreactions.txt", reacVector,lofasz,reacVList,compoundVList);
-           std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
+	typedef graph_traits <ReactionNetwork> traits;
+	typename traits::vertex_iterator vertex_iter, vertex_end;
 
-           if(reacVector.size() < 300)
-           {
-               std::cout << "not enough data read." << std::endl;
-               return 1;
-           }
+	bool bipartiteee = boost::is_bipartite(lofasz);
 
-           reacVector[13].printReaction();
-           reacVector[299].printReaction();
-  
-  
-  
-           graph_traits<ReactionNetwork>::vertex_iterator vi, vi_end;
-           int count=0;
-           for (boost::tie(vi, vi_end)=vertices(lofasz); vi!=vi_end; ++vi){
-           count++;
-           }
-  
-           std::cout<<"The graph has "<<count<<" vertices."<<std::endl;
-  
-  
-           typedef graph_traits <ReactionNetwork> traits;
-           typename traits::vertex_iterator vertex_iter, vertex_end;
-  
-             bool bipartiteee = boost::is_bipartite(lofasz);
-  
-           if (bipartiteee) {std::cout<<"The graph is bipartite"<<std::endl;}
-           else {std::cout<<"The graph is not bipartite."<<std::endl;}
-  
-           reaction newreaction;
-  
-           reaction evennewer;
-           evennewer.printReaction();
-           evennewer=newreaction;
-  
-           newreaction.printReaction();
-           evennewer.printReaction();
-           std::cin.ignore();
-  
-  
-  
-  std::cout<<"Tests completed."<<std::endl;
-  }
+	if (bipartiteee) {std::cout<<"The graph is bipartite"<<std::endl;}
+	else {std::cout<<"The graph is not bipartite."<<std::endl;}
 
+	reaction newreaction;
+
+	reaction evennewer;
+	evennewer.printReaction();
+	evennewer=newreaction;
+
+	newreaction.printReaction();
+	evennewer.printReaction();
+
+
+	std::cout<<"Tests completed."<<std::endl;
+}
