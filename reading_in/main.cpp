@@ -36,6 +36,13 @@ int main (int argc, char* argv[]){
            //reaction::readReactions(DATA_PATH "reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,reacVList,compoundVList);
            reaction::readReactions(DATA_PATH "newreactions.txt", reacVector,lofasz,reacVList,compoundVList);
            std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
+
+           if(reacVector.size() < 300)
+           {
+               std::cout << "not enough data read." << std::endl;
+               return 1;
+           }
+
            reacVector[13].printReaction();
            reacVector[299].printReaction();
   
