@@ -17,7 +17,7 @@
 #include <fstream>
 #include <utility>
 #include <algorithm>
-
+#include <array>
 
 struct environment
 {
@@ -59,6 +59,8 @@ struct SubReac;
 typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS, SubReac, bool> ReactionNetwork;
 typedef boost::graph_traits<ReactionNetwork>::vertex_descriptor Vertex;
 
+typedef std::array<int, 9> InternalMetsT;
+
 
 class reaction
 {
@@ -67,14 +69,14 @@ class reaction
 
 	std::vector<int> substrates;
 	std::vector<int> products;
-	int  internalMets [9];
-	double freeEChange;
+	InternalMetsT internalMets = {};
+	double freeEChange = 0.0;
 	//std::string humanReadable;
 	double currentFreeEChange=0;
 
 public:
 
-	reaction(double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, int (&internalMets)[9] );
+	reaction(double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, const InternalMetsT& tmpInternalMets);
 	reaction();
 
 	static void readReactions(std::string fileName, std::vector<reaction>& reacPointer, ReactionNetwork& lofasz  ,  std::vector<Vertex>& vertexList, const std::vector<Vertex>& compoundVList);

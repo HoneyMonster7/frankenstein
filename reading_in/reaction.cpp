@@ -1,5 +1,25 @@
 #include "reaction.h"
 
+reaction::reaction(double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, const InternalMetsT& tmpInternalMets)
+	: substrates(tmpsubstrates)
+	, products(tmproducts)
+	, internalMets(tmpInternalMets)
+	, freeEChange(tmpfreechange)
+{}
+
+reaction::reaction() {}
+
+void reaction::printReaction()
+{
+	std::cout<<"From: ";
+	for(auto i =substrates.begin(); i!=substrates.end(); ++i) std::cout<<*i<<' ';
+	std::cout<<std::endl;
+	std::cout<<"To: ";
+	for(auto i=products.begin(); i!=products.end(); ++i) std::cout<<*i<<' ';
+	std::cout<<std::endl;
+	std::cout<<"Free energy change: "<<freeEChange<<std::endl;
+}
+
 
 void reaction::readCompounds(std::string fileName, ReactionNetwork& graph, std::vector<Vertex>& vertexList)
 {
@@ -25,7 +45,7 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 	std::ifstream inFile(fileName);
 	std::string line,tmpsubs,tmpprods;
 
-	int tmpinternalMets[9] = {};
+	InternalMetsT tmpinternalMets = {};
 
 	double tmpfreeE;
 
@@ -103,26 +123,6 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 	}
 }
 
-reaction::reaction(double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, int (&tmpInternalMets) [9] )  {
-
-	freeEChange=tmpfreechange;
-	substrates=tmpsubstrates;
-	products=tmproducts;
-
-	std::copy(std::begin(tmpInternalMets), std::end(tmpInternalMets), std::begin(internalMets));
-}
-
-void reaction::printReaction()
-{
-	std::cout<<"From: ";
-	for(auto i =substrates.begin(); i!=substrates.end(); ++i) std::cout<<*i<<' ';
-	std::cout<<std::endl;
-	std::cout<<"To: ";
-	for(auto i=products.begin(); i!=products.end(); ++i) std::cout<<*i<<' ';
-	std::cout<<std::endl;
-	std::cout<<"Free energy change: "<<freeEChange<<std::endl;
-}
-
 double reaction::freeEchange() { return freeEChange; }
 
 
@@ -134,10 +134,4 @@ void reaction::recalcEchange(const environment& env)
 	double insideLog=(std::pow(env.ppiCont,internalMets[0])*std::pow(env.piCont,internalMets[1])*std::pow(env.atpCont,internalMets[2])*std::pow(env.adpCont,internalMets[3])*std::pow(env.ampCont,internalMets[4])*std::pow(env.nadredcont,internalMets[5])*std::pow(env.nadoxcont,internalMets[6])*std::pow(env.co2cont,internalMets[7])*std::pow(env.h2ocont,internalMets[8]));
 
 	currentFreeEChange=freeEChange+8.3144598*env.temperature*std::log(insideLog);
-}
-
-reaction::reaction()
-{
-	int tmpint [9] = {};
-	std::copy(std::begin(tmpint), std::end(tmpint), std::begin(internalMets));
 }
