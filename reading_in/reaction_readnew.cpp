@@ -53,7 +53,7 @@ class reaction{
 //	std::string type;
 	std::vector<int> substrates;
 	std::vector<int> products;
-	int [9] internalMets;
+	int  internalMets [9];
 	double freeEChange;
 	//std::string humanReadable;	
 	double currentFreeEChange=0;
@@ -63,15 +63,12 @@ class reaction{
 
 	static void readCompounds (std::string fileName, ReactionNetwork &lofasz, std::vector<Vertex> &compoundlist);
 
-	reaction(std::vector<int> tmpsubstrates, std::vector<int> tmproducts, int [] internalMets ); 
+	reaction(std::vector<int> tmpsubstrates, std::vector<int> tmproducts,int (&internalMets)[9] ); 
 	reaction();
 	void printReaction ();
 	double freeEchange();
-	int getsubstrateIndex();
-	int getproductIndex();
-	int getnrATP();
-	int getnrNADH();
-	std::string gettype();
+	std::vector<int> getsubstrates();
+	std::vector<int> getproducts();
 	void recalcEchange(environment env);
 //	~reaction();
 };
@@ -102,7 +99,8 @@ std::vector<reaction> reacVector;
          reaction::readCompounds("newsortedcompounds.txt",lofasz,compoundVList);
 
 	 std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
-	 reaction::readReactions("reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,reacVList,compoundVList);
+	 //reaction::readReactions("reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,reacVList,compoundVList);
+	 reaction::readReactions("newreactions.txt", reacVector,lofasz,reacVList,compoundVList);
 	 std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
 	 reacVector[13].printReaction();
 	 reacVector[299].printReaction();
@@ -126,7 +124,7 @@ std::vector<reaction> reacVector;
 	 if (bipartiteee) {std::cout<<"The graph is bipartite"<<std::endl;}
 	 else {std::cout<<"The graph is not bipartite."<<std::endl;}
 
-	 reaction newreaction(" ",0,0,0,0,0," ");
+	 reaction newreaction;
 
 	 reaction evennewer;
 	 evennewer.printReaction();
@@ -172,15 +170,16 @@ void reaction::readReactions (std::string fileName, std::vector<reaction> &reacP
 	std::ifstream inFile(fileName);
 	std::string line,tmpsubs,tmpprods;
 
-	std::vector<int> tmpsubstrates, tmproducts;
-       	int tmpnrATP=0, tmpnrPPi=0, tmpnrPi=0 ,  tmpnrADP=0,tmpnrNAD_red=0,tmpnrNAD_ox=0, tmpnrCO2=0,tmpnrH2O=0;
-	int [9] tmpinternalMets= {};
+       	//int tmpnrATP=0, tmpnrPPi=0, tmpnrPi=0 ,  tmpnrADP=0,tmpnrNAD_red=0,tmpnrNAD_ox=0, tmpnrCO2=0,tmpnrH2O=0;
+	int tmpinternalMets [9] = {};
 
 	double tmpfreeE;
 
 	typedef boost::graph_traits<ReactionNetwork>::edge_descriptor Edge;
 
 	while (std::getline(inFile,line)){
+		
+		std::vector<int> tmpsubstrates, tmproducts;
 		std::stringstream iss(line);
 		iss>>tmpfreeE;
 		std::getline(iss,tmpsubs, '>');
@@ -199,12 +198,12 @@ void reaction::readReactions (std::string fileName, std::vector<reaction> &reacP
 		}
 
 		//finding if any of the internal metabolites appear on any side of the reaction
-		for (int interMIndex=-9; i<0; i++){
-			if(std::find(tmpsubstrates.begin(), tmpsubstrates.end(),i)){
+		for (int i=-9; i<0; i++){
+			if(std::find(tmpsubstrates.begin(), tmpsubstrates.end(),i)!=tmpsubstrates.end()){
 				tmpinternalMets[i+9]--;
 			}
 	
-			if(std::find(tmproducts.begin(), tmproducts.end(),i)){
+			if(std::find(tmproducts.begin(), tmproducts.end(),i)!=tmproducts.end()){
 				tmpinternalMets[i+9]++;
 			}
 		}
@@ -241,12 +240,12 @@ void reaction::readReactions (std::string fileName, std::vector<reaction> &reacP
 
 }
 
-reaction::reaction(std::vector<int> tmpsubstrates, std::vector<int> tmproducts, int [9] tmpInternalMets )  {
+reaction::reaction(std::vector<int> tmpsubstrates, std::vector<int> tmproducts, int (&tmpInternalMets) [9] )  {
 
 	substrates=tmpsubstrates;
 	products=tmproducts;
 
-	internalMets=tmpinternalMets;
+	std::copy(std::begin(tmpInternalMets),std::end(tmpInternalMets),std::begin(internalMets));
 
 
 
@@ -263,11 +262,9 @@ void reaction::printReaction(){
 }
 
 double reaction::freeEchange(){ return freeEChange;}
-int reaction::getsubstrateIndex(){return substrateIndex;}
-int reaction::getproductIndex(){return productIndex;}
-int reaction::getnrATP(){return nrATP;}
-int reaction::getnrNADH(){return nrNADH;}
-std::string reaction::gettype(){return type;}
+std::vector<int> reaction::getsubstrates() {return substrates;}
+std::vector<int> reaction::getproducts() {return products ;}
+
 
 void recalcEchange(environment env){
 	//recalculate the freeEchang using the formula G=G0+RT*ln(([C]^c*[D]^d)/([A]^a*[B]^b))
@@ -275,11 +272,12 @@ void recalcEchange(environment env){
 
 }
 reaction::reaction(){
-	substrates=new std::vector<int>;
-	products=new std::vector<int>;
+	std::vector<int> substrates;
+	std::vector<int> products;
 
-	int [9] tmpint={};
-	internalMets=tmpint;
+	int tmpint [9] = {};
+	std::copy(std::begin(tmpint),std::end(tmpint),std::begin(internalMets));
+	
 }
 
 /*reaction::~reaction(){
