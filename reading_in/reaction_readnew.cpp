@@ -14,16 +14,21 @@
 
 struct environment{
 
-	double temperature=293; //temperature in kelvins
+	//substrates from newsortedcompounds.txt in this order
+	//in the internalMets array they are kept in this order
+
+	double ppiCont=1;
+	double piCont=1;
 	double atpCont=1;
 	double adpCont=1;
 	double ampCont=1;
-	double nadplusCont=1;
-	double nadhCont=1;
-	double co2Cont=1;
-	double piCont=1;
-	double ppiCont=1;
-	double h2oCont=1;
+	double nadredcont=1;
+	double nadoxcont=1;
+	double co2cont=1;
+	double h2ocont=1;
+
+
+	double temperature=293; //temperature in kelvins
 	double nh3Cont=1;
 	double glutCont=1;
 	double oxo2Cont=1;
@@ -63,7 +68,7 @@ class reaction{
 
 	static void readCompounds (std::string fileName, ReactionNetwork &lofasz, std::vector<Vertex> &compoundlist);
 
-	reaction(std::vector<int> tmpsubstrates, std::vector<int> tmproducts,int (&internalMets)[9] ); 
+	reaction(double tmpfreechange, std::vector<int> tmpsubstrates, std::vector<int> tmproducts,int (&internalMets)[9] ); 
 	reaction();
 	void printReaction ();
 	double freeEchange();
@@ -209,19 +214,26 @@ void reaction::readReactions (std::string fileName, std::vector<reaction> &reacP
 		}
 
 
-	 	reacPointer.emplace_back(tmpsubstrates,tmproducts,tmpinternalMets);	
+	 	reacPointer.emplace_back(tmpfreeE,tmpsubstrates,tmproducts,tmpinternalMets);	
 
 
 		vertexList.emplace_back(boost::add_vertex(graph));
-		graph[vertexList[vertexList.size()-1]].reac=reaction(tmpsubstrates,tmproducts,tmpinternalMets);
+		graph[vertexList[vertexList.size()-1]].reac=reaction(tmpfreeE,tmpsubstrates,tmproducts,tmpinternalMets);
 
 
+		for (int i : tmpsubstrates){
 		Edge e1;
-		//not adding edges yet
-		//e1=(boost::add_edge(compoundVList[tmpsubI],vertexList[vertexList.size()-1],graph)).first;
+		e1=(boost::add_edge(compoundVList[i+9],vertexList[vertexList.size()-1],graph)).first;
+
+		}
 
 
+		for (int i: tmproducts){
 
+			Edge e1;
+			e1=(boost::add_edge(vertexList[vertexList.size()-1],compoundVList[i+9],graph)).first;
+
+				}
 
 //		tmpSR.reac=new reaction(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);
 
@@ -240,8 +252,9 @@ void reaction::readReactions (std::string fileName, std::vector<reaction> &reacP
 
 }
 
-reaction::reaction(std::vector<int> tmpsubstrates, std::vector<int> tmproducts, int (&tmpInternalMets) [9] )  {
+reaction::reaction(double tmpfreechange, std::vector<int> tmpsubstrates, std::vector<int> tmproducts, int (&tmpInternalMets) [9] )  {
 
+	freeEChange=tmpfreechange;
 	substrates=tmpsubstrates;
 	products=tmproducts;
 
@@ -266,10 +279,13 @@ std::vector<int> reaction::getsubstrates() {return substrates;}
 std::vector<int> reaction::getproducts() {return products ;}
 
 
-void recalcEchange(environment env){
+void reaction::recalcEchange(environment env){
 	//recalculate the freeEchang using the formula G=G0+RT*ln(([C]^c*[D]^d)/([A]^a*[B]^b))
 	//need the reactions database changed for this
 
+	double insideLog=(std::pow(env.ppiCont,internalMets[0])*std::pow(env.piCont,internalMets[1])*std::pow(env.atpCont,internalMets[2])*std::pow(env.adpCont,internalMets[3])*std::pow(env.ampCont,internalMets[4])*std::pow(env.nadredcont,internalMets[5])*std::pow(env.nadoxcont,internalMets[6])*std::pow(env.co2cont,internalMets[7])*std::pow(env.h2ocont,internalMets[8]));
+
+	currentFreeEChange=freeEChange+8.3144598*env.temperature*std::log(insideLog);
 }
 reaction::reaction(){
 	std::vector<int> substrates;
