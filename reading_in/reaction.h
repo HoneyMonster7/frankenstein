@@ -79,9 +79,9 @@ public:
 	reaction(double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, const InternalMetsT& tmpInternalMets);
 	reaction();
 
-	static void readReactions(std::string fileName, std::vector<reaction>& reacPointer, ReactionNetwork& lofasz  ,  std::vector<Vertex>& vertexList, const std::vector<Vertex>& compoundVList);
+	static void readReactions(std::string fileName, std::vector<reaction>& reacPointer, ReactionNetwork& lofasz, std::vector<Vertex>& vertexList, const std::vector<Vertex>& compoundVList);
 
-	static void readCompounds(std::string fileName, ReactionNetwork& lofasz, std::vector<Vertex>& compoundlist)  ;
+	static void readCompounds(std::string fileName, ReactionNetwork& lofasz, std::vector<Vertex>& compoundlist);
 
 	void printReaction();
 	double freeEchange();

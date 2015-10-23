@@ -33,7 +33,7 @@ void reaction::readCompounds(std::string fileName, ReactionNetwork& graph, std::
 		throw std::runtime_error("Can't open input file " + fileName);
 	}
 
-	while (std::getline(inFile, line))
+	while(std::getline(inFile, line))
 	{
 		std::stringstream iss(line);
 		iss>>index;
@@ -72,18 +72,18 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		std::istringstream subss(tmpsubs);
 		std::istringstream prodss(tmpprods);
 
-		for (int tmp; subss>>tmp;)
+		for(int tmp; subss>>tmp;)
 		{
 			tmpsubstrates.push_back(tmp);
 		}
 
-		for (int tmp; prodss>>tmp;)
+		for(int tmp; prodss>>tmp;)
 		{
 			tmproducts.push_back(tmp);
 		}
 
 		//finding if any of the internal metabolites appear on any side of the reaction
-		for (int i=-9; i<0; i++)
+		for(int i=-9; i<0; i++)
 		{
 			if(std::find(tmpsubstrates.begin(), tmpsubstrates.end(), i) != tmpsubstrates.end())
 			{
@@ -104,14 +104,14 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		graph[vertexList[vertexList.size()-1]].reac=reaction(tmpfreeE,tmpsubstrates,tmproducts,tmpinternalMets);
 
 
-		for (int i : tmpsubstrates)
+		for(int i : tmpsubstrates)
 		{
 			Edge e1;
 			e1=(boost::add_edge(compoundVList[i+9],vertexList[vertexList.size()-1],graph)).first;
 		}
 
 
-		for (int i: tmproducts)
+		for(int i: tmproducts)
 		{
 			Edge e1;
 			e1=(boost::add_edge(vertexList[vertexList.size()-1],compoundVList[i+9],graph)).first;
