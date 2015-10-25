@@ -26,11 +26,11 @@ int main(int argc, char* argv[])
 	try
 	{
 		//reaction::readCompounds(DATA_PATH "compounds_list__4C_v3_2_2_ext_100.dat",lofasz,compoundVList);
-		reaction::readCompounds(DATA_PATH "newsortedcompounds.txt", lofasz, compoundVList);
+		reaction::readCompounds(DATA_PATH "fullnewcompounds.dat", lofasz, compoundVList);
 
 		std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
 		//reaction::readReactions(DATA_PATH "reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,reacVList,compoundVList);
-		reaction::readReactions(DATA_PATH "newreactions.txt", reacVector, lofasz, reacVList, compoundVList);
+		reaction::readReactions(DATA_PATH "fullnewreactions.dat", reacVector, lofasz, reacVList, compoundVList);
 		std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
 	}
 	catch(std::runtime_error& e)

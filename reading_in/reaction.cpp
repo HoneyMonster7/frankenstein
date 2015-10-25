@@ -83,16 +83,16 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		}
 
 		//finding if any of the internal metabolites appear on any side of the reaction
-		for(int i=-9; i<0; i++)
+		for(int i=-13; i<0; i++)
 		{
 			if(std::find(tmpsubstrates.begin(), tmpsubstrates.end(), i) != tmpsubstrates.end())
 			{
-				tmpinternalMets[i+9]--;
+				tmpinternalMets[i+13]--;
 			}
 
 			if(std::find(tmproducts.begin(), tmproducts.end(), i) != tmproducts.end())
 			{
-				tmpinternalMets[i+9]++;
+				tmpinternalMets[i+13]++;
 			}
 		}
 
@@ -107,14 +107,14 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		for(int i : tmpsubstrates)
 		{
 			Edge e1;
-			e1=(boost::add_edge(compoundVList[i+9],vertexList[vertexList.size()-1],graph)).first;
+			e1=(boost::add_edge(compoundVList[i+13],vertexList[vertexList.size()-1],graph)).first;
 		}
 
 
 		for(int i: tmproducts)
 		{
 			Edge e1;
-			e1=(boost::add_edge(vertexList[vertexList.size()-1],compoundVList[i+9],graph)).first;
+			e1=(boost::add_edge(vertexList[vertexList.size()-1],compoundVList[i+13],graph)).first;
 		}
 
 		//		tmpSR.reac=new reaction(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);
@@ -141,7 +141,7 @@ void reaction::recalcEchange(const environment& env)
 	//recalculate the freeEchang using the formula G=G0+RT*ln(([C]^c*[D]^d)/([A]^a*[B]^b))
 	//need the reactions database changed for this
 
-	double insideLog=(std::pow(env.ppiCont,internalMets[0])*std::pow(env.piCont,internalMets[1])*std::pow(env.atpCont,internalMets[2])*std::pow(env.adpCont,internalMets[3])*std::pow(env.ampCont,internalMets[4])*std::pow(env.nadredcont,internalMets[5])*std::pow(env.nadoxcont,internalMets[6])*std::pow(env.co2cont,internalMets[7])*std::pow(env.h2ocont,internalMets[8]));
+	double insideLog=(std::pow(env.nh2acceptorCont,internalMets[0])*std::pow(env.nh2donorCont,internalMets[1])*std::pow(env.conh22Cont,internalMets[2])*std::pow(env.nh3aqCont,internalMets[3])*std::pow(env.ppiCont,internalMets[4])*std::pow(env.piCont,internalMets[5])*std::pow(env.atpCont,internalMets[6])*std::pow(env.adpCont,internalMets[7])*std::pow(env.ampCont,internalMets[8])*std::pow(env.nadredcont,internalMets[9])*std::pow(env.nadoxcont,internalMets[10])*std::pow(env.co2cont,internalMets[11])*std::pow(env.h2ocont,internalMets[12]));
 
 	currentFreeEChange=freeEChange+8.3144598*env.temperature*std::log(insideLog);
 }

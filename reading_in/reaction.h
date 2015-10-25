@@ -2,8 +2,6 @@
 
 
 // header file for the reaction class
-//
-//
 
 
 #include <boost/graph/adjacency_list.hpp>
@@ -25,6 +23,11 @@ struct environment
 	//substrates from newsortedcompounds.txt in this order
 	//in the internalMets array they are kept in this order
 
+	double nh2acceptorCont=1;
+	double nh2donorCont=1;
+	double conh22Cont=1;
+	double nh3aqCont=1;
+
 	double ppiCont=1;
 	double piCont=1;
 	double atpCont=1;
@@ -37,7 +40,6 @@ struct environment
 
 
 	double temperature=293; //temperature in kelvins
-	double nh3Cont=1;
 	double glutCont=1;
 	double oxo2Cont=1;
 };
@@ -59,7 +61,7 @@ struct SubReac;
 typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS, SubReac, bool> ReactionNetwork;
 typedef boost::graph_traits<ReactionNetwork>::vertex_descriptor Vertex;
 
-typedef std::array<int, 9> InternalMetsT;
+typedef std::array<int, 13> InternalMetsT;
 
 
 class reaction
