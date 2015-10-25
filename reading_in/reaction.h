@@ -94,7 +94,7 @@ public:
 	double freeEchange();
 	void recalcEchange(const environment& env);
 
-	void calcThroughput( const int NrCompounds, std::vector<Vertex> reacList);
+	static void calcThroughput( const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> reacList);
 
 	// inlining the return of big vectors may help the compiler
 	// to get rid of some needless copying

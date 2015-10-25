@@ -147,7 +147,7 @@ void reaction::recalcEchange(const environment& env)
 }
 
 
-void calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> reacList){
+void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> reacList){
 
 	glp_prob *lp;
 	lp=glp_create_prob();
@@ -210,6 +210,11 @@ void calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vector<Ve
 	std::copy(ja.begin(),ja.end(),jarray);
 	std::copy(ar.begin(),ar.end(),ararray);
 
-	glp_load_matrix(lp,length,iarray,jarray,ararray);
+	std::cout<<"The length of the vectors are: "<<length<<", "<<ja.size()<<", "<<ar.size()<<std::endl;
+
+	std::cout<<"Last elements are: "<<iarray[length]<<", "<<jarray[length]<<", "<<ararray[length]<<std::endl;
+	glp_load_matrix(lp,length-1,iarray,jarray,ararray);
+
+	//glp_simplex(lp,NULL);
 
 }

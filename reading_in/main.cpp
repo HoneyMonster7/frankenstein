@@ -72,6 +72,8 @@ int main(int argc, char* argv[])
 	newreaction.printReaction();
 	evennewer.printReaction();
 
+	int compsize=compoundVList.size();
+	reaction::calcThroughput(compsize,lofasz,reacVList);
 
 	std::cout<<"Tests completed."<<std::endl;
 }

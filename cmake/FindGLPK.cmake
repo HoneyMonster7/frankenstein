@@ -35,7 +35,7 @@ SET(GLPK_LIBRARIES ${GLPK_LIB} )
 
 FIND_PATH(GLPK_INCLUDE_DIR
   glpk.h
-  PATHS /usr/include/ /usr/include/glpk $ENV{GLPK_DIR}/include
+  PATHS /usr/include/ /usr/include/glpk $ENV{GLPK_DIR}/include ~/kellekek/glpk/
   DOC "Directory where GLPK header files are stored" )
 
 include(FindPackageHandleStandardArgs)
