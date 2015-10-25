@@ -10,6 +10,11 @@
 #include <cstdlib>
 #include <boost/graph/bipartite.hpp>
 
+//for the glpk library
+#include "stdio.h"
+#include "stdlib.h"
+#include "glpk.h"
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -88,6 +93,8 @@ public:
 	void printReaction();
 	double freeEchange();
 	void recalcEchange(const environment& env);
+
+	void calcThroughput( const int NrCompounds, std::vector<Vertex> reacList);
 
 	// inlining the return of big vectors may help the compiler
 	// to get rid of some needless copying

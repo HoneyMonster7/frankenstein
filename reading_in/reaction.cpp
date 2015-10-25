@@ -145,3 +145,71 @@ void reaction::recalcEchange(const environment& env)
 
 	currentFreeEChange=freeEChange+8.3144598*env.temperature*std::log(insideLog);
 }
+
+
+void calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> reacList){
+
+	glp_prob *lp;
+	lp=glp_create_prob();
+	glp_set_prob_name(lp,"network_throughput");
+	glp_set_obj_dir(lp,GLP_MAX);
+	
+	glp_add_rows(lp,NrCompounds);
+
+	//extra column for the imaginary reaction getting rid of the final compound (objective function)
+	int listSize=reacList.size();
+	glp_add_cols(lp,listSize+1);
+
+
+	std::vector<int> ia,ja;
+	std::vector<double> ar;
+
+	for (int i=1;i<=listSize;i++){
+		//reactions don't go backwards
+		glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);
+
+
+		//preparing the sparse matrix's values 
+		reaction tmpreac=graph[reacList[i-1]].reac;
+	
+		std::vector<int> tmpsubs=tmpreac.getsubstrates();
+		std::vector<int> tmpprods=tmpreac.getproducts();
+
+		for (int j: tmpsubs){
+			//using i+14 as the column numbering starts from 1, and there are 13 internal metabolites
+			//with negative substrate indices
+			ia.push_back(j+14);
+			ja.push_back(i);
+			ar.push_back(-1);
+		}
+
+		for (int j: tmpprods){
+			//using i+14 as the column numbering starts from 1, and there are 13 internal metabolites
+			//with negative substrate indices
+			ia.push_back(j+14);
+			ja.push_back(i);
+			ar.push_back(1);
+		}
+
+	}
+
+	//add imaginary reaction here:
+	//ia.push_back( );
+	//ja.push_back( );
+	//ar.push_back( );
+	//
+	//target is to maximize the imaginary reactions throughput
+	glp_set_obj_coef(lp,reacList.size()+1,1.0);
+
+
+	//creating the arrays now
+	int length=ia.size();
+	int iarray[length],jarray[length];
+	double ararray[length];
+	std::copy(ia.begin(),ia.end(),iarray);
+	std::copy(ja.begin(),ja.end(),jarray);
+	std::copy(ar.begin(),ar.end(),ararray);
+
+	glp_load_matrix(lp,length,iarray,jarray,ararray);
+
+}
