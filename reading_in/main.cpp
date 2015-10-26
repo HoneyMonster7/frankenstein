@@ -73,7 +73,10 @@ int main(int argc, char* argv[])
 	evennewer.printReaction();
 
 	int compsize=compoundVList.size();
-	reaction::calcThroughput(compsize,lofasz,reacVList);
+
+	std::vector<int> subset= {130,285,5109,5107};
+	std::vector<Vertex> testReacList = reaction::subsetVertices(subset,reacVList);
+	reaction::calcThroughput(compsize,lofasz,testReacList);
 
 	std::cout<<"Tests completed."<<std::endl;
 }

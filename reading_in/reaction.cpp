@@ -180,7 +180,7 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 			//with negative substrate indices
 			ia.push_back(j+14);
 			ja.push_back(i);
-			ar.push_back(-1);
+			ar.push_back(-1.0);
 		}
 
 		for (int j: tmpprods){
@@ -188,7 +188,7 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 			//with negative substrate indices
 			ia.push_back(j+14);
 			ja.push_back(i);
-			ar.push_back(1);
+			ar.push_back(1.0);
 		}
 
 	}
@@ -210,6 +210,12 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 	std::copy(ja.begin(),ja.end(),jarray);
 	std::copy(ar.begin(),ar.end(),ararray);
 
+
+	for (int i=0; i<length; i++){
+
+		std::cout<<"Matrix element: "<<ia[i]-14<<", "<<ja[i]<<", "<<ararray[i]<<std::endl;
+	}
+
 	std::cout<<"The length of the vectors are: "<<length<<", "<<ja.size()<<", "<<ar.size()<<std::endl;
 
 	std::cout<<"Last elements are: "<<iarray[length]<<", "<<jarray[length]<<", "<<ararray[length]<<std::endl;
@@ -219,14 +225,15 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 
 }
 
- std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList){
+ std::vector<Vertex> reaction::subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList){
 	 //sort not required? 
 	 std::sort(vertexIDs.begin(),vertexIDs.end());
 
 	 std::vector<Vertex> tobeReturned;
 
 	 for(int i :vertexIDs){
-		 tobeReturned.push_back(reacList[i]);
+		 //uses i-1 in order to correspond to line numbers in the input reaction list
+		 tobeReturned.push_back(reacList[i-1]);
 	 }
 	 return tobeReturned;
  }
