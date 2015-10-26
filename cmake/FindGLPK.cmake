@@ -30,12 +30,12 @@ INCLUDE(CheckIncludeFileCXX)
 CHECK_INCLUDE_FILE_CXX(glpk.h FEELPP_HAS_GLPK_H)
 
 
-FIND_LIBRARY( GLPK_LIB glpk PATHS /usr/lib $ENV{GLPK_DIR}/lib)
+FIND_LIBRARY( GLPK_LIB glpk PATHS /usr/lib $ENV{GLPK_DIR}/lib /home/s1134965/kellekek/glpk/glpk-4.56/src )
 SET(GLPK_LIBRARIES ${GLPK_LIB} )
 
 FIND_PATH(GLPK_INCLUDE_DIR
   glpk.h
-  PATHS /usr/include/ /usr/include/glpk $ENV{GLPK_DIR}/include ~/kellekek/glpk/
+  PATHS /usr/include/ /usr/include/glpk $ENV{GLPK_DIR}/include /home/s1134965/kellekek/glpk/glpk-4.56/src
   DOC "Directory where GLPK header files are stored" )
 
 include(FindPackageHandleStandardArgs)
