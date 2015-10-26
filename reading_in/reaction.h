@@ -95,7 +95,7 @@ public:
 	void recalcEchange(const environment& env);
 
 	static void calcThroughput( const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> reacList);
-
+	static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 	// inlining the return of big vectors may help the compiler
 	// to get rid of some needless copying
 	inline std::vector<int> getsubstrates() { return substrates; }

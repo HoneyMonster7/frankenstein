@@ -218,3 +218,15 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 	//glp_simplex(lp,NULL);
 
 }
+
+ std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList){
+	 //sort not required? 
+	 std::sort(vertexIDs.begin(),vertexIDs.end());
+
+	 std::vector<Vertex> tobeReturned;
+
+	 for(int i :vertexIDs){
+		 tobeReturned.push_back(reacList[i]);
+	 }
+	 return tobeReturned;
+ }
