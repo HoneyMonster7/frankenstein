@@ -1,10 +1,12 @@
 #include "reaction.h"
 
-reaction::reaction(double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, const InternalMetsT& tmpInternalMets)
-	: substrates(tmpsubstrates)
+reaction::reaction(int reacNr,double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, const InternalMetsT& tmpInternalMets)
+	: listNR(reacNr)
+	, substrates(tmpsubstrates)
 	, products(tmproducts)
 	, internalMets(tmpInternalMets)
 	, freeEChange(tmpfreechange)
+	  
 {}
 
 reaction::reaction() {}
@@ -61,6 +63,7 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		throw std::runtime_error("Can't open input file " + fileName);
 	}
 
+	int counter=0;
 	while(std::getline(inFile, line))
 	{
 		std::vector<int> tmpsubstrates, tmproducts;
@@ -97,11 +100,11 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		}
 
 
-		reacPointer.emplace_back(tmpfreeE, tmpsubstrates, tmproducts, tmpinternalMets);
+		reacPointer.emplace_back(counter,tmpfreeE, tmpsubstrates, tmproducts, tmpinternalMets);
 
 
 		vertexList.emplace_back(boost::add_vertex(graph));
-		graph[vertexList[vertexList.size()-1]].reac=reaction(tmpfreeE,tmpsubstrates,tmproducts,tmpinternalMets);
+		graph[vertexList[vertexList.size()-1]].reac=reaction(counter,tmpfreeE,tmpsubstrates,tmproducts,tmpinternalMets);
 
 
 		for(int i : tmpsubstrates)
@@ -130,6 +133,7 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		//std::cout<<"Numbers: "<<tmpsubI<<" "<<tmpProdI<<" "<<tmpnrATP<<" "<<tmpnrNADH<<" "<<tmpfreeE<<std::endl;
 		//std::cout<<"Humanreadable: "<<tmpHumRead<<std::endl;
 
+		counter++;
 	}
 }
 

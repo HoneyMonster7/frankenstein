@@ -74,6 +74,7 @@ class reaction
 	//properties of each reaction, should include an int (possible shorter) for each internal metabolite to aid   the recalculation of freeEchange for different environments
 	//      std::string type;
 
+	int listNR;
 	std::vector<int> substrates;
 	std::vector<int> products;
 	InternalMetsT internalMets = {};
@@ -83,7 +84,7 @@ class reaction
 
 public:
 
-	reaction(double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, const InternalMetsT& tmpInternalMets);
+	reaction(int listNR,double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, const InternalMetsT& tmpInternalMets);
 	reaction();
 
 	static void readReactions(std::string fileName, std::vector<reaction>& reacPointer, ReactionNetwork& lofasz, std::vector<Vertex>& vertexList, const std::vector<Vertex>& compoundVList);
