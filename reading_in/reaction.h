@@ -63,7 +63,7 @@ struct substrate
 struct SubReac;
 
 
-typedef boost::adjacency_list<boost::listS, boost::vecS, boost::directedS, SubReac, bool> ReactionNetwork;
+typedef boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS, SubReac, bool> ReactionNetwork;
 typedef boost::graph_traits<ReactionNetwork>::vertex_descriptor Vertex;
 
 typedef std::array<int, 13> InternalMetsT;
