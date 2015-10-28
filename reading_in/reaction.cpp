@@ -158,7 +158,7 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 
 	//extra column for the imaginary reaction getting rid of the final compound (objective function)
 	int listSize=reacList.size();
-	glp_add_cols(lp,listSize+1);
+	glp_add_cols(lp,listSize+5);
 
 
 	std::vector<int> ia,ja;
@@ -166,12 +166,18 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 
 	for (int i=1;i<=listSize;i++){
 		//reactions don't go backwards
-		glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);
 
 
 		//preparing the sparse matrix's values 
 		reaction tmpreac=graph[reacList[i-1]].reac;
-	
+
+
+		if(tmpreac.currentFreeEChange<0){
+		glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);
+		}
+		else{glp_set_col_bnds(lp,i,GLP_UP,0.0,0.0);}
+
+
 		std::vector<int> tmpsubs=tmpreac.getsubstrates();
 		std::vector<int> tmpprods=tmpreac.getproducts();
 
@@ -194,12 +200,14 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 	}
 
 	//add imaginary reaction here:
-	//ia.push_back( );
-	//ja.push_back( );
-	//ar.push_back( );
+	ia.push_back(908+14);	ja.push_back(listSize+1); ar.push_back(1.0);
+	ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
+	ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
+	ia.push_back(-1+14);	ja.push_back(listSize+4); ar.push_back(1.0);
+	ia.push_back(-2+14);	ja.push_back(listSize+5); ar.push_back(1.0);
 	//
 	//target is to maximize the imaginary reactions throughput
-	glp_set_obj_coef(lp,reacList.size()+1,1.0);
+	glp_set_obj_coef(lp,listSize+1,1.0);
 
 
 	//creating the arrays now
@@ -221,8 +229,17 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 	std::cout<<"Last elements are: "<<iarray[length]<<", "<<jarray[length]<<", "<<ararray[length]<<std::endl;
 	glp_load_matrix(lp,length-1,iarray,jarray,ararray);
 
-	//glp_simplex(lp,NULL);
+	glp_simplex(lp,NULL);
 
+	double goodness=glp_get_obj_val(lp);
+
+	std::cout<<"Objective function value: "<<goodness<<std::endl;
+	std::cout<<"Coefficients:";
+	for (int i=0; i<(listSize+5); i++){
+		double colvalue=glp_get_col_prim(lp,i+1);
+		std::cout<<colvalue<<", ";
+	}
+	std::cout<<std::endl;
 }
 
  std::vector<Vertex> reaction::subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList){
