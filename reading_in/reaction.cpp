@@ -172,10 +172,10 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 		reaction tmpreac=graph[reacList[i-1]].reac;
 
 
-		if(tmpreac.currentFreeEChange<0){
-		glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);
-		}
-		else{glp_set_col_bnds(lp,i,GLP_UP,0.0,0.0);}
+		//if(tmpreac.currentFreeEChange<0){
+		//glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);
+		//}
+		//else{glp_set_col_bnds(lp,i,GLP_UP,0.0,0.0);}
 
 
 		std::vector<int> tmpsubs=tmpreac.getsubstrates();
@@ -199,6 +199,7 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 
 	}
 
+	glp_set_col_bnds(lp,listSize+1,GLP_UP,0.0,10.0);
 	//add imaginary reaction here:
 	ia.push_back(908+14);	ja.push_back(listSize+1); ar.push_back(1.0);
 	ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
