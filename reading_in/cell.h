@@ -21,6 +21,7 @@
 
 #include "reaction.h"
 
+typedef boost::mt19937 RandomGeneratorType;
 
 class cell{
 
@@ -34,7 +35,7 @@ class cell{
 	
 	inline std::vector<int> getReacs() {return availableReactions;}
 
-	void mutate(double probToAdd, double probToDel, ReactionNetwork& allReacs);
+	void mutate(double probToAdd, double probToDel, ReactionNetwork& allReacs, RandomGeneratorType& generator );
 
 	void printReacs();
 

@@ -90,15 +90,18 @@ std::vector<int> cell::canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>
 
 }
 
-void cell::mutate( double probToAdd, double probToDel, ReactionNetwork& allReacs){
+void cell::mutate( double probToAdd, double probToDel, ReactionNetwork& allReacs, RandomGeneratorType& generator ){
 
-	boost::random::mt19937 gen{static_cast<std::uint32_t>(1)};
+	boost::random::mt19937 gen{static_cast<std::uint32_t>(availableReactions.size())};
 
 	std::cout<<"Random numbers:";
-	for (int i=1; i<50; i++){
-		std::cout<<gen()<<", ";
-	}
-	std::cout<<std::endl;
+//	for (int i=1; i<50; i++){
+//		std::cout<<gen()%availableReactions.size()<<", ";
+//	}
+
+	
+	
+	
 	double doWeAdd;
 }
 

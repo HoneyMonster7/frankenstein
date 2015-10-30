@@ -2,6 +2,7 @@
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <cstdlib>
+#include <boost/random.hpp>
 #include <boost/graph/bipartite.hpp>
 
 #include <string>
@@ -17,6 +18,10 @@ using namespace boost;
 
 int main(int argc, char* argv[])
 {
+
+
+	RandomGeneratorType generator(1);
+
 	std::cout<<"Tests begin."<<std::endl;
 
 	std::vector<reaction> reacVector;
@@ -82,7 +87,7 @@ int main(int argc, char* argv[])
 	std::vector<int> semmi;
 		semmi=trialcell.canBeAdded(lofasz, reacVList,internals);
 
-		trialcell.mutate(1.0,1.0,lofasz);
+		trialcell.mutate(1.0,1.0,lofasz,generator);
 		
 	//reaction::calcThroughput(compsize,lofasz,testReacList);
 
