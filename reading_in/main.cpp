@@ -81,7 +81,8 @@ int main(int argc, char* argv[])
 	cell trialcell(subset);
 	std::vector<int> semmi;
 		semmi=trialcell.canBeAdded(lofasz, reacVList,internals);
-	
+
+		trialcell.mutate(1.0,1.0,lofasz);
 		
 	//reaction::calcThroughput(compsize,lofasz,testReacList);
 

@@ -77,8 +77,6 @@ std::vector<int> cell::canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>
 
 
 
-	//testing
-	std::cout<<"Possible reactions:"<<std::cout;
 	std::vector<int> tobereturned;
 	while(!setOfNewReactions.empty()){
 
@@ -94,5 +92,13 @@ std::vector<int> cell::canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>
 
 void cell::mutate( double probToAdd, double probToDel, ReactionNetwork& allReacs){
 
+	boost::random::mt19937 gen{static_cast<std::uint32_t>(1)};
 
+	std::cout<<"Random numbers:";
+	for (int i=1; i<50; i++){
+		std::cout<<gen()<<", ";
+	}
+	std::cout<<std::endl;
+	double doWeAdd;
 }
+

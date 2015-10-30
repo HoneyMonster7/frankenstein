@@ -4,6 +4,9 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random.hpp>
+#include <boost/random/uniform_real.hpp>
 #include <cstdlib>
 #include <boost/graph/bipartite.hpp>
 

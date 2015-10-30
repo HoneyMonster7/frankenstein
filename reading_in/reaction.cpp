@@ -1,5 +1,6 @@
 #include "reaction.h"
 
+
 reaction::reaction(int reacNr,double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, const InternalMetsT& tmpInternalMets)
 	: listNR(reacNr)
 	, substrates(tmpsubstrates)
@@ -23,12 +24,10 @@ void reaction::printReaction()
 }
 
 
-void reaction::readCompounds(std::string fileName, ReactionNetwork& graph, std::vector<Vertex>& vertexList)
+void reaction::readCompounds(std::string fileName, ReactionNetwork& graph, std::vector<Vertex>& vertexList, std::vector<Vertex>& internals)
 {
 	std::ifstream inFile(fileName);
 	std::string line, nameChem, namenorm;
-	int index, charge;
-	double formFreeE;
 
 	if(!inFile)
 	{
@@ -37,15 +36,26 @@ void reaction::readCompounds(std::string fileName, ReactionNetwork& graph, std::
 
 	while(std::getline(inFile, line))
 	{
+		substrate tmpsubstrate;
+
 		std::stringstream iss(line);
-		iss>>index;
-		iss>>formFreeE;
+		iss>>tmpsubstrate.index;
+		iss>>tmpsubstrate.freeOfCreation;
 		iss>>nameChem;
-		iss>>namenorm;
-		iss>>charge;
+		iss>>tmpsubstrate.name;
+		iss>>tmpsubstrate.charge;
 		vertexList.emplace_back(boost::add_vertex(graph));
+
+		graph[vertexList[vertexList.size()-1]].sub=tmpsubstrate;
+
+		if(tmpsubstrate.index<0){
+			internals.emplace_back(vertexList[vertexList.size()-1]);
+		}
+
 	}
 }
+
+int reaction::getListNr(){ return listNR;}
 
 void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPointer, ReactionNetwork& graph, std::vector<Vertex>& vertexList, const std::vector<Vertex>& compoundVList)
 {
@@ -120,18 +130,6 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 			e1=(boost::add_edge(vertexList[vertexList.size()-1],compoundVList[i+13],graph)).first;
 		}
 
-		//		tmpSR.reac=new reaction(tmpType,tmpsubI,tmpProdI,tmpnrATP,tmpnrNADH,tmpfreeE,tmpHumRead);
-
-
-		//Possibly also create the bipartite graph at this stage
-		//graph structure: substrate number n is vertex number 2n
-		//		   reaction number n is vertex number 2n+1
-		//vertex properties are a pair <substrate,reaction> with the
-		//non-important one being blank
-
-		//std::cout<<"Type: "<<tmpType<<std::endl;
-		//std::cout<<"Numbers: "<<tmpsubI<<" "<<tmpProdI<<" "<<tmpnrATP<<" "<<tmpnrNADH<<" "<<tmpfreeE<<std::endl;
-		//std::cout<<"Humanreadable: "<<tmpHumRead<<std::endl;
 
 		counter++;
 	}
@@ -162,7 +160,7 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 
 	//extra column for the imaginary reaction getting rid of the final compound (objective function)
 	int listSize=reacList.size();
-	glp_add_cols(lp,listSize+5);
+	glp_add_cols(lp,listSize+6);
 
 
 	std::vector<int> ia,ja;
@@ -203,16 +201,18 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 
 	}
 
-	glp_set_col_bnds(lp,listSize+1,GLP_UP,0.0,10.0);
+	glp_set_col_bnds(lp,listSize+6,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
-	ia.push_back(908+14);	ja.push_back(listSize+1); ar.push_back(1.0);
+	ia.push_back(908+14);	ja.push_back(listSize+6); ar.push_back(-1.0);
 	ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
 	ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
 	ia.push_back(-1+14);	ja.push_back(listSize+4); ar.push_back(1.0);
 	ia.push_back(-2+14);	ja.push_back(listSize+5); ar.push_back(1.0);
+	ia.push_back(14);	ja.push_back(listSize+6); ar.push_back(1.0);
+
 	//
 	//target is to maximize the imaginary reactions throughput
-	glp_set_obj_coef(lp,listSize+1,1.0);
+	glp_set_obj_coef(lp,listSize+6,1.0);
 
 
 	//creating the arrays now
@@ -240,7 +240,7 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 
 	std::cout<<"Objective function value: "<<goodness<<std::endl;
 	std::cout<<"Coefficients:";
-	for (int i=0; i<(listSize+5); i++){
+	for (int i=0; i<(listSize+6); i++){
 		double colvalue=glp_get_col_prim(lp,i+1);
 		std::cout<<colvalue<<", ";
 	}
