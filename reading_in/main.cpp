@@ -11,6 +11,7 @@
 #include <algorithm>
 
 #include "reaction.h"
+#include "cell.h"
 
 using namespace boost;
 
@@ -20,13 +21,13 @@ int main(int argc, char* argv[])
 
 	std::vector<reaction> reacVector;
 
-	std::vector<Vertex> reacVList, compoundVList;
+	std::vector<Vertex> reacVList, compoundVList,internals;
 	ReactionNetwork lofasz;
 
 	try
 	{
 		//reaction::readCompounds(DATA_PATH "compounds_list__4C_v3_2_2_ext_100.dat",lofasz,compoundVList);
-		reaction::readCompounds(DATA_PATH "fullnewcompounds.dat", lofasz, compoundVList);
+		reaction::readCompounds(DATA_PATH "fullnewcompounds.dat", lofasz, compoundVList,internals);
 
 		std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
 		//reaction::readReactions(DATA_PATH "reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,reacVList,compoundVList);
@@ -76,7 +77,13 @@ int main(int argc, char* argv[])
 
 	std::vector<int> subset= {130,285,5109,5107};
 	std::vector<Vertex> testReacList = reaction::subsetVertices(subset,reacVList);
-	reaction::calcThroughput(compsize,lofasz,testReacList);
+
+	cell trialcell(subset);
+	std::vector<int> semmi;
+		semmi=trialcell.canBeAdded(lofasz, reacVList,internals);
+	
+		
+	//reaction::calcThroughput(compsize,lofasz,testReacList);
 
 	std::cout<<"Tests completed."<<std::endl;
 }

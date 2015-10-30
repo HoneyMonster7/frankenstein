@@ -89,7 +89,7 @@ public:
 
 	static void readReactions(std::string fileName, std::vector<reaction>& reacPointer, ReactionNetwork& lofasz, std::vector<Vertex>& vertexList, const std::vector<Vertex>& compoundVList);
 
-	static void readCompounds(std::string fileName, ReactionNetwork& lofasz, std::vector<Vertex>& compoundlist);
+	static void readCompounds(std::string fileName, ReactionNetwork& lofasz, std::vector<Vertex>& compoundlist, std::vector<Vertex>& internals);
 
 	void printReaction();
 	double freeEchange();
@@ -101,6 +101,7 @@ public:
 	// to get rid of some needless copying
 	inline std::vector<int> getsubstrates() { return substrates; }
 	inline std::vector<int> getproducts() { return products; }
+	int getListNr();
 };
 
 struct SubReac
