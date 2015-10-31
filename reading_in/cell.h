@@ -4,9 +4,11 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/visitors.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/generator_iterator.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random.hpp>
 #include <boost/random/uniform_real.hpp>
+#include <boost/random/uniform_int.hpp>
 #include <cstdlib>
 #include <boost/graph/bipartite.hpp>
 
@@ -22,6 +24,9 @@
 #include "reaction.h"
 
 typedef boost::mt19937 RandomGeneratorType;
+typedef boost::uniform_int<> UniIntDistType;
+//next line may not be needed
+typedef boost::variate_generator<RandomGeneratorType&, UniIntDistType> Gen_Type;
 
 class cell{
 
@@ -40,4 +45,7 @@ class cell{
 	void printReacs();
 
 	 std::vector<int> canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals);
+
+
+	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
 };

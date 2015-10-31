@@ -18,8 +18,7 @@ using namespace boost;
 
 int main(int argc, char* argv[])
 {
-
-
+	//defined in cell.h
 	RandomGeneratorType generator(1);
 
 	std::cout<<"Tests begin."<<std::endl;
@@ -88,6 +87,7 @@ int main(int argc, char* argv[])
 		semmi=trialcell.canBeAdded(lofasz, reacVList,internals);
 
 		trialcell.mutate(1.0,1.0,lofasz,generator);
+	
 		
 	//reaction::calcThroughput(compsize,lofasz,testReacList);
 
