@@ -25,8 +25,9 @@
 
 typedef boost::mt19937 RandomGeneratorType;
 typedef boost::uniform_int<> UniIntDistType;
-//next line may not be needed
 typedef boost::variate_generator<RandomGeneratorType&, UniIntDistType> Gen_Type;
+typedef boost::uniform_real<> UniRealDistType;
+typedef boost::variate_generator<RandomGeneratorType&, UniRealDistType> RealGenType;
 
 class cell{
 
@@ -40,7 +41,7 @@ class cell{
 	
 	inline std::vector<int> getReacs() {return availableReactions;}
 
-	void mutate(double probToAdd, double probToDel, ReactionNetwork& allReacs, RandomGeneratorType& generator );
+	void mutate(double probToAdd, double probToDel, ReactionNetwork& allReacs, RandomGeneratorType& generator , std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals);
 
 	void printReacs();
 
@@ -48,4 +49,5 @@ class cell{
 
 
 	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
+	 double randomRealInRange(RandomGeneratorType& generator, double maxNumber);
 };

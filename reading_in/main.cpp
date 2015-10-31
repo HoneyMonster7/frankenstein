@@ -68,16 +68,7 @@ int main(int argc, char* argv[])
 	if (bipartiteee) {std::cout<<"The graph is bipartite"<<std::endl;}
 	else {std::cout<<"The graph is not bipartite."<<std::endl;}
 
-	reaction newreaction;
 
-	reaction evennewer;
-	evennewer.printReaction();
-	evennewer=newreaction;
-
-	newreaction.printReaction();
-	evennewer.printReaction();
-
-	int compsize=compoundVList.size();
 
 	std::vector<int> subset= {130,285,5109,5107};
 	std::vector<Vertex> testReacList = reaction::subsetVertices(subset,reacVList);
@@ -86,9 +77,16 @@ int main(int argc, char* argv[])
 	std::vector<int> semmi;
 		semmi=trialcell.canBeAdded(lofasz, reacVList,internals);
 
-		trialcell.mutate(1.0,1.0,lofasz,generator);
+		std::cout<<"Adding tests."<<std::endl;
+		for (int k=0; k<10; k++){
+		trialcell.mutate(1.0,0.0,lofasz,generator,reacVList,internals );
+		}	
 	
-		
+		std::cout<<"Deleting tests."<<std::endl;
+		for (int k=0; k<10000; k++){
+			trialcell.mutate(0.0,1.0,lofasz,generator,reacVList,internals);
+		}
+
 	//reaction::calcThroughput(compsize,lofasz,testReacList);
 
 	std::cout<<"Tests completed."<<std::endl;
