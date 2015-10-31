@@ -179,7 +179,7 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 
 
 		//if(tmpreac.currentFreeEChange<0){
-		glp_set_col_bnds(lp,i,GLP_DB,0.0,3.0);
+		glp_set_col_bnds(lp,i,GLP_DB,0.0,2.0);
 		//}
 		//else{glp_set_col_bnds(lp,i,GLP_UP,0.0,0.0);}
 
