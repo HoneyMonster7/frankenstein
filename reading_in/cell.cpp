@@ -119,6 +119,7 @@ void cell::mutate( double probToAdd, double probToDel, ReactionNetwork& allReacs
 		std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
 		availableReactions.erase(availableReactions.begin()+whichOneToDel);
 	}
+	std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions."<<std::endl;
 }
 
  int cell::randomIntInRange(RandomGeneratorType& generator, int maxNumber){
