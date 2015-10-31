@@ -86,6 +86,10 @@ std::vector<int> cell::canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>
 		tobereturned.emplace_back(reacnumber);
 		setOfNewReactions.erase(setOfNewReactions.begin());
 	}
+	//uncomment for printing out the line numbers of possible reactions to be added 
+	//for (auto whatever:tobereturned){
+	//	std::cout<<whatever+1<<std::endl;
+	//}
 		return tobereturned;
 
 }
@@ -105,15 +109,15 @@ void cell::mutate( double probToAdd, double probToDel, ReactionNetwork& allReacs
 	if(doWeAdd<=probToAdd){
 		std::vector<int> whatCanWeAdd = canBeAdded(allReacs, Vertexlist, internals);
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
-		std::cout<<"We add reaction nr: "<<whichOneToAdd<<std::endl;
-		//availableReactions.push_back(whichOneToAdd);
+		std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
+		availableReactions.push_back(whatCanWeAdd[whichOneToAdd]);
 	}
 
 	if(doWeDelete<=probToDel){
 
 		int whichOneToDel=randomIntInRange(generator,availableReactions.size()-1);
-		std::cout<<"We delete nr: "<<whichOneToDel<<std::endl;
-		//availableReactions.erase(availableReactions.begin()+whichOneToDel);
+		std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
+		availableReactions.erase(availableReactions.begin()+whichOneToDel);
 	}
 }
 

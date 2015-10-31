@@ -78,12 +78,17 @@ int main(int argc, char* argv[])
 		semmi=trialcell.canBeAdded(lofasz, reacVList,internals);
 
 		std::cout<<"Adding tests."<<std::endl;
-		for (int k=0; k<10; k++){
+		for (int k=0; k<30; k++){
+			//for testing
+			//std::cout<<"Current reactions:";
+			//std::vector<int> currentreacs=trialcell.getReacs();
+			//for(auto i:currentreacs){std::cout<<i<<" ";}
+			std::cout<<std::endl;
 		trialcell.mutate(1.0,0.0,lofasz,generator,reacVList,internals );
 		}	
 	
 		std::cout<<"Deleting tests."<<std::endl;
-		for (int k=0; k<10000; k++){
+		for (int k=0; k<15; k++){
 			trialcell.mutate(0.0,1.0,lofasz,generator,reacVList,internals);
 		}
 
