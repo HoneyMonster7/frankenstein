@@ -158,6 +158,9 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 	
 	glp_add_rows(lp,NrCompounds);
 
+	for (int i=1; i<=NrCompounds; i++){
+		glp_set_row_bnds(lp,i,GLP_FX,0.0,0.0);
+	}
 	//extra column for the imaginary reaction getting rid of the final compound (objective function)
 	int listSize=reacList.size();
 	glp_add_cols(lp,listSize+6);
@@ -167,7 +170,6 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 	std::vector<double> ar;
 
 	for (int i=1;i<=listSize;i++){
-		//reactions don't go backwards
 
 
 		//preparing the sparse matrix's values 
@@ -201,14 +203,14 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 
 	}
 
-	glp_set_col_bnds(lp,listSize+6,GLP_DB,-10.0,10.0);
+	//glp_set_col_bnds(lp,listSize+6,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
-	ia.push_back(908+14);	ja.push_back(listSize+6); ar.push_back(-1.0);
+	ia.push_back(908+14);	ja.push_back(listSize+1); ar.push_back(1.0);
 	ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
 	ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
 	ia.push_back(-1+14);	ja.push_back(listSize+4); ar.push_back(1.0);
-	ia.push_back(-2+14);	ja.push_back(listSize+5); ar.push_back(1.0);
-	ia.push_back(14);	ja.push_back(listSize+6); ar.push_back(1.0);
+	ia.push_back(-2+14);	ja.push_back(listSize+5); ar.push_back(-1.0);
+	ia.push_back(14);	ja.push_back(listSize+6); ar.push_back(-1.0);
 
 	//
 	//target is to maximize the imaginary reactions throughput

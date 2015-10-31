@@ -74,20 +74,19 @@ int main(int argc, char* argv[])
 	std::vector<Vertex> testReacList = reaction::subsetVertices(subset,reacVList);
 
 	cell trialcell(subset);
-	std::vector<int> semmi;
-		semmi=trialcell.canBeAdded(lofasz, reacVList,internals);
 
-		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<50; k++){
-			//for testing
-			//std::cout<<"Current reactions:";
-			//std::vector<int> currentreacs=trialcell.getReacs();
-			//for(auto i:currentreacs){std::cout<<i<<" ";}
-			std::cout<<std::endl;
-		trialcell.mutate(0.5,0.4,lofasz,generator,reacVList,internals );
-		}
+		//std::cout<<"Adding&deleting tests."<<std::endl;
+		//for (int k=0; k<50; k++){
+		//	//for testing
+		//	//std::cout<<"Current reactions:";
+		//	//std::vector<int> currentreacs=trialcell.getReacs();
+		//	//for(auto i:currentreacs){std::cout<<i<<" ";}
+		//	std::cout<<std::endl;
+		//trialcell.mutate(0.5,0.4,lofasz,generator,reacVList,internals );
+		//}
 
-	//reaction::calcThroughput(compsize,lofasz,testReacList);
+	int compsize=compoundVList.size();
+	reaction::calcThroughput(compsize,lofasz,testReacList);
 
 	std::cout<<"Tests completed."<<std::endl;
 }
