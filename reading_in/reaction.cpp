@@ -187,6 +187,7 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 		std::vector<int> tmpsubs=tmpreac.getsubstrates();
 		std::vector<int> tmpprods=tmpreac.getproducts();
 
+		//ia.push_back(1); ja.push_back(1); ar.push_back(0.0);
 		for (int j: tmpsubs){
 			//using i+14 as the column numbering starts from 1, and there are 13 internal metabolites
 			//with negative substrate indices
@@ -226,22 +227,22 @@ void reaction::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std:
 
 	//creating the arrays now
 	int length=ia.size();
-	int iarray[length],jarray[length];
-	double ararray[length];
-	std::copy(ia.begin(),ia.end(),iarray);
-	std::copy(ja.begin(),ja.end(),jarray);
-	std::copy(ar.begin(),ar.end(),ararray);
+	int iarray[length+1],jarray[length+1];
+	double ararray[length+1];
+	std::copy(ia.begin(),ia.end(),iarray+1);
+	std::copy(ja.begin(),ja.end(),jarray+1);
+	std::copy(ar.begin(),ar.end(),ararray+1);
 
 
-	for (int i=0; i<length; i++){
+	for (int i=0; i<=length; i++){
 
-		std::cout<<"Matrix element: "<<ia[i]-14<<", "<<ja[i]<<", "<<ararray[i]<<std::endl;
+		std::cout<<"Matrix element: "<<iarray[i]<<", "<<jarray[i]<<", "<<ararray[i]<<std::endl;
 	}
 
 	std::cout<<"The length of the vectors are: "<<length<<", "<<ja.size()<<", "<<ar.size()<<std::endl;
 
 	std::cout<<"Last elements are: "<<iarray[length]<<", "<<jarray[length]<<", "<<ararray[length]<<std::endl;
-	glp_load_matrix(lp,length-1,iarray,jarray,ararray);
+	glp_load_matrix(lp,length,iarray,jarray,ararray);
 
 	glp_simplex(lp,NULL);
 

@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 	}
 
 
-	std::vector<int> subset= {130,285,5109,5107};
+	std::vector<int> subset= {130,285,5107,5109};
 	std::vector<Vertex> testReacList = reaction::subsetVertices(subset,reacVList);
 
 	cell trialcell(subset);
