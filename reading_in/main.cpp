@@ -70,6 +70,26 @@ int main(int argc, char* argv[])
 
 
 
+	environment currentEnvironment;
+	currentEnvironment.atpCont=1e-1;
+	currentEnvironment.adpCont=1e-2;
+	currentEnvironment.ampCont=1e-4;
+	currentEnvironment.nadoxcont=1e-2;
+	currentEnvironment.nadredcont=1e-2;
+	currentEnvironment.piCont=1e-3;
+	currentEnvironment.ppiCont=1e-3;
+	currentEnvironment.co2cont=1e-5;
+	currentEnvironment.nh3aqCont=1e-5;
+	currentEnvironment.glutCont=1e-2;
+	currentEnvironment.oxo2Cont=1e-3;
+
+
+	for (Vertex current : reacVList){
+
+		lofasz[current].reac.recalcEchange(currentEnvironment);
+	}
+
+
 	std::vector<int> subset= {130,285,5109,5107};
 	std::vector<Vertex> testReacList = reaction::subsetVertices(subset,reacVList);
 
