@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 
 
 	std::vector<int> subset= {130,285,5107,5109};
-	std::vector<Vertex> testReacList = reaction::subsetVertices(subset,reacVList);
+	std::vector<Vertex> testReacList = cell::subsetVertices(subset,reacVList);
 
 	cell trialcell(subset);
 
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 		//}
 
 	int compsize=compoundVList.size();
-	reaction::calcThroughput(compsize,lofasz,testReacList);
+	cell::calcThroughput(compsize,lofasz,testReacList);
 
 	std::cout<<"Tests completed."<<std::endl;
 }

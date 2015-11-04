@@ -48,6 +48,9 @@ class cell{
 	 std::vector<int> canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals);
 
 
+	static void calcThroughput( const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> reacList);
+	static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
+
 	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
 	 double randomRealInRange(RandomGeneratorType& generator, double maxNumber);
 };
