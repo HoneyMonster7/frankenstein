@@ -266,3 +266,13 @@ void cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vec
 	 }
 	 return tobeReturned;
  }
+
+void cell::printHumanReadable(ReactionNetwork& graph, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& substratlist){
+
+	for (int i: availableReactions){
+
+		reaction currentReac=graph[Vertexlist[i]].reac;
+
+	}
+
+}
