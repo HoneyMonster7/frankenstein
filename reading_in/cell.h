@@ -20,6 +20,7 @@
 #include <utility>
 #include <algorithm>
 #include <array>
+#include <math.h>
 
 #include "reaction.h"
 
@@ -41,14 +42,14 @@ class cell{
 	
 	inline std::vector<int> getReacs() {return availableReactions;}
 
-	void mutate(double probToAdd, double probToDel, ReactionNetwork& allReacs, RandomGeneratorType& generator , std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals);
+	void mutate(ReactionNetwork& allReacs, RandomGeneratorType& generator , std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals);
 
 	void printReacs();
 
 	 std::vector<int> canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals);
 
 
-	static void calcThroughput( const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> reacList);
+	void calcThroughput( const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> allreacList);
 	static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 
 

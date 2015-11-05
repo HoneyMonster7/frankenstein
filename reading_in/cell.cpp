@@ -95,7 +95,7 @@ std::vector<int> cell::canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>
 
 }
 
-void cell::mutate( double probToAdd, double probToDel, ReactionNetwork& allReacs, RandomGeneratorType& generator, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals ){
+void cell::mutate( ReactionNetwork& allReacs, RandomGeneratorType& generator, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals ){
 
 
 //	std::cout<<"Random numbers:";
@@ -103,18 +103,24 @@ void cell::mutate( double probToAdd, double probToDel, ReactionNetwork& allReacs
 //		std::cout<<gen()%availableReactions.size()<<", ";
 //	}
 
+	int desiredNetworkSize=10;
+	int currentReactionNumber = availableReactions.size();
+
+	double addProb= 0.1*exp(desiredNetworkSize-currentReactionNumber);
+	double delProb=0.1*exp(currentReactionNumber-desiredNetworkSize);
+
 
 	double doWeAdd=randomRealInRange(generator, 1);
 	double doWeDelete=randomRealInRange(generator,1);
 
-	if(doWeAdd<=probToAdd){
+	if(doWeAdd<=addProb){
 		std::vector<int> whatCanWeAdd = canBeAdded(allReacs, Vertexlist, internals);
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
 		std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
 		availableReactions.push_back(whatCanWeAdd[whichOneToAdd]);
 	}
 
-	if(doWeDelete<=probToDel){
+	if(doWeDelete<=delProb){
 
 		int whichOneToDel=randomIntInRange(generator,availableReactions.size()-1);
 		std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
@@ -146,13 +152,19 @@ double cell::randomRealInRange(RandomGeneratorType& generator, double maxNumber)
 
 
 
-void cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> reacList){
+void cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> allreacList){
+
+
+	std::vector<Vertex> reacList=subsetVertices(availableReactions,allreacList);
 
 	glp_prob *lp;
 	lp=glp_create_prob();
 	glp_set_prob_name(lp,"network_throughput");
 	glp_set_obj_dir(lp,GLP_MAX);
-	
+
+	//silencing GLPK output
+	//glp_term_out(GLP_OFF);
+
 	glp_add_rows(lp,NrCompounds);
 
 	for (int i=1; i<=NrCompounds; i++){
@@ -176,7 +188,7 @@ void cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vec
 
 
 		//if(tmpreac.currentFreeEChange<0){
-		glp_set_col_bnds(lp,i,GLP_DB,0.0,2.0);
+		glp_set_col_bnds(lp,i,GLP_DB,0.0,1.0);
 		//}
 		//else{glp_set_col_bnds(lp,i,GLP_UP,0.0,0.0);}
 
@@ -231,15 +243,17 @@ void cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vec
 	std::copy(ar.begin(),ar.end(),ararray+1);
 
 
-	for (int i=0; i<=length; i++){
+	//for (int i=0; i<=length; i++){
 
 
-		std::cout<<"Matrix element: "<<iarray[i]<<", "<<jarray[i]<<", "<<ararray[i]<<std::endl;
-	}
+	//	std::cout<<"Matrix element: "<<iarray[i]<<", "<<jarray[i]<<", "<<ararray[i]<<std::endl;
+	//}
 
-	std::cout<<"The length of the vectors are: "<<length<<", "<<ja.size()<<", "<<ar.size()<<std::endl;
+	//std::cout<<"The length of the vectors are: "<<length<<", "<<ja.size()<<", "<<ar.size()<<std::endl;
 
-	std::cout<<"Last elements are: "<<iarray[length]<<", "<<jarray[length]<<", "<<ararray[length]<<std::endl;
+	//std::cout<<"Last elements are: "<<iarray[length]<<", "<<jarray[length]<<", "<<ararray[length]<<std::endl;
+	
+	
 	glp_load_matrix(lp,length,iarray,jarray,ararray);
 
 	glp_simplex(lp,NULL);
