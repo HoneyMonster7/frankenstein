@@ -31,8 +31,8 @@ typedef boost::variate_generator<RandomGeneratorType&, UniRealDistType> RealGenT
 
 class cell{
 
-
 	std::vector<int> availableReactions;
+	public: static ReactionNetwork allTheReactions;
 
 
 	public: 

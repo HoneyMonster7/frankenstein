@@ -2,6 +2,7 @@
 
 
 
+ReactionNetwork cell::allTheReactions;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
 

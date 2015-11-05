@@ -93,6 +93,8 @@ int main(int argc, char* argv[])
 	std::vector<int> subset= {130,285,5107,5109};
 	std::vector<Vertex> testReacList = cell::subsetVertices(subset,reacVList);
 
+
+	//ReactionNetwork cell::allTheReactions=lofasz;
 	cell trialcell(subset);
 
 		//std::cout<<"Adding&deleting tests."<<std::endl;
