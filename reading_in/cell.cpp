@@ -95,7 +95,7 @@ std::vector<int> cell::canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>
 
 }
 
-void cell::mutate( ReactionNetwork& allReacs, RandomGeneratorType& generator, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals ){
+void cell::mutate( ReactionNetwork& allReacs, RandomGeneratorType& generator, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals, const int compoundSize ){
 
 
 //	std::cout<<"Random numbers:";
@@ -106,6 +106,11 @@ void cell::mutate( ReactionNetwork& allReacs, RandomGeneratorType& generator, st
 	int desiredNetworkSize=10;
 	int currentReactionNumber = availableReactions.size();
 
+
+	int deleteThisOne,addThisOne;
+
+	std::vector<int> trialNewCell = availableReactions;
+
 	double addProb= 0.1*exp(desiredNetworkSize-currentReactionNumber);
 	double delProb=0.1*exp(currentReactionNumber-desiredNetworkSize);
 
@@ -113,20 +118,40 @@ void cell::mutate( ReactionNetwork& allReacs, RandomGeneratorType& generator, st
 	double doWeAdd=randomRealInRange(generator, 1);
 	double doWeDelete=randomRealInRange(generator,1);
 
-	if(doWeAdd<=addProb){
+
+	//calculating current throughput
+	double currentThroughPut=calcThroughput(compoundSize,allReacs,Vertexlist);
+	bool areWeAdding= doWeAdd<=addProb;
+	if(areWeAdding){
 		std::vector<int> whatCanWeAdd = canBeAdded(allReacs, Vertexlist, internals);
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
-		std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
-		availableReactions.push_back(whatCanWeAdd[whichOneToAdd]);
+		//std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
+		addThisOne=whatCanWeAdd[whichOneToAdd];
+		trialNewCell.push_back(whatCanWeAdd[whichOneToAdd]);
 	}
 
-	if(doWeDelete<=delProb){
+	bool areWeDeleting=doWeDelete<=delProb;
+	if(areWeDeleting){
 
 		int whichOneToDel=randomIntInRange(generator,availableReactions.size()-1);
-		std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
-		availableReactions.erase(availableReactions.begin()+whichOneToDel);
+		//std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
+		deleteThisOne=whichOneToDel;
+		trialNewCell.erase(trialNewCell.begin()+whichOneToDel);
 	}
-	std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions."<<std::endl;
+
+	
+	cell tryIfWorks(trialNewCell);
+
+	double proposedThroughput=tryIfWorks.calcThroughput(compoundSize,allReacs,Vertexlist);
+
+	//if the network is not severly paralyzed we implement the changes
+	if (currentThroughPut*0.5<proposedThroughput){
+		if(areWeAdding){availableReactions.push_back(addThisOne);}
+		if(areWeDeleting){availableReactions.erase(availableReactions.begin()+deleteThisOne);}
+	}
+	else{ std::cout<<"Changes too destructive, not implemented."<<std::endl;}
+
+	std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions, with a throughput of "<<currentThroughPut<<"."<<std::endl;
 }
 
  int cell::randomIntInRange(RandomGeneratorType& generator, int maxNumber){
@@ -152,7 +177,7 @@ double cell::randomRealInRange(RandomGeneratorType& generator, double maxNumber)
 
 
 
-void cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> allreacList){
+double cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> allreacList){
 
 
 	std::vector<Vertex> reacList=subsetVertices(availableReactions,allreacList);
@@ -163,7 +188,7 @@ void cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vec
 	glp_set_obj_dir(lp,GLP_MAX);
 
 	//silencing GLPK output
-	//glp_term_out(GLP_OFF);
+	glp_term_out(GLP_OFF);
 
 	glp_add_rows(lp,NrCompounds);
 
@@ -260,13 +285,15 @@ void cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vec
 
 	double goodness=glp_get_obj_val(lp);
 
-	std::cout<<"Objective function value: "<<goodness<<std::endl;
-	std::cout<<"Coefficients:";
-	for (int i=0; i<(listSize+4); i++){
-		double colvalue=glp_get_col_prim(lp,i+1);
-		std::cout<<colvalue<<", ";
-	}
-	std::cout<<std::endl;
+	//std::cout<<"Objective function value: "<<goodness<<std::endl;
+	//std::cout<<"Coefficients:";
+	//for (int i=0; i<(listSize+4); i++){
+	//	double colvalue=glp_get_col_prim(lp,i+1);
+	//	std::cout<<colvalue<<", ";
+	//}
+	//std::cout<<std::endl;
+
+	return goodness;
 }
 
  std::vector<Vertex> cell::subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList){
@@ -282,12 +309,30 @@ void cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vec
 	 return tobeReturned;
  }
 
-void cell::printHumanReadable(ReactionNetwork& graph, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& substratlist){
+
+void cell::printHumanReadable(ReactionNetwork& graph, std::vector<Vertex>& reacList, std::vector<Vertex>& substrateList){
+
 
 	for (int i: availableReactions){
 
-		reaction currentReac=graph[Vertexlist[i]].reac;
+		int id=graph[reacList[i]].reac.getListNr();
 
+		std::vector<int> products = graph[reacList[i]].reac.getproducts();
+		std::vector<int> substrates = graph[reacList[i]].reac.getsubstrates();
+
+		std::cout<<id<<": ";
+		for (int j:products){
+			std::string temp= graph[substrateList[j]].sub.name;
+			//std::cout<<temp<<" + ";
+			//std::cout<<j<<" + ";
+		}
+
+		std::cout<<" > ";
+
+		for (int j:substrates){
+			//std::cout<<graph[substrateList[j]].sub.name<<" + ";
+		}
+		std::cout<<std::endl;
+	
 	}
-
 }

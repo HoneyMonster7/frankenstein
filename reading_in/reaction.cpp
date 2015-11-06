@@ -48,6 +48,7 @@ void reaction::readCompounds(std::string fileName, ReactionNetwork& graph, std::
 
 		graph[vertexList[vertexList.size()-1]].sub=tmpsubstrate;
 
+		std::cout<<graph[vertexList[vertexList.size()-1]].sub.name<<std::endl;
 		if(tmpsubstrate.index<0){
 			internals.emplace_back(vertexList[vertexList.size()-1]);
 		}

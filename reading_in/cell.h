@@ -42,18 +42,18 @@ class cell{
 	
 	inline std::vector<int> getReacs() {return availableReactions;}
 
-	void mutate(ReactionNetwork& allReacs, RandomGeneratorType& generator , std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals);
+	void mutate(ReactionNetwork& allReacs, RandomGeneratorType& generator , std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals, const int compoundSize);
 
 	void printReacs();
 
 	 std::vector<int> canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals);
 
 
-	void calcThroughput( const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> allreacList);
+	double calcThroughput( const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> allreacList);
 	static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 
 
-	void printHumanReadable(ReactionNetwork& graph, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& substratelist);
+	void printHumanReadable(ReactionNetwork& graph, std::vector<Vertex>& reacList, std::vector<Vertex>& substrateList);
 
 	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
 	 double randomRealInRange(RandomGeneratorType& generator, double maxNumber);
