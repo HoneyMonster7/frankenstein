@@ -126,8 +126,9 @@ void cell::mutate( ReactionNetwork& allReacs, RandomGeneratorType& generator, st
 		std::vector<int> whatCanWeAdd = canBeAdded(allReacs, Vertexlist, internals);
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
 		//std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
-		addThisOne=whatCanWeAdd[whichOneToAdd];
-		trialNewCell.push_back(whatCanWeAdd[whichOneToAdd]-1);
+		//+1 required as the file from which we read starts with line 1, but vectors number from 0 
+		addThisOne=whatCanWeAdd[whichOneToAdd]+1;
+		trialNewCell.push_back(addThisOne);
 	}
 
 	bool areWeDeleting=doWeDelete<=delProb;
@@ -136,7 +137,7 @@ void cell::mutate( ReactionNetwork& allReacs, RandomGeneratorType& generator, st
 		int whichOneToDel=randomIntInRange(generator,availableReactions.size()-1);
 		//std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
 		deleteThisOne=whichOneToDel;
-		trialNewCell.erase(trialNewCell.begin()+whichOneToDel);
+		trialNewCell.erase(trialNewCell.begin()+deleteThisOne);
 	}
 
 	
