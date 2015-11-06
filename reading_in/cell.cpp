@@ -127,7 +127,7 @@ void cell::mutate( ReactionNetwork& allReacs, RandomGeneratorType& generator, st
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
 		//std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
 		addThisOne=whatCanWeAdd[whichOneToAdd];
-		trialNewCell.push_back(whatCanWeAdd[whichOneToAdd]);
+		trialNewCell.push_back(whatCanWeAdd[whichOneToAdd]-1);
 	}
 
 	bool areWeDeleting=doWeDelete<=delProb;
@@ -312,25 +312,51 @@ double cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::v
 
 void cell::printHumanReadable(ReactionNetwork& graph, std::vector<Vertex>& reacList, std::vector<Vertex>& substrateList){
 
+	std::string emptyName = ("---");
 
 	for (int i: availableReactions){
 
 		int id=graph[reacList[i]].reac.getListNr();
 
-		std::vector<int> products = graph[reacList[i]].reac.getproducts();
-		std::vector<int> substrates = graph[reacList[i]].reac.getsubstrates();
+		std::vector<int> products = graph[reacList[i-1]].reac.getproducts();
+		std::vector<int> substrates = graph[reacList[i-1]].reac.getsubstrates();
 
 		std::cout<<id<<": ";
-		for (int j:products){
-			std::string temp= graph[substrateList[j]].sub.name;
-			//std::cout<<temp<<" + ";
-			//std::cout<<j<<" + ";
+		for (int j:substrates){
+			//figuring out whether we have a meaningful name
+			std::string toPrint,name,molecule;
+			molecule=graph[substrateList[j+13]].sub.molecule;
+			name=graph[substrateList[j+13]].sub.name;
+
+			if (name.compare(emptyName) == 0){
+				toPrint=molecule;
+			}
+			else {
+				toPrint=name;
+			}
+			std::cout<<toPrint<<" + ";
+			//std::cout<<graph[substrateList[j+13]].sub.index<<" + ";
 		}
+
 
 		std::cout<<" > ";
 
-		for (int j:substrates){
-			//std::cout<<graph[substrateList[j]].sub.name<<" + ";
+		for (int j:products){
+			//figuring out whether we have a meaningful name
+			std::string toPrint,name,molecule;
+			molecule=graph[substrateList[j+13]].sub.molecule;
+			name=graph[substrateList[j+13]].sub.name;
+
+
+			if (name.compare(emptyName) == 0){
+				toPrint=molecule;
+			}
+			else {
+				toPrint=name;
+			}
+			std::cout<<toPrint<<" + ";
+			//std::cout<<graph[substrateList[j+13]].sub.index<<" + ";
+
 		}
 		std::cout<<std::endl;
 	

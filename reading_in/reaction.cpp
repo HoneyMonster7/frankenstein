@@ -41,14 +41,14 @@ void reaction::readCompounds(std::string fileName, ReactionNetwork& graph, std::
 		std::stringstream iss(line);
 		iss>>tmpsubstrate.index;
 		iss>>tmpsubstrate.freeOfCreation;
-		iss>>nameChem;
+		iss>>tmpsubstrate.molecule;
 		iss>>tmpsubstrate.name;
 		iss>>tmpsubstrate.charge;
 		vertexList.emplace_back(boost::add_vertex(graph));
 
 		graph[vertexList[vertexList.size()-1]].sub=tmpsubstrate;
 
-		std::cout<<graph[vertexList[vertexList.size()-1]].sub.name<<std::endl;
+		//std::cout<<graph[vertexList[vertexList.size()-1]].sub.name<<std::endl;
 		if(tmpsubstrate.index<0){
 			internals.emplace_back(vertexList[vertexList.size()-1]);
 		}
