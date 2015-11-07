@@ -94,7 +94,8 @@ int main(int argc, char* argv[])
 	std::vector<Vertex> testReacList = cell::subsetVertices(subset,reacVList);
 
 
-	//ReactionNetwork cell::allTheReactions=lofasz;
+	cell::allTheReactions=lofasz;
+	cell::reactionVertexList=reacVList;
 	cell trialcell(subset);
 
 	int compsize=compoundVList.size();
@@ -107,7 +108,7 @@ int main(int argc, char* argv[])
 			//for(auto i:currentreacs){std::cout<<i<<" ";}
 			std::cout<<k<<", "<<std::endl;
 		trialcell.mutate(lofasz,generator,reacVList,internals,compsize );
-		trialcell.printHumanReadable(lofasz,reacVList,compoundVList);
+		trialcell.printHumanReadable(reacVList,compoundVList);
 
 		trialcell.calcThroughput(compoundVList.size(),lofasz,reacVList);
 		}

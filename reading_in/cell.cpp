@@ -1,8 +1,10 @@
 #include "cell.h"
 
 
-
+// static class variables
 ReactionNetwork cell::allTheReactions;
+
+std::vector<Vertex> cell::reactionVertexList;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
 
@@ -311,8 +313,9 @@ double cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::v
  }
 
 
-void cell::printHumanReadable(ReactionNetwork& graph, std::vector<Vertex>& reacList, std::vector<Vertex>& substrateList){
+void cell::printHumanReadable(std::vector<Vertex>& reacList, std::vector<Vertex>& substrateList){
 
+	ReactionNetwork graph=allTheReactions;
 	std::string emptyName = ("---");
 
 	for (int i: availableReactions){
