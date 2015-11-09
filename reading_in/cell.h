@@ -43,11 +43,11 @@ class cell{
 	
 	inline std::vector<int> getReacs() {return availableReactions;}
 
-	void mutate(ReactionNetwork& allReacs, RandomGeneratorType& generator , std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals, const int compoundSize);
+	void mutate(RandomGeneratorType& generator , std::vector<Vertex>& internals, const int compoundSize);
 
 	void printReacs();
 
-	 std::vector<int> canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals);
+	 std::vector<int> canBeAdded(std::vector<Vertex>& internals);
 
 
 	double calcThroughput( const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> allreacList);

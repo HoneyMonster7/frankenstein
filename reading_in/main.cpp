@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 			//std::vector<int> currentreacs=trialcell.getReacs();
 			//for(auto i:currentreacs){std::cout<<i<<" ";}
 			std::cout<<k<<", "<<std::endl;
-		trialcell.mutate(lofasz,generator,reacVList,internals,compsize );
+		trialcell.mutate(generator,internals,compsize );
 		trialcell.printHumanReadable(reacVList,compoundVList);
 
 		trialcell.calcThroughput(compoundVList.size(),lofasz,reacVList);

@@ -25,9 +25,11 @@ void cell::printReacs() {
 	std::cout<<" END"<<std::endl;
 }
 
-std::vector<int> cell::canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals){
+std::vector<int> cell::canBeAdded(std::vector<Vertex>& internals){
 
 
+	ReactionNetwork allReacs =allTheReactions;
+	std::vector<Vertex> Vertexlist=reactionVertexList;
 
 	//set to keep the substrate vertices that are currently used in the network
 	std::set<Vertex> substrateSet;
@@ -97,9 +99,11 @@ std::vector<int> cell::canBeAdded(ReactionNetwork& allReacs, std::vector<Vertex>
 
 }
 
-void cell::mutate( ReactionNetwork& allReacs, RandomGeneratorType& generator, std::vector<Vertex>& Vertexlist, std::vector<Vertex>& internals, const int compoundSize ){
+void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internals, const int compoundSize ){
 
 
+	ReactionNetwork allReacs=allTheReactions;
+	std::vector<Vertex> Vertexlist=reactionVertexList;
 //	std::cout<<"Random numbers:";
 //	for (int i=1; i<50; i++){
 //		std::cout<<gen()%availableReactions.size()<<", ";
@@ -125,7 +129,7 @@ void cell::mutate( ReactionNetwork& allReacs, RandomGeneratorType& generator, st
 	double currentThroughPut=calcThroughput(compoundSize,allReacs,Vertexlist);
 	bool areWeAdding= doWeAdd<=addProb;
 	if(areWeAdding){
-		std::vector<int> whatCanWeAdd = canBeAdded(allReacs, Vertexlist, internals);
+		std::vector<int> whatCanWeAdd = canBeAdded(internals);
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
 		//std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
 		//+1 required as the file from which we read starts with line 1, but vectors number from 0 
