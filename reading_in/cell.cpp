@@ -5,6 +5,7 @@
 ReactionNetwork cell::allTheReactions;
 
 std::vector<Vertex> cell::reactionVertexList;
+std::vector<Vertex> cell::substrateVertexList;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
 
@@ -126,7 +127,7 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 
 
 	//calculating current throughput
-	double currentThroughPut=calcThroughput(compoundSize,allReacs,Vertexlist);
+	double currentThroughPut=calcThroughput(compoundSize);
 	bool areWeAdding= doWeAdd<=addProb;
 	if(areWeAdding){
 		std::vector<int> whatCanWeAdd = canBeAdded(internals);
@@ -149,7 +150,7 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 	
 	cell tryIfWorks(trialNewCell);
 
-	double proposedThroughput=tryIfWorks.calcThroughput(compoundSize,allReacs,Vertexlist);
+	double proposedThroughput=tryIfWorks.calcThroughput(compoundSize);
 
 	//if the network is not severly paralyzed we implement the changes
 	if (currentThroughPut*0.5<proposedThroughput){
@@ -184,9 +185,11 @@ double cell::randomRealInRange(RandomGeneratorType& generator, double maxNumber)
 
 
 
-double cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> allreacList){
+double cell::calcThroughput(const int NrCompounds ){
 
 
+	ReactionNetwork graph=allTheReactions;
+	std::vector<Vertex> allreacList=reactionVertexList;
 	std::vector<Vertex> reacList=subsetVertices(availableReactions,allreacList);
 
 	glp_prob *lp;
@@ -317,9 +320,10 @@ double cell::calcThroughput(const int NrCompounds,ReactionNetwork& graph, std::v
  }
 
 
-void cell::printHumanReadable(std::vector<Vertex>& reacList, std::vector<Vertex>& substrateList){
+void cell::printHumanReadable(std::vector<Vertex>& substrateList){
 
 	ReactionNetwork graph=allTheReactions;
+	std::vector<Vertex> reacList=reactionVertexList;
 	std::string emptyName = ("---");
 
 	for (int i: availableReactions){

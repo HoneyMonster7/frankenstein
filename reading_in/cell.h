@@ -36,6 +36,7 @@ class cell{
 	public: static ReactionNetwork allTheReactions;
 
 			static std::vector<Vertex> reactionVertexList;
+			static std::vector<Vertex> substrateVertexList;
 
 	//public: 
 	cell(std::vector<int>& availableReactons);
@@ -50,11 +51,11 @@ class cell{
 	 std::vector<int> canBeAdded(std::vector<Vertex>& internals);
 
 
-	double calcThroughput( const int NrCompounds,ReactionNetwork& graph, std::vector<Vertex> allreacList);
+	double calcThroughput( const int NrCompounds);
 	static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 
 
-	void printHumanReadable(std::vector<Vertex>& reacList, std::vector<Vertex>& substrateList);
+	void printHumanReadable(std::vector<Vertex>& substrateList);
 
 	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
 	 double randomRealInRange(RandomGeneratorType& generator, double maxNumber);
