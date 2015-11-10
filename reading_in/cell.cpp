@@ -36,20 +36,20 @@ void cell::printCytoscape(std::vector<Vertex> internals){
 
 	for (int i: availableReactions){
 
-		reaction currentReac=allTheReactions[reactionVertexList[i]].reac;
+		reaction currentReac=allTheReactions[reactionVertexList[i-1]].reac;
 		std::vector<int> currentsubs=currentReac.getsubstrates();
 		std::vector<int> currentproducts=currentReac.getproducts();
 		int reacNR=currentReac.getListNr();
 
 
 		for (int sub:currentsubs){
-			std::string substrateName=cell::niceSubstrateName(substrateVertexList[sub+14]);
+			std::string substrateName=cell::niceSubstrateName(substrateVertexList[sub+13]);
 
 			std::cout<<substrateName<<" cr "<<reacNR<<std::endl;
 		}
 
 		for (int prod:currentproducts){
-			std::string productName=cell::niceSubstrateName(substrateVertexList[prod+14]);
+			std::string productName=cell::niceSubstrateName(substrateVertexList[prod+13]);
 
 			std::cout<<reacNR<<" rc "<<productName<<std::endl;
 

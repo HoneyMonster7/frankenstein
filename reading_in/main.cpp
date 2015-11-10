@@ -104,19 +104,19 @@ int main(int argc, char* argv[])
 		trialcell.printCytoscape(internals);
 
 		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<100; k++){
+		for (int k=0; k<20; k++){
 			//for testing
 			//std::cout<<"Current reactions:";
 			//std::vector<int> currentreacs=trialcell.getReacs();
 			//for(auto i:currentreacs){std::cout<<i<<" ";}
-			std::cout<<k<<", "<<std::endl;
+			//std::cout<<k<<", "<<std::endl;
 		trialcell.mutate(generator,internals);
-		//trialcell.printHumanReadable(compoundVList);
+		trialcell.printHumanReadable(compoundVList);
 
 		trialcell.calcThroughput(compoundVList.size());
 		}
 
-		//trialcell.printCytoscape(internals);
+		trialcell.printCytoscape(internals);
 	//cell::calcThroughput(compsize,lofasz,testReacList);
 
 	std::cout<<"Tests completed."<<std::endl;
