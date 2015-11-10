@@ -97,6 +97,7 @@ int main(int argc, char* argv[])
 	cell::allTheReactions=lofasz;
 	cell::reactionVertexList=reacVList;
 	cell::substrateVertexList=compoundVList;
+	cell::internalMetaboliteVList=internals;
 	cell trialcell(subset);
 
 	//int compsize=compoundVList.size();
@@ -111,9 +112,9 @@ int main(int argc, char* argv[])
 			//for(auto i:currentreacs){std::cout<<i<<" ";}
 			//std::cout<<k<<", "<<std::endl;
 		trialcell.mutate(generator,internals);
-		trialcell.printHumanReadable(compoundVList);
+		//trialcell.printHumanReadable(compoundVList);
 
-		trialcell.calcThroughput(compoundVList.size());
+		trialcell.calcThroughput();
 		}
 
 		trialcell.printCytoscape(internals);

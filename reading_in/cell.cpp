@@ -6,12 +6,17 @@ ReactionNetwork cell::allTheReactions;
 
 std::vector<Vertex> cell::reactionVertexList;
 std::vector<Vertex> cell::substrateVertexList;
+std::vector<Vertex> cell::internalMetaboliteVList;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
 
 		 :availableReactions(tmpAvailReacs)
 
-{}
+{
+	double initialPerformance=calcThroughput();
+	performance=initialPerformance;
+}
+
 
 cell::cell() {}
 
@@ -75,8 +80,9 @@ std::vector<int> cell::canBeAdded(std::vector<Vertex>& internals){
 
 	//set to keep the substrate vertices that are currently used in the network
 	std::set<Vertex> substrateSet;
+	int nrOfAvailableReactions=availableReactions.size();
 
-	for (int i=0; i<availableReactions.size();i++){
+	for (int i=0; i<nrOfAvailableReactions;i++){
 	//	std::cout<<"Reaction number:"<<i<<std::endl;
 
 	typename boost::graph_traits<ReactionNetwork>::adjacency_iterator vi, vi_end;
@@ -146,7 +152,7 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 
 	ReactionNetwork allReacs=allTheReactions;
 	std::vector<Vertex> Vertexlist=reactionVertexList;
-	int compoundSize= substrateVertexList.size();
+	//int compoundSize= substrateVertexList.size();
 //	std::cout<<"Random numbers:";
 //	for (int i=1; i<50; i++){
 //		std::cout<<gen()%availableReactions.size()<<", ";
@@ -169,7 +175,6 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 
 
 	//calculating current throughput
-	double currentThroughPut=calcThroughput(compoundSize);
 	bool areWeAdding= doWeAdd<=addProb;
 	if(areWeAdding){
 		std::vector<int> whatCanWeAdd = canBeAdded(internals);
@@ -192,16 +197,17 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 	
 	cell tryIfWorks(trialNewCell);
 
-	double proposedThroughput=tryIfWorks.calcThroughput(compoundSize);
+	double proposedThroughput=tryIfWorks.getPerformance();
 
 	//if the network is not severly paralyzed we implement the changes
-	if (currentThroughPut*0.5<proposedThroughput){
+	if (performance*0.5<proposedThroughput){
 		if(areWeAdding){availableReactions.push_back(addThisOne);}
 		if(areWeDeleting){availableReactions.erase(availableReactions.begin()+deleteThisOne);}
+		performance=proposedThroughput;
 	}
 	else{ std::cout<<"Changes too destructive, not implemented."<<std::endl;}
 
-	std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions, with a throughput of "<<currentThroughPut<<"."<<std::endl;
+	std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions, with a throughput of "<<performance<<"."<<std::endl;
 }
 
  int cell::randomIntInRange(RandomGeneratorType& generator, int maxNumber){
@@ -227,12 +233,58 @@ double cell::randomRealInRange(RandomGeneratorType& generator, double maxNumber)
 
 
 
-double cell::calcThroughput(const int NrCompounds ){
+double cell::calcThroughput(){
 
 
 	ReactionNetwork graph=allTheReactions;
 	std::vector<Vertex> allreacList=reactionVertexList;
 	std::vector<Vertex> reacList=subsetVertices(availableReactions,allreacList);
+
+	//need to find a way to only include compounds that are used in current reactions
+	//
+	
+	//plan: create a vector<int> with the same length as substrateVertices that lists which row corresponds to which substrate
+	
+	//first 13 is the internal metabolites (need to use variable instead of 13 later)
+	std::vector<int> substrateIndex(substrateVertexList.size());
+
+	for(int i=0; i<13; i++){
+		substrateIndex[i]=i+1;
+	}
+
+	//counter to keep track of which row of the GLPK problem the next substrate will belong to
+	int nextRowNumber=14;
+	std::set<Vertex> substrateSet;
+
+	for (int i=0; i<availableReactions.size();i++){
+
+		typename boost::graph_traits<ReactionNetwork>::adjacency_iterator vi, vi_end;
+
+		for(boost::tie(vi,vi_end)=boost::adjacent_vertices(reactionVertexList[availableReactions[i]-1],allTheReactions); vi!=vi_end; ++vi){
+
+			substrateSet.insert(vi.dereference());
+		}
+	}
+	
+	//erasing internal metabolites from the set, as we already have those at the beginning of the list
+	for(auto metab:internalMetaboliteVList){substrateSet.erase(metab);}
+		
+	while(!substrateSet.empty()){
+		int substrateid=allTheReactions[*substrateSet.begin()].sub.index;
+
+		substrateIndex[substrateid+13]=nextRowNumber;
+		nextRowNumber++;
+		substrateSet.erase(substrateSet.begin());
+	}
+
+
+
+
+
+
+
+
+
 
 	glp_prob *lp;
 	lp=glp_create_prob();
@@ -242,9 +294,9 @@ double cell::calcThroughput(const int NrCompounds ){
 	//silencing GLPK output
 	glp_term_out(GLP_OFF);
 
-	glp_add_rows(lp,NrCompounds);
+	glp_add_rows(lp,nextRowNumber-1);
 
-	for (int i=1; i<=NrCompounds; i++){
+	for (int i=1; i<nextRowNumber; i++){
 		//specifying that the rows must sum to zero (flux vector in the nullspace of S matrix)
 		glp_set_row_bnds(lp,i,GLP_FX,0.0,0.0);
 	}
@@ -277,7 +329,9 @@ double cell::calcThroughput(const int NrCompounds ){
 		for (int j: tmpsubs){
 			//using i+14 as the column numbering starts from 1, and there are 13 internal metabolites
 			//with negative substrate indices
-			ia.push_back(j+14);
+			int rownumber=substrateIndex[j+13];
+			//ia.push_back(j+14);  previous method
+			ia.push_back(rownumber);
 			ja.push_back(i);
 			ar.push_back(-1.0);
 		}
@@ -285,7 +339,9 @@ double cell::calcThroughput(const int NrCompounds ){
 		for (int j: tmpprods){
 			//using i+14 as the column numbering starts from 1, and there are 13 internal metabolites
 			//with negative substrate indices
-			ia.push_back(j+14);
+			int rownumber=substrateIndex[j+13];
+			//ia.push_back(j+14);  previous method
+			ia.push_back(rownumber);
 			ja.push_back(i);
 			ar.push_back(1.0);
 		}
@@ -299,10 +355,10 @@ double cell::calcThroughput(const int NrCompounds ){
 
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
-	ia.push_back(908+14);	ja.push_back(listSize+1); ar.push_back(1.0);
-	ia.push_back(-1+14);	ja.push_back(listSize+2); ar.push_back(1.0);
-	ia.push_back(-2+14);	ja.push_back(listSize+3); ar.push_back(-1.0);
-	ia.push_back(14);	ja.push_back(listSize+4); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[908+13]);	ja.push_back(listSize+1); ar.push_back(1.0);
+	ia.push_back(substrateIndex[-1+13]);	ja.push_back(listSize+2); ar.push_back(1.0);
+	ia.push_back(substrateIndex[-2+13]);	ja.push_back(listSize+3); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[13]);	ja.push_back(listSize+4); ar.push_back(-1.0);
 
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
 	//ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);

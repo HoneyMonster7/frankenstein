@@ -33,16 +33,19 @@ typedef boost::variate_generator<RandomGeneratorType&, UniRealDistType> RealGenT
 class cell{
 
 	std::vector<int> availableReactions;
+	double performance;
 	public: static ReactionNetwork allTheReactions;
 
 			static std::vector<Vertex> reactionVertexList;
 			static std::vector<Vertex> substrateVertexList;
+			static std::vector<Vertex> internalMetaboliteVList;
 
 	//public: 
 	cell(std::vector<int>& availableReactons);
 	cell();
 	
 	inline std::vector<int> getReacs() {return availableReactions;}
+	inline double getPerformance() {return performance;}
 
 	void mutate(RandomGeneratorType& generator , std::vector<Vertex>& internals);
 
@@ -51,7 +54,7 @@ class cell{
 	 std::vector<int> canBeAdded(std::vector<Vertex>& internals);
 
 
-	double calcThroughput( const int NrCompounds);
+	double calcThroughput();
 	static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 	static std::string niceSubstrateName(Vertex currentVertex);
 
