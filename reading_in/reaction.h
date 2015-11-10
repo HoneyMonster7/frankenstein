@@ -99,6 +99,7 @@ public:
 	// to get rid of some needless copying
 	inline std::vector<int> getsubstrates() { return substrates; }
 	inline std::vector<int> getproducts() { return products; }
+	inline double getCurrentFreeEChange() {return currentFreeEChange;}
 	int getListNr();
 };
 

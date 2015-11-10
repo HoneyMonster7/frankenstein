@@ -145,6 +145,7 @@ void reaction::recalcEchange(const environment& env)
 	//need the reactions database changed for this
 
 	double insideLog=(std::pow(env.nh2acceptorCont,internalMets[0])*std::pow(env.nh2donorCont,internalMets[1])*std::pow(env.conh22Cont,internalMets[2])*std::pow(env.nh3aqCont,internalMets[3])*std::pow(env.ppiCont,internalMets[4])*std::pow(env.piCont,internalMets[5])*std::pow(env.atpCont,internalMets[6])*std::pow(env.adpCont,internalMets[7])*std::pow(env.ampCont,internalMets[8])*std::pow(env.nadredcont,internalMets[9])*std::pow(env.nadoxcont,internalMets[10])*std::pow(env.co2cont,internalMets[11])*std::pow(env.h2ocont,internalMets[12]));
+	std::cout<<"Inside the log: "<<insideLog<<std::endl;
 
 	currentFreeEChange=freeEChange+8.3144598*env.temperature*std::log(insideLog);
 }

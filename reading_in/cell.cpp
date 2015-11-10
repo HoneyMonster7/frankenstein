@@ -316,10 +316,12 @@ double cell::calcThroughput(){
 		reaction tmpreac=graph[reacList[i-1]].reac;
 
 
-		//if(tmpreac.currentFreeEChange<0){
+		double freeChange=tmpreac.getCurrentFreeEChange();
+		//std::cout<<"FreeEChange: "<<freeChange<<std::endl;
+		//if(freeChange<0){
 		glp_set_col_bnds(lp,i,GLP_DB,0.0,1.0);
 		//}
-		//else{glp_set_col_bnds(lp,i,GLP_UP,0.0,0.0);}
+		//else{glp_set_col_bnds(lp,i,GLP_UP,-1.0,0.0);}
 
 
 		std::vector<int> tmpsubs=tmpreac.getsubstrates();
