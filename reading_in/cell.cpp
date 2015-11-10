@@ -26,6 +26,29 @@ void cell::printReacs() {
 	std::cout<<" END"<<std::endl;
 }
 
+void cell::printCytoscape(std::vector<Vertex> internals){
+
+	ReactionNetwork allReacs=allTheReactions;
+	std::vector<Vertex> Vertexlist=reactionVertexList;
+	std::vector<Vertex> substrateList=substrateVertexList;
+
+
+
+	for (int i: availableReactions){
+		//std::cout<<
+	}
+
+
+
+
+
+	}
+
+
+
+
+
+
 std::vector<int> cell::canBeAdded(std::vector<Vertex>& internals){
 
 
@@ -100,11 +123,12 @@ std::vector<int> cell::canBeAdded(std::vector<Vertex>& internals){
 
 }
 
-void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internals, const int compoundSize ){
+void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internals){
 
 
 	ReactionNetwork allReacs=allTheReactions;
 	std::vector<Vertex> Vertexlist=reactionVertexList;
+	int compoundSize= substrateVertexList.size();
 //	std::cout<<"Random numbers:";
 //	for (int i=1; i<50; i++){
 //		std::cout<<gen()%availableReactions.size()<<", ";
@@ -319,6 +343,17 @@ double cell::calcThroughput(const int NrCompounds ){
 	 return tobeReturned;
  }
 
+std::string cell::niceSubstrateName(Vertex currentVertex){
+
+	std::string emptyName=("---");
+	std::string tobereturned;
+	if (allTheReactions[currentVertex].sub.name.compare(emptyName) ==0)
+	{tobereturned=allTheReactions[currentVertex].sub.molecule;}
+	else
+	{tobereturned=allTheReactions[currentVertex].sub.name;}
+	return tobereturned;
+
+}
 
 void cell::printHumanReadable(std::vector<Vertex>& substrateList){
 

@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 	cell::substrateVertexList=compoundVList;
 	cell trialcell(subset);
 
-	int compsize=compoundVList.size();
+	//int compsize=compoundVList.size();
 
 		std::cout<<"Adding&deleting tests."<<std::endl;
 		for (int k=0; k<15; k++){
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
 			//std::vector<int> currentreacs=trialcell.getReacs();
 			//for(auto i:currentreacs){std::cout<<i<<" ";}
 			std::cout<<k<<", "<<std::endl;
-		trialcell.mutate(generator,internals,compsize );
+		trialcell.mutate(generator,internals);
 		trialcell.printHumanReadable(compoundVList);
 
 		trialcell.calcThroughput(compoundVList.size());

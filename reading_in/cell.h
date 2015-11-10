@@ -44,7 +44,7 @@ class cell{
 	
 	inline std::vector<int> getReacs() {return availableReactions;}
 
-	void mutate(RandomGeneratorType& generator , std::vector<Vertex>& internals, const int compoundSize);
+	void mutate(RandomGeneratorType& generator , std::vector<Vertex>& internals);
 
 	void printReacs();
 
@@ -53,10 +53,13 @@ class cell{
 
 	double calcThroughput( const int NrCompounds);
 	static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
+	static std::string niceSubstrateName(Vertex currentVertex);
 
 
 	void printHumanReadable(std::vector<Vertex>& substrateList);
+	void printCytoscape(std::vector<Vertex> internals);
 
 	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
-	 double randomRealInRange(RandomGeneratorType& generator, double maxNumber);
+			 double randomRealInRange(RandomGeneratorType& generator, double maxNumber);
+
 };
