@@ -81,6 +81,7 @@ class reaction
 	double freeEChange = 0.0;
 	//std::string humanReadable;
 	double currentFreeEChange=0;
+	public: static int nrOfInternalMetabolites;
 
 public:
 

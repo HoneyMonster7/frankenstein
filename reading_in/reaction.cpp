@@ -1,5 +1,7 @@
 #include "reaction.h"
 
+int reaction::nrOfInternalMetabolites;
+
 
 reaction::reaction(int reacNr,double tmpfreechange, const std::vector<int>& tmpsubstrates, const std::vector<int>& tmproducts, const InternalMetsT& tmpInternalMets)
 	: listNR(reacNr)
@@ -98,17 +100,17 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		}
 
 		//finding if any of the internal metabolites appear on any side of the reaction
-		for(int i=-13; i<0; i++)
+		for(int i=-nrOfInternalMetabolites; i<0; i++)
 		{
 			if(std::find(tmpsubstrates.begin(), tmpsubstrates.end(), i) != tmpsubstrates.end())
 			{
-				tmpinternalMets[i+13]--;
+				tmpinternalMets[i+nrOfInternalMetabolites]--;
 				//std::cout<<"Internal metabolite nr "<<i<<" found going in."<<std::endl;
 			}
 
 			if(std::find(tmproducts.begin(), tmproducts.end(), i) != tmproducts.end())
 			{
-				tmpinternalMets[i+13]++;
+				tmpinternalMets[i+nrOfInternalMetabolites]++;
 			}
 		}
 
@@ -123,14 +125,14 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		for(int i : tmpsubstrates)
 		{
 			Edge e1;
-			e1=(boost::add_edge(compoundVList[i+13],vertexList[vertexList.size()-1],graph)).first;
+			e1=(boost::add_edge(compoundVList[i+nrOfInternalMetabolites],vertexList[vertexList.size()-1],graph)).first;
 		}
 
 
 		for(int i: tmproducts)
 		{
 			Edge e1;
-			e1=(boost::add_edge(vertexList[vertexList.size()-1],compoundVList[i+13],graph)).first;
+			e1=(boost::add_edge(vertexList[vertexList.size()-1],compoundVList[i+nrOfInternalMetabolites],graph)).first;
 		}
 
 

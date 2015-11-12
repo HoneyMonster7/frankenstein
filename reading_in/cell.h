@@ -39,6 +39,7 @@ class cell{
 			static std::vector<Vertex> reactionVertexList;
 			static std::vector<Vertex> substrateVertexList;
 			static std::vector<Vertex> internalMetaboliteVList;
+			static int nrOfInternalMetabolites;
 
 	//public: 
 	cell(std::vector<int>& availableReactons);

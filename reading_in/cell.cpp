@@ -7,6 +7,7 @@ ReactionNetwork cell::allTheReactions;
 std::vector<Vertex> cell::reactionVertexList;
 std::vector<Vertex> cell::substrateVertexList;
 std::vector<Vertex> cell::internalMetaboliteVList;
+int cell::nrOfInternalMetabolites;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
 
@@ -48,13 +49,13 @@ void cell::printCytoscape(std::vector<Vertex> internals){
 
 
 		for (int sub:currentsubs){
-			std::string substrateName=cell::niceSubstrateName(substrateVertexList[sub+13]);
+			std::string substrateName=cell::niceSubstrateName(substrateVertexList[sub+nrOfInternalMetabolites]);
 
 			std::cout<<substrateName<<" cr "<<reacNR<<std::endl;
 		}
 
 		for (int prod:currentproducts){
-			std::string productName=cell::niceSubstrateName(substrateVertexList[prod+13]);
+			std::string productName=cell::niceSubstrateName(substrateVertexList[prod+nrOfInternalMetabolites]);
 
 			std::cout<<reacNR<<" rc "<<productName<<std::endl;
 
@@ -245,10 +246,10 @@ double cell::calcThroughput(){
 	
 	//plan: create a vector<int> with the same length as substrateVertices that lists which row corresponds to which substrate
 	
-	//first 13 is the internal metabolites (need to use variable instead of 13 later)
+	//first nrOfInternalMetabolites is the internal metabolites (need to use variable instead of 13 later)
 	std::vector<int> substrateIndex(substrateVertexList.size());
 
-	for(int i=0; i<13; i++){
+	for(int i=0; i<nrOfInternalMetabolites; i++){
 		substrateIndex[i]=i+1;
 	}
 
@@ -272,7 +273,7 @@ double cell::calcThroughput(){
 	while(!substrateSet.empty()){
 		int substrateid=allTheReactions[*substrateSet.begin()].sub.index;
 
-		substrateIndex[substrateid+13]=nextRowNumber;
+		substrateIndex[substrateid+nrOfInternalMetabolites]=nextRowNumber;
 		nextRowNumber++;
 		substrateSet.erase(substrateSet.begin());
 	}
@@ -331,7 +332,7 @@ double cell::calcThroughput(){
 		for (int j: tmpsubs){
 			//using i+14 as the column numbering starts from 1, and there are 13 internal metabolites
 			//with negative substrate indices
-			int rownumber=substrateIndex[j+13];
+			int rownumber=substrateIndex[j+nrOfInternalMetabolites];
 			//ia.push_back(j+14);  previous method
 			ia.push_back(rownumber);
 			ja.push_back(i);
@@ -341,7 +342,7 @@ double cell::calcThroughput(){
 		for (int j: tmpprods){
 			//using i+14 as the column numbering starts from 1, and there are 13 internal metabolites
 			//with negative substrate indices
-			int rownumber=substrateIndex[j+13];
+			int rownumber=substrateIndex[j+nrOfInternalMetabolites];
 			//ia.push_back(j+14);  previous method
 			ia.push_back(rownumber);
 			ja.push_back(i);
@@ -357,10 +358,10 @@ double cell::calcThroughput(){
 
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
-	ia.push_back(substrateIndex[908+13]);	ja.push_back(listSize+1); ar.push_back(1.0);
-	ia.push_back(substrateIndex[-1+13]);	ja.push_back(listSize+2); ar.push_back(1.0);
-	ia.push_back(substrateIndex[-2+13]);	ja.push_back(listSize+3); ar.push_back(-1.0);
-	ia.push_back(substrateIndex[13]);	ja.push_back(listSize+4); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[908+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
+	ia.push_back(substrateIndex[-1+nrOfInternalMetabolites]);	ja.push_back(listSize+2); ar.push_back(1.0);
+	ia.push_back(substrateIndex[-2+nrOfInternalMetabolites]);	ja.push_back(listSize+3); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
 
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
 	//ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
@@ -449,8 +450,8 @@ void cell::printHumanReadable(std::vector<Vertex>& substrateList){
 		for (int j:substrates){
 			//figuring out whether we have a meaningful name
 			std::string toPrint,name,molecule;
-			molecule=graph[substrateList[j+13]].sub.molecule;
-			name=graph[substrateList[j+13]].sub.name;
+			molecule=graph[substrateList[j+nrOfInternalMetabolites]].sub.molecule;
+			name=graph[substrateList[j+nrOfInternalMetabolites]].sub.name;
 
 			if (name.compare(emptyName) == 0){
 				toPrint=molecule;
@@ -468,8 +469,8 @@ void cell::printHumanReadable(std::vector<Vertex>& substrateList){
 		for (int j:products){
 			//figuring out whether we have a meaningful name
 			std::string toPrint,name,molecule;
-			molecule=graph[substrateList[j+13]].sub.molecule;
-			name=graph[substrateList[j+13]].sub.name;
+			molecule=graph[substrateList[j+nrOfInternalMetabolites]].sub.molecule;
+			name=graph[substrateList[j+nrOfInternalMetabolites]].sub.name;
 
 
 			if (name.compare(emptyName) == 0){
