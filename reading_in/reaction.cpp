@@ -63,7 +63,7 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 	std::ifstream inFile(fileName);
 	std::string line,tmpsubs,tmpprods;
 
-	InternalMetsT tmpinternalMets = {};
+	//InternalMetsT tmpinternalMets = {};
 
 	double tmpfreeE;
 
@@ -77,6 +77,7 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 	int counter=0;
 	while(std::getline(inFile, line))
 	{
+	InternalMetsT tmpinternalMets = {};
 		std::vector<int> tmpsubstrates, tmproducts;
 		std::stringstream iss(line);
 		iss>>tmpfreeE;
@@ -102,6 +103,7 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 			if(std::find(tmpsubstrates.begin(), tmpsubstrates.end(), i) != tmpsubstrates.end())
 			{
 				tmpinternalMets[i+13]--;
+				//std::cout<<"Internal metabolite nr "<<i<<" found going in."<<std::endl;
 			}
 
 			if(std::find(tmproducts.begin(), tmproducts.end(), i) != tmproducts.end())
@@ -145,8 +147,8 @@ void reaction::recalcEchange(const environment& env)
 	//need the reactions database changed for this
 
 	double insideLog=(std::pow(env.nh2acceptorCont,internalMets[0])*std::pow(env.nh2donorCont,internalMets[1])*std::pow(env.conh22Cont,internalMets[2])*std::pow(env.nh3aqCont,internalMets[3])*std::pow(env.ppiCont,internalMets[4])*std::pow(env.piCont,internalMets[5])*std::pow(env.atpCont,internalMets[6])*std::pow(env.adpCont,internalMets[7])*std::pow(env.ampCont,internalMets[8])*std::pow(env.nadredcont,internalMets[9])*std::pow(env.nadoxcont,internalMets[10])*std::pow(env.co2cont,internalMets[11])*std::pow(env.h2ocont,internalMets[12]));
-	std::cout<<"Inside the log: "<<insideLog<<std::endl;
 
-	currentFreeEChange=freeEChange+8.3144598*env.temperature*std::log(insideLog);
+	currentFreeEChange=freeEChange+8.3144598e-3*env.temperature*std::log(insideLog);
+	//std::cout<<"Inside the log: "<<insideLog<<"freechange now: "<<currentFreeEChange<<std::endl;
 }
 
