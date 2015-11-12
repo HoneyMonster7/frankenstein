@@ -103,6 +103,8 @@ int main(int argc, char* argv[])
 	cell::substrateVertexList=compoundVList;
 	cell::internalMetaboliteVList=internals;
 	cell::nrOfInternalMetabolites=nrOfInternalMetabolites;
+	//this is the k value for the fitness function
+	cell::smallKforFitness=1e-2;
 	cell trialcell(subset);
 
 	//int compsize=compoundVList.size();

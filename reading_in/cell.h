@@ -40,6 +40,7 @@ class cell{
 			static std::vector<Vertex> substrateVertexList;
 			static std::vector<Vertex> internalMetaboliteVList;
 			static int nrOfInternalMetabolites;
+			static double smallKforFitness;
 
 	//public: 
 	cell(std::vector<int>& availableReactons);

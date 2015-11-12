@@ -8,6 +8,7 @@ std::vector<Vertex> cell::reactionVertexList;
 std::vector<Vertex> cell::substrateVertexList;
 std::vector<Vertex> cell::internalMetaboliteVList;
 int cell::nrOfInternalMetabolites;
+double cell::smallKforFitness;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
 
@@ -318,7 +319,7 @@ double cell::calcThroughput(){
 
 
 		double freeChange=tmpreac.getCurrentFreeEChange();
-		std::cout<<"FreeEChange: "<<freeChange<<std::endl;
+		//std::cout<<"FreeEChange: "<<freeChange<<std::endl;
 		if(freeChange<0){
 		glp_set_col_bnds(lp,i,GLP_DB,0.0,1.0);
 		}
@@ -404,7 +405,7 @@ double cell::calcThroughput(){
 	//}
 	//std::cout<<std::endl;
 
-	return goodness;
+	return goodness-smallKforFitness*availableReactions.size();
 }
 
  std::vector<Vertex> cell::subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList){
