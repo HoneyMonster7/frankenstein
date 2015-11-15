@@ -40,7 +40,15 @@ void cell::printCytoscape(std::vector<Vertex> internals){
 	std::vector<Vertex> Vertexlist=reactionVertexList;
 	std::vector<Vertex> substrateList=substrateVertexList;
 
+	std::ofstream outfile,typesfile;
+	outfile.open("test.txt");
+	//for the node_types
+	std::set<int> reacNumbers;
+	std::set<std::string> compoundNames;
+	std::set<std::string> internalMetNames;
+	typesfile.open("node_types.txt");
 
+	typesfile<<"type"<<std::endl;
 
 	for (int i: availableReactions){
 
@@ -49,25 +57,54 @@ void cell::printCytoscape(std::vector<Vertex> internals){
 		std::vector<int> currentproducts=currentReac.getproducts();
 		int reacNR=currentReac.getListNr();
 
+		//adding the current reaction to a set, will be used to generate the node-type file
+		reacNumbers.insert(reacNR);
 
 		for (int sub:currentsubs){
 			std::string substrateName=cell::niceSubstrateName(substrateVertexList[sub+nrOfInternalMetabolites]);
 
 			std::cout<<substrateName<<" cr "<<reacNR<<std::endl;
+			outfile<<substrateName<<" cr "<<reacNR<<std::endl;
+			compoundNames.insert(substrateName);
+
 		}
 
 		for (int prod:currentproducts){
 			std::string productName=cell::niceSubstrateName(substrateVertexList[prod+nrOfInternalMetabolites]);
 
 			std::cout<<reacNR<<" rc "<<productName<<std::endl;
+			outfile<<reacNR<<" rc "<<productName<<std::endl;
+			compoundNames.insert(productName);
 
 		}
 	}
 
+	for (auto met:internalMetaboliteVList){
+		internalMetNames.insert(cell::niceSubstrateName(met));
+	}
 
 
+	//looping through all the internalMet names writing them into the type file, removing them from the substrate list
+	while(!internalMetNames.empty()){
+		compoundNames.erase(*internalMetNames.begin());
+		typesfile<<*internalMetNames.begin()<<"=InternalMet"<<std::endl;
+		internalMetNames.erase(internalMetNames.begin());
+	}
+	//doing the same with reacnubmers
+	while(!reacNumbers.empty()){
+		typesfile<<*reacNumbers.begin()<<"=Reaction"<<std::endl;
+		reacNumbers.erase(reacNumbers.begin());
+	}
+	//now with the normal substrates NEED TO DIFFERENTIATE BETWEEN SOURCE AND SINK LATER
+	
 
+	while(!compoundNames.empty()){
+		typesfile<<*compoundNames.begin()<<"=Compound"<<std::endl;
+		compoundNames.erase(compoundNames.begin());
+	}
 
+	outfile.close();
+	typesfile.close();
 	}
 
 
@@ -285,6 +322,7 @@ double cell::calcThroughput(){
 	//erasing internal metabolites from the set, as we already have those at the beginning of the list
 	for(auto metab:internalMetaboliteVList){substrateSet.erase(metab);}
 
+	//in order to always have the source and sink nodes
 	substrateSet.insert(substrateVertexList[nrOfInternalMetabolites]);
 	substrateSet.insert(substrateVertexList[nrOfInternalMetabolites+908]);
 		

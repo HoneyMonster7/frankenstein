@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 		trialcell.printCytoscape(internals);
 
 		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<200; k++){
+		for (int k=0; k<20; k++){
 			//for testing
 			//std::cout<<"Current reactions:";
 			//std::vector<int> currentreacs=trialcell.getReacs();
