@@ -284,6 +284,9 @@ double cell::calcThroughput(){
 	
 	//erasing internal metabolites from the set, as we already have those at the beginning of the list
 	for(auto metab:internalMetaboliteVList){substrateSet.erase(metab);}
+
+	substrateSet.insert(substrateVertexList[nrOfInternalMetabolites]);
+	substrateSet.insert(substrateVertexList[nrOfInternalMetabolites+908]);
 		
 	while(!substrateSet.empty()){
 		int substrateid=allTheReactions[*substrateSet.begin()].sub.index;
