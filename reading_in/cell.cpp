@@ -168,12 +168,15 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 
 	std::vector<int> trialNewCell = availableReactions;
 
-	double addProb= 0.1*exp(desiredNetworkSize-currentReactionNumber);
-	double delProb=0.1*exp(currentReactionNumber-desiredNetworkSize);
+	//double addProb= 0.1*exp(desiredNetworkSize-currentReactionNumber);
+	//double delProb=0.1*exp(currentReactionNumber-desiredNetworkSize);
 
+	double addProb=0.5;
+	double delProb=0.5;
 
 	double doWeAdd=randomRealInRange(generator, 1);
 	double doWeDelete=randomRealInRange(generator,1);
+	double doWeAccept=randomRealInRange(generator,1);
 
 
 	//calculating current throughput
@@ -181,17 +184,16 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 	if(areWeAdding){
 		std::vector<int> whatCanWeAdd = canBeAdded(internals);
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
-		//std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
+		std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
 		//+1 required as the file from which we read starts with line 1, but vectors number from 0 
 		addThisOne=whatCanWeAdd[whichOneToAdd]+1;
 		trialNewCell.push_back(addThisOne);
 	}
 
-	bool areWeDeleting=doWeDelete<=delProb;
-	if(areWeDeleting){
+	else{
 
-		int whichOneToDel=randomIntInRange(generator,availableReactions.size()-1);
-		//std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
+		int whichOneToDel=randomIntInRange(generator,trialNewCell.size()-1);
+		std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
 		deleteThisOne=whichOneToDel;
 		trialNewCell.erase(trialNewCell.begin()+deleteThisOne);
 	}
@@ -202,12 +204,23 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 	double proposedThroughput=tryIfWorks.getPerformance();
 
 	//if the network is not severly paralyzed we implement the changes
-	if (performance*0.5<proposedThroughput){
+	//if (performance*0.5<proposedThroughput){
+	//	if(areWeAdding){availableReactions.push_back(addThisOne);}
+	//	else{availableReactions.erase(availableReactions.begin()+deleteThisOne);}
+	//	performance=proposedThroughput;
+	//}
+	//else{ std::cout<<"Changes too destructive, not implemented."<<std::endl;}
+	
+	if (doWeAccept<exp(-1.0*smallKforFitness*(performance-proposedThroughput)))
+	{
 		if(areWeAdding){availableReactions.push_back(addThisOne);}
-		if(areWeDeleting){availableReactions.erase(availableReactions.begin()+deleteThisOne);}
+		else{availableReactions.erase(availableReactions.begin()+deleteThisOne);}
 		performance=proposedThroughput;
 	}
-	else{ std::cout<<"Changes too destructive, not implemented."<<std::endl;}
+	else
+	{
+		std::cout<<"Changes not implemented."<<std::endl;
+	}
 
 	std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions, with a throughput of "<<performance<<"."<<std::endl;
 }
