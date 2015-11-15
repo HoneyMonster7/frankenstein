@@ -17,6 +17,7 @@ cell::cell(std::vector<int>& tmpAvailReacs)
 {
 	double initialPerformance=calcThroughput();
 	performance=initialPerformance;
+	firstPerformance=initialPerformance;
 }
 
 
@@ -211,7 +212,7 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 	//}
 	//else{ std::cout<<"Changes too destructive, not implemented."<<std::endl;}
 	
-	if (doWeAccept<exp(-1.0*smallKforFitness*(performance-proposedThroughput)))
+	if (doWeAccept<exp(-1.0*firstPerformance*(performance-proposedThroughput)))
 	{
 		if(areWeAdding){availableReactions.push_back(addThisOne);}
 		else{availableReactions.erase(availableReactions.begin()+deleteThisOne);}
@@ -222,7 +223,7 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 		std::cout<<"Changes not implemented."<<std::endl;
 	}
 
-	std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions, with a throughput of "<<performance<<"."<<std::endl;
+	std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions, with a fittness of "<<performance<<"."<<std::endl;
 }
 
  int cell::randomIntInRange(RandomGeneratorType& generator, int maxNumber){

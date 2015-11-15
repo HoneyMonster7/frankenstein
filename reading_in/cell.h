@@ -34,6 +34,7 @@ class cell{
 
 	std::vector<int> availableReactions;
 	double performance;
+	private: double firstPerformance;
 	public: static ReactionNetwork allTheReactions;
 
 			static std::vector<Vertex> reactionVertexList;
