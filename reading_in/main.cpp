@@ -21,6 +21,10 @@ int main(int argc, char* argv[])
 	//defined in cell.h
 	RandomGeneratorType generator(1);
 
+	//set the number of internalmetabolites here:
+	int nrOfInternalMetabolites=13;
+	reaction::nrOfInternalMetabolites=nrOfInternalMetabolites;
+
 	std::cout<<"Tests begin."<<std::endl;
 
 	std::vector<reaction> reacVector;
@@ -97,6 +101,10 @@ int main(int argc, char* argv[])
 	cell::allTheReactions=lofasz;
 	cell::reactionVertexList=reacVList;
 	cell::substrateVertexList=compoundVList;
+	cell::internalMetaboliteVList=internals;
+	cell::nrOfInternalMetabolites=nrOfInternalMetabolites;
+	//this is the k value for the fitness function
+	cell::smallKforFitness=1e-2;
 	cell trialcell(subset);
 
 	//int compsize=compoundVList.size();
@@ -111,9 +119,9 @@ int main(int argc, char* argv[])
 			//for(auto i:currentreacs){std::cout<<i<<" ";}
 			//std::cout<<k<<", "<<std::endl;
 		trialcell.mutate(generator,internals);
-		trialcell.printHumanReadable(compoundVList);
+		//trialcell.printHumanReadable(compoundVList);
 
-		trialcell.calcThroughput(compoundVList.size());
+		trialcell.calcThroughput();
 		}
 
 		trialcell.printCytoscape(internals);

@@ -81,6 +81,7 @@ class reaction
 	double freeEChange = 0.0;
 	//std::string humanReadable;
 	double currentFreeEChange=0;
+	public: static int nrOfInternalMetabolites;
 
 public:
 
@@ -99,6 +100,7 @@ public:
 	// to get rid of some needless copying
 	inline std::vector<int> getsubstrates() { return substrates; }
 	inline std::vector<int> getproducts() { return products; }
+	inline double getCurrentFreeEChange() {return currentFreeEChange;}
 	int getListNr();
 };
 
