@@ -35,11 +35,8 @@ class cell{
 	std::vector<int> availableReactions;
 	double performance;
 	private: double firstPerformance;
-	public: static ReactionNetwork allTheReactions;
+	public: 
 
-			static std::vector<Vertex> reactionVertexList;
-			static std::vector<Vertex> substrateVertexList;
-			static std::vector<Vertex> internalMetaboliteVList;
 			static int nrOfInternalMetabolites;
 			static double smallKforFitness;
 
