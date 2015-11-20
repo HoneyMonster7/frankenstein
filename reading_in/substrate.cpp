@@ -13,7 +13,17 @@ substrate::substrate() {}
 
 
 void substrate::addInvolved(int addThisReac){
-	involvedInReacs.emplace_back(addThisReac);
+	int tmpadd=addThisReac;
+	//involvedInReacs.push_back(tmpadd);
+	involvedInReacs.emplace_back(tmpadd);
+}
+
+void substrate::printInvolved(){
+	for (int i: involvedInReacs){
+		std::cout<<i<<", ";
+	}
+
+	std::cout<<"in substrate"<<molecule<<std::endl;
 }
 
 void substrate::buildNeighbourList(std::vector<reaction>& reacList, std::vector<substrate>& substrateVector){
@@ -26,21 +36,44 @@ void substrate::buildNeighbourList(std::vector<reaction>& reacList, std::vector<
 		std::vector<int> currSubs=currentReac.getsubstrates();
 		std::vector<int> currProds=currentReac.getproducts();
 
+		//std::cout<<currentReac.getListNr()<<" has neighbours: ";
+
+
 		for (int i:currSubs)
 		{
 			std::vector<int> involvedIn=substrateVector[i+reaction::nrOfInternalMetabolites].getinvolved();
-			for (int j:involvedIn){neighbourSet.insert(j);}
+			for (int j:involvedIn){
+				neighbourSet.insert(j);
+				//std::cout<<j<<", ";
+			}
 		}
 		for (int i:currProds)
 		{
 			std::vector<int> involvedIn=substrateVector[i+reaction::nrOfInternalMetabolites].getinvolved();
-			for (int j:involvedIn){neighbourSet.insert(j);}
+			for (int j:involvedIn){
+				neighbourSet.insert(j);
+				//std::cout<<j<<", ";
+			}
 		}
+
+		//std::cout<<std::endl;
 
 		std::vector<int> toBeNeighbours(neighbourSet.begin(), neighbourSet.end());
 		currentReac.setNeighbours(toBeNeighbours);
-		int currnr=currentReac.getListNr();
-		std::cout<<currnr<<" has "<<toBeNeighbours.size()<<" neighbours"<<std::endl;
+		//int currnr=currentReac.getListNr();
+		//std::cout<<currnr<<" has "<<toBeNeighbours.size()<<" neighbours, set has "<<neighbourSet.size()<<std::endl;
 	}
+
+}
+
+std::string substrate::niceSubstrateName(){
+
+		std::string emptyName=("---");
+		std::string tobereturned;
+		if (name.compare(emptyName) ==0)
+			{tobereturned=molecule;}
+		else
+			{tobereturned=name;}
+		return tobereturned;
 
 }

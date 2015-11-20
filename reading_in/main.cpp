@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 
 	
 	reacVector[129].printNeighbours();
-	reacVector[5109].printNeighbours();
+	reacVector[5108].printNeighbours();
 
 //	auto verts = vertices(lofasz);
 //	size_t count = std::distance(verts.first, verts.second);

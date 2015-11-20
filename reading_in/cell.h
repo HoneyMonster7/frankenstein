@@ -37,6 +37,8 @@ class cell{
 	private: double firstPerformance;
 	public: 
 
+			static std::vector<reaction> reactionVector;
+			static std::vector<substrate> substrateVector;
 			static int nrOfInternalMetabolites;
 			static double smallKforFitness;
 
@@ -51,16 +53,15 @@ class cell{
 
 	void printReacs();
 
-	 std::vector<int> canBeAdded(std::vector<Vertex>& internals);
+	 std::vector<int> canBeAdded();
 
 
 	double calcThroughput();
-	static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
-	static std::string niceSubstrateName(Vertex currentVertex);
+	//static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 
 
 	void printHumanReadable(std::vector<Vertex>& substrateList);
-	void printCytoscape(std::vector<Vertex> internals);
+	void printCytoscape();
 
 	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
 			 double randomRealInRange(RandomGeneratorType& generator, double maxNumber);

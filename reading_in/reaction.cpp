@@ -120,15 +120,17 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		for(int i : tmpsubstrates)
 		{
 		if(i>=0){
-			substrateVector[i+nrOfInternalMetabolites].addInvolved(i);	
+			substrateVector[i+nrOfInternalMetabolites].addInvolved(counter);	
+			//std::cout<<counter<<" has substrate: "<<i<<std::endl;
 		}
 		}
 
 
-		for(int i: tmproducts)
+		for(int j: tmproducts)
 		{
-		if(i>=0){
-			substrateVector[i+nrOfInternalMetabolites].addInvolved(i);	
+		if(j>=0){
+			//std::cout<<counter<<" has product: "<<i<<std::endl;
+			substrateVector[j+nrOfInternalMetabolites].addInvolved(counter);	
 		}
 		}
 
@@ -155,6 +157,7 @@ neighbourOf=neighbourList;
 }
 
 void reaction::printNeighbours(){
+	std::cout<<listNR<<" has neighbours: ";
 	for (const int & i:neighbourOf){
 		std::cout<<i<<", ";
 	}

@@ -80,6 +80,8 @@ class substrate
 	void addInvolved(int addThisReac);
 
 	static void buildNeighbourList(std::vector<reaction>& reacList, std::vector<substrate>& substrateVector);
+	void printInvolved();
+	std::string niceSubstrateName();
 };
 
 

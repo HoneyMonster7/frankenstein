@@ -2,11 +2,9 @@
 
 
 // static class variables
-ReactionNetwork cell::allTheReactions;
 
-std::vector<Vertex> cell::reactionVertexList;
-std::vector<Vertex> cell::substrateVertexList;
-std::vector<Vertex> cell::internalMetaboliteVList;
+std::vector<reaction> reactionVector;
+std::vector<substrate> substrateVector;
 int cell::nrOfInternalMetabolites;
 double cell::smallKforFitness;
 
@@ -52,7 +50,7 @@ void cell::printCytoscape(std::vector<Vertex> internals){
 
 	for (int i: availableReactions){
 
-		reaction currentReac=allTheReactions[reactionVertexList[i-1]].reac;
+		reaction currentReac= reactionVector[i-1];
 		std::vector<int> currentsubs=currentReac.getsubstrates();
 		std::vector<int> currentproducts=currentReac.getproducts();
 		int reacNR=currentReac.getListNr();
@@ -61,28 +59,32 @@ void cell::printCytoscape(std::vector<Vertex> internals){
 		reacNumbers.insert(reacNR);
 
 		for (int sub:currentsubs){
-			std::string substrateName=cell::niceSubstrateName(substrateVertexList[sub+nrOfInternalMetabolites]);
+			if (sub>=nrOfInternalMetabolites){
+				std::string substrateName=substrateVector[sub+nrOfInternalMetabolites].niceSubstrateName();
 
-			std::cout<<substrateName<<" cr "<<reacNR<<std::endl;
-			outfile<<substrateName<<" cr "<<reacNR<<std::endl;
-			compoundNames.insert(substrateName);
+				std::cout<<substrateName<<" cr "<<reacNR<<std::endl;
+				outfile<<substrateName<<" cr "<<reacNR<<std::endl;
+				compoundNames.insert(substrateName);
+			}
 
 		}
 
 		for (int prod:currentproducts){
-			std::string productName=cell::niceSubstrateName(substrateVertexList[prod+nrOfInternalMetabolites]);
+			if (prod>=nrOfInternalMetabolites){
+				std::string productName=substrateVector[prod+nrOfInternalMetabolites].niceSubstrateName();
 
-			std::cout<<reacNR<<" rc "<<productName<<std::endl;
-			outfile<<reacNR<<" rc "<<productName<<std::endl;
-			compoundNames.insert(productName);
+				std::cout<<reacNR<<" rc "<<productName<<std::endl;
+				outfile<<reacNR<<" rc "<<productName<<std::endl;
+				compoundNames.insert(productName);
+			}
 
 		}
 	}
 
-	for (auto met:internalMetaboliteVList){
-		internalMetNames.insert(cell::niceSubstrateName(met));
-	}
 
+	for (int i=0; i<nrOfInternalMetabolites; i++){
+		internalMetNames.insert(substrateVector[i].niceSubstrateName());
+	}
 
 	//looping through all the internalMet names writing them into the type file, removing them from the substrate list
 	while(!internalMetNames.empty()){
@@ -112,73 +114,31 @@ void cell::printCytoscape(std::vector<Vertex> internals){
 
 
 
-std::vector<int> cell::canBeAdded(std::vector<Vertex>& internals){
+std::vector<int> cell::canBeAdded(){
 
 
-	ReactionNetwork allReacs =allTheReactions;
-	std::vector<Vertex> Vertexlist=reactionVertexList;
 
-	//set to keep the substrate vertices that are currently used in the network
-	std::set<Vertex> substrateSet;
-	int nrOfAvailableReactions=availableReactions.size();
+	std::set<int> availableReactions;
 
 	for (int i=0; i<nrOfAvailableReactions;i++){
 	//	std::cout<<"Reaction number:"<<i<<std::endl;
 
-	typename boost::graph_traits<ReactionNetwork>::adjacency_iterator vi, vi_end;
+		std::vector<int> neighboursOfCurrentReac=reactionVector[availableReactions[i]].getNeighbours();
 
-
-	//for testing
-	//allReacs[Vertexlist[availableReactions[i]-1]].reac.printReaction();
-	//std::cout<<"Compounds:";
-
-	//iterating through the vertices connected to the current reaction (the compounds taking part)
-	for (boost::tie(vi,vi_end)=boost::adjacent_vertices(Vertexlist[availableReactions[i]-1],allReacs); vi!=vi_end; ++vi){
-
-		//adding the substrate vertex to the list (only unique elements are kept)
-		substrateSet.insert(vi.dereference());
-
-	}
-
-	//testin
-	//std::cout<<std::endl;
-	}
-
-	//getting rid of the internal metabolites in there
-	for(auto metab:internals){ substrateSet.erase(metab);}
-
-
-	//the set that the possible new (and existing) reactions will be stored in
-	std::set<Vertex> setOfNewReactions;
-
-	while(!substrateSet.empty()){
-		int substrateid;
-		substrateid=allReacs[*substrateSet.begin()].sub.index;
-		//std::cout<<", "<<substrateid ;
-
-		//looping through the substrates currently in play
-		typename boost::graph_traits<ReactionNetwork>::adjacency_iterator inner, inner_end;
-
-
-		for(boost::tie(inner,inner_end)=boost::adjacent_vertices(*substrateSet.begin(),allReacs); inner!=inner_end; ++inner){
-
-			setOfNewReactions.insert(inner.dereference());
+		for (int j:neighboursOfCurrentReac){
+			availableReactions.insert(j);
 		}
-
-		substrateSet.erase(substrateSet.begin());
 	}
 
 
+	for (int i:availableReactions){
 
-	std::vector<int> tobereturned;
-	while(!setOfNewReactions.empty()){
-
-		//testing
-		//allReacs[*setOfNewReactions.begin()].reac.printReaction();
-		int reacnumber=allReacs[*setOfNewReactions.begin()].reac.getListNr();
-		tobereturned.emplace_back(reacnumber);
-		setOfNewReactions.erase(setOfNewReactions.begin());
+		//getting rid of reactions that are already in the network
+		availableReactions.erase(i);
 	}
+
+	std::vector<int> tobereturned(availableReactions.begin(),availableReactions.end());
+	
 	//uncomment for printing out the line numbers of possible reactions to be added 
 	//for (auto whatever:tobereturned){
 	//	std::cout<<whatever+1<<std::endl;
@@ -476,18 +436,6 @@ double cell::calcThroughput(){
 	 return tobeReturned;
  }
 
-std::string cell::niceSubstrateName(Vertex currentVertex){
-
-	std::string emptyName=("---");
-	std::string tobereturned;
-	substrate currentSub=allTheReactions[currentVertex].sub;
-	if (currentSub.name.compare(emptyName) ==0)
-	{tobereturned=currentSub.molecule;}
-	else
-	{tobereturned=currentSub.name;}
-	return tobereturned;
-
-}
 
 void cell::printHumanReadable(std::vector<Vertex>& substrateList){
 
