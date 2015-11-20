@@ -118,7 +118,9 @@ std::vector<int> cell::canBeAdded(){
 
 
 
-	std::set<int> availableReactions;
+	int nrOfAvailableReactions=availableReactions.size();
+	
+	std::set<int> canAdd;
 
 	for (int i=0; i<nrOfAvailableReactions;i++){
 	//	std::cout<<"Reaction number:"<<i<<std::endl;
@@ -126,7 +128,7 @@ std::vector<int> cell::canBeAdded(){
 		std::vector<int> neighboursOfCurrentReac=reactionVector[availableReactions[i]].getNeighbours();
 
 		for (int j:neighboursOfCurrentReac){
-			availableReactions.insert(j);
+			canAdd.insert(j);
 		}
 	}
 
@@ -134,10 +136,10 @@ std::vector<int> cell::canBeAdded(){
 	for (int i:availableReactions){
 
 		//getting rid of reactions that are already in the network
-		availableReactions.erase(i);
+		canAdd.erase(i);
 	}
 
-	std::vector<int> tobereturned(availableReactions.begin(),availableReactions.end());
+	std::vector<int> tobereturned(canAdd.begin(),canAdd.end());
 	
 	//uncomment for printing out the line numbers of possible reactions to be added 
 	//for (auto whatever:tobereturned){
