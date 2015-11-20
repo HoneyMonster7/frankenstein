@@ -149,7 +149,7 @@ std::vector<int> cell::canBeAdded(){
 
 }
 
-void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internals){
+void cell::mutate( RandomGeneratorType& generator ){
 
 
 	ReactionNetwork allReacs=allTheReactions;
@@ -160,7 +160,6 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 //		std::cout<<gen()%availableReactions.size()<<", ";
 //	}
 
-	int desiredNetworkSize=10;
 	int currentReactionNumber = availableReactions.size();
 
 
@@ -172,7 +171,6 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 	//double delProb=0.1*exp(currentReactionNumber-desiredNetworkSize);
 
 	double addProb=0.5;
-	double delProb=0.5;
 
 	double doWeAdd=randomRealInRange(generator, 1);
 	double doWeDelete=randomRealInRange(generator,1);
@@ -186,7 +184,8 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
 		std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
 		//+1 required as the file from which we read starts with line 1, but vectors number from 0 
-		addThisOne=whatCanWeAdd[whichOneToAdd]+1;
+		//CHECK IF THE +1 IS REALLY NEEDED
+		addThisOne=whatCanWeAdd[whichOneToAdd];
 		trialNewCell.push_back(addThisOne);
 	}
 
@@ -251,17 +250,14 @@ double cell::randomRealInRange(RandomGeneratorType& generator, double maxNumber)
 double cell::calcThroughput(){
 
 
-	ReactionNetwork graph=allTheReactions;
-	std::vector<Vertex> allreacList=reactionVertexList;
-	std::vector<Vertex> reacList=subsetVertices(availableReactions,allreacList);
 
 	//need to find a way to only include compounds that are used in current reactions
 	//
 	
-	//plan: create a vector<int> with the same length as substrateVertices that lists which row corresponds to which substrate
+	//plan: create a vector<int> with the same length as substrateVector that lists which row corresponds to which substrate
 	
 	//first nrOfInternalMetabolites is the internal metabolites (need to use variable instead of 13 later)
-	std::vector<int> substrateIndex(substrateVertexList.size());
+	std::vector<int> substrateIndex(substrateVector.size());
 
 	for(int i=0; i<nrOfInternalMetabolites; i++){
 		substrateIndex[i]=i+1;
@@ -269,29 +265,34 @@ double cell::calcThroughput(){
 
 	//counter to keep track of which row of the GLPK problem the next substrate will belong to
 	int nextRowNumber=14;
-	std::set<Vertex> substrateSet;
+	std::set<int> substrateSet;
 
 	for (int i=0; i<availableReactions.size();i++){
 
-		typename boost::graph_traits<ReactionNetwork>::adjacency_iterator vi, vi_end;
 
-		for(boost::tie(vi,vi_end)=boost::adjacent_vertices(reactionVertexList[availableReactions[i]-1],allTheReactions); vi!=vi_end; ++vi){
+		//CHECK IF THERE IS A +1 REQUIRED
+		reaction currentReac=reactionVector[i];
 
-			substrateSet.insert(vi.dereference());
+		for (int j:currentReac.getsubstrates()){
+			substrateSet.insert(j);
 		}
+		for (int j:currentReac.getproducts()){
+			substrateSet.insert(j);
+		}
+
 	}
 	
+	
 	//erasing internal metabolites from the set, as we already have those at the beginning of the list
-	for(auto metab:internalMetaboliteVList){substrateSet.erase(metab);}
+	for(int metab=0; metab<nrOfInternalMetabolites; metab++){substrateSet.erase(metab);}
 
 	//in order to always have the source and sink nodes
 	substrateSet.insert(substrateVertexList[nrOfInternalMetabolites]);
 	substrateSet.insert(substrateVertexList[nrOfInternalMetabolites+908]);
 		
 	while(!substrateSet.empty()){
-		int substrateid=allTheReactions[*substrateSet.begin()].sub.index;
 
-		substrateIndex[substrateid+nrOfInternalMetabolites]=nextRowNumber;
+		substrateIndex[*substrateSet.begin()+nrOfInternalMetabolites]=nextRowNumber;
 		nextRowNumber++;
 		substrateSet.erase(substrateSet.begin());
 	}
@@ -320,7 +321,7 @@ double cell::calcThroughput(){
 		glp_set_row_bnds(lp,i,GLP_FX,0.0,0.0);
 	}
 	//extra column for the imaginary reaction getting rid of the final compound (objective function)
-	int listSize=reacList.size();
+	int listSize=availableReactions.size();
 	glp_add_cols(lp,listSize+4);
 
 	//for(int i=1; i<=listSize+4; i++){ glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);}
@@ -332,7 +333,7 @@ double cell::calcThroughput(){
 
 
 		//preparing the sparse matrix's values 
-		reaction tmpreac=graph[reacList[i-1]].reac;
+		reaction tmpreac=reactionVector[availableReactions[i-1]];
 
 
 		double freeChange=tmpreac.getCurrentFreeEChange();
@@ -340,7 +341,7 @@ double cell::calcThroughput(){
 		if(freeChange<0){
 		glp_set_col_bnds(lp,i,GLP_DB,0.0,1.0);
 		}
-		else{glp_set_col_bnds(lp,i,GLP_UP,-1.0,0.0);}
+		else{glp_set_col_bnds(lp,i,GLP_DB,-1.0,0.0);}
 
 
 		std::vector<int> tmpsubs=tmpreac.getsubstrates();
@@ -424,19 +425,6 @@ double cell::calcThroughput(){
 
 	return goodness-smallKforFitness*availableReactions.size();
 }
-
- std::vector<Vertex> cell::subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList){
-	 //sort not required? 
-	 std::sort(vertexIDs.begin(),vertexIDs.end());
-
-	 std::vector<Vertex> tobeReturned;
-
-	 for(int i :vertexIDs){
-		 //uses i-1 in order to correspond to line numbers in the input reaction list
-		 tobeReturned.push_back(reacList[i-1]);
-	 }
-	 return tobeReturned;
- }
 
 
 void cell::printHumanReadable(std::vector<Vertex>& substrateList){
