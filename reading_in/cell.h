@@ -35,8 +35,10 @@ class cell{
 	std::vector<int> availableReactions;
 	double performance;
 	private: double firstPerformance;
+			 std::vector<double> fluxThroughReacs;
 	public: 
 
+			static int sourceSubstrate,sinkSubstrate;
 			static std::vector<reaction> reactionVector;
 			static std::vector<substrate> substrateVector;
 			static int nrOfInternalMetabolites;
@@ -49,6 +51,7 @@ class cell{
 	inline std::vector<int> getReacs() {return availableReactions;}
 	inline double getPerformance() {return performance;}
 
+	inline std::vector<double> getFluxes() {return fluxThroughReacs;}
 	void mutate(RandomGeneratorType& generator);
 
 	void printReacs();
@@ -56,6 +59,7 @@ class cell{
 	 std::vector<int> canBeAdded();
 
 
+	void setFluxes(std::vector<double>& fluxVector);
 	double calcThroughput();
 	//static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 

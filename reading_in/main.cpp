@@ -91,6 +91,11 @@ int main(int argc, char* argv[])
 	cell::substrateVector=substrateVector;
 	//this is the k value for the fitness function
 	cell::smallKforFitness=1e-2;
+	//don't add nrofinternalmetabolites here
+	cell::sourceSubstrate=911;
+	cell::sinkSubstrate=0;
+
+
 	cell trialcell(subset);
 
 	//int compsize=compoundVList.size();
@@ -98,7 +103,7 @@ int main(int argc, char* argv[])
 		trialcell.printCytoscape();
 
 		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<2000; k++){
+		for (int k=0; k<30; k++){
 			//for testing
 			//std::cout<<"Current reactions:";
 			//std::vector<int> currentreacs=trialcell.getReacs();

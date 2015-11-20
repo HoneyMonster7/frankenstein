@@ -6,6 +6,8 @@
 std::vector<reaction> cell::reactionVector;
 std::vector<substrate> cell::substrateVector;
 int cell::nrOfInternalMetabolites;
+int cell::sourceSubstrate;
+int cell::sinkSubstrate;
 double cell::smallKforFitness;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
@@ -14,6 +16,7 @@ cell::cell(std::vector<int>& tmpAvailReacs)
 
 {
 	double initialPerformance=calcThroughput();
+	std::vector<double> fluxThroughReacs(availableReactions.size());
 	performance=initialPerformance;
 	firstPerformance=initialPerformance/22;
 }
@@ -35,18 +38,25 @@ void cell::printReacs() {
 void cell::printCytoscape(){
 
 
-	std::ofstream outfile,typesfile;
+	std::ofstream outfile,typesfile,edgeFile;
 	outfile.open("test.txt");
 	//for the node_types
 	std::set<int> reacNumbers;
 	std::set<std::string> compoundNames;
 	std::set<std::string> internalMetNames;
 	typesfile.open("node_types.txt");
+	edgeFile.open("edge_attributes.txt");
 
-	typesfile<<"type"<<std::endl;
+	//typesfile<<"Name Type"<<std::endl;
 
-	for (int i: availableReactions){
+	outfile<<"Source	Type	Target"<<std::endl;
 
+	for (int j=0; j<availableReactions.size();j++){
+
+		int i=availableReactions[j];
+		double fluxOfCurrentReaction=fluxThroughReacs[j];
+		if (std::abs(fluxOfCurrentReaction)<1e-6){fluxOfCurrentReaction=0;}
+		std::cout<<"The flux of "<<i<<" is "<<fluxOfCurrentReaction<<std::endl;
 		reaction currentReac= reactionVector[i-1];
 		std::vector<int> currentsubs=currentReac.getsubstrates();
 		std::vector<int> currentproducts=currentReac.getproducts();
@@ -56,54 +66,66 @@ void cell::printCytoscape(){
 		reacNumbers.insert(reacNR);
 
 		for (int sub:currentsubs){
-			if (sub>=nrOfInternalMetabolites){
+			//if (sub>=nrOfInternalMetabolites){
 				std::string substrateName=substrateVector[sub+nrOfInternalMetabolites].niceSubstrateName();
 
 				std::cout<<substrateName<<" cr "<<reacNR<<std::endl;
 				outfile<<substrateName<<" cr "<<reacNR<<std::endl;
-				compoundNames.insert(substrateName);
-			}
+				edgeFile<<substrateName<<" (cr) "<<reacNR<<" = "<<fluxOfCurrentReaction<<std::endl;
+					compoundNames.insert(substrateName);
+			//}
 
 		}
 
 		for (int prod:currentproducts){
-			if (prod>=nrOfInternalMetabolites){
+			//if (prod>=nrOfInternalMetabolites){
 				std::string productName=substrateVector[prod+nrOfInternalMetabolites].niceSubstrateName();
 
 				std::cout<<reacNR<<" rc "<<productName<<std::endl;
 				outfile<<reacNR<<" rc "<<productName<<std::endl;
-				compoundNames.insert(productName);
-			}
+				edgeFile<<reacNR<<" (rc) "<<productName<<" = "<<fluxOfCurrentReaction<<std::endl;
+					compoundNames.insert(productName);
+			//}
 
 		}
 	}
-
 
 	for (int i=0; i<nrOfInternalMetabolites; i++){
 		internalMetNames.insert(substrateVector[i].niceSubstrateName());
 	}
 
+	std::string sourceName=substrateVector[sourceSubstrate+nrOfInternalMetabolites].niceSubstrateName();
+	std::string sinkName=substrateVector[sinkSubstrate+nrOfInternalMetabolites].niceSubstrateName();
+
+	compoundNames.erase(sourceName);
+	compoundNames.erase(sinkName);
+	typesfile<<sourceName<<" = Source"<<std::endl;
+	typesfile<<sinkName<<" = Sink"<<std::endl;
+
+
 	//looping through all the internalMet names writing them into the type file, removing them from the substrate list
 	while(!internalMetNames.empty()){
 		compoundNames.erase(*internalMetNames.begin());
-		typesfile<<*internalMetNames.begin()<<"=InternalMet"<<std::endl;
+		typesfile<<*internalMetNames.begin()<<" = InternalMet"<<std::endl;
 		internalMetNames.erase(internalMetNames.begin());
 	}
 	//doing the same with reacnubmers
 	while(!reacNumbers.empty()){
-		typesfile<<*reacNumbers.begin()<<"=Reaction"<<std::endl;
+		typesfile<<*reacNumbers.begin()<<" = Reaction"<<std::endl;
 		reacNumbers.erase(reacNumbers.begin());
 	}
 	//now with the normal substrates NEED TO DIFFERENTIATE BETWEEN SOURCE AND SINK LATER
 	
 
 	while(!compoundNames.empty()){
-		typesfile<<*compoundNames.begin()<<"=Compound"<<std::endl;
+		
+		typesfile<<*compoundNames.begin()<<" = Compound"<<std::endl;
 		compoundNames.erase(compoundNames.begin());
 	}
 
 	outfile.close();
 	typesfile.close();
+	edgeFile.close();
 	}
 
 
@@ -217,6 +239,8 @@ void cell::mutate( RandomGeneratorType& generator ){
 		if(areWeAdding){availableReactions.push_back(addThisOne+1);}
 		else{availableReactions.erase(availableReactions.begin()+deleteThisOne);}
 		performance=proposedThroughput;
+		std::vector<double> tmpFluxes=tryIfWorks.getFluxes();
+		setFluxes(tmpFluxes);
 	}
 	else
 	{
@@ -293,8 +317,8 @@ double cell::calcThroughput(){
 	for(int metab=0; metab<nrOfInternalMetabolites; metab++){substrateSet.erase(metab);}
 
 	//in order to always have the source and sink nodes
-	substrateSet.insert(0+nrOfInternalMetabolites);
-	substrateSet.insert(911+nrOfInternalMetabolites);
+	substrateSet.insert(sinkSubstrate+nrOfInternalMetabolites);
+	substrateSet.insert(sourceSubstrate+nrOfInternalMetabolites);
 		
 	while(!substrateSet.empty()){
 
@@ -388,11 +412,11 @@ double cell::calcThroughput(){
 
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
-	ia.push_back(substrateIndex[911+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
+	ia.push_back(substrateIndex[sourceSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
 	ia.push_back(substrateIndex[-1+nrOfInternalMetabolites]);	ja.push_back(listSize+2); ar.push_back(1.0);
 	ia.push_back(substrateIndex[-2+nrOfInternalMetabolites]);	ja.push_back(listSize+3); ar.push_back(-1.0);
 	ia.push_back(substrateIndex[-8+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(-1.0);
-	ia.push_back(substrateIndex[nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[sinkSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
 
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
 	//ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
@@ -433,6 +457,17 @@ double cell::calcThroughput(){
 	//}
 	//std::cout<<std::endl;
 
+	std::vector<double> tmpFluxes(availableReactions.size());
+
+	std::cout<<"Fluxes are: ";
+	for (int i=0;i<availableReactions.size();i++){
+
+		tmpFluxes[i]=glp_get_col_prim(lp,i+1);
+		std::cout<<tmpFluxes[i]<<", ";
+	}
+	std::cout<<std::endl;
+
+	setFluxes(tmpFluxes);
 	//std::cout<<"goodness is "<<goodness<<std::endl;;
 	//std::cout<<"Fittness is "<<goodness-smallKforFitness*availableReactions.size()<<std::endl;;
 	return goodness-smallKforFitness*availableReactions.size();
@@ -473,4 +508,8 @@ void cell::printHumanReadable(){
 		std::cout<<std::endl;
 	
 	}
+}
+void cell::setFluxes(std::vector<double>& fluxVector){
+
+	fluxThroughReacs=fluxVector;
 }
