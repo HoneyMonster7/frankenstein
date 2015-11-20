@@ -427,7 +427,7 @@ double cell::calcThroughput(){
 }
 
 
-void cell::printHumanReadable(std::vector<Vertex>& substrateList){
+void cell::printHumanReadable(){
 
 	ReactionNetwork graph=allTheReactions;
 	std::vector<Vertex> reacList=reactionVertexList;
@@ -435,24 +435,16 @@ void cell::printHumanReadable(std::vector<Vertex>& substrateList){
 
 	for (int i: availableReactions){
 
-		int id=graph[reacList[i]].reac.getListNr();
+		int id=reactionVector[i].getListNr();
 
-		std::vector<int> products = graph[reacList[i-1]].reac.getproducts();
-		std::vector<int> substrates = graph[reacList[i-1]].reac.getsubstrates();
+		std::vector<int> products = reactionVector[i].getproducts();
+		std::vector<int> substrates = reactionVector[i].getsubstrates();
 
 		std::cout<<id<<": ";
 		for (int j:substrates){
 			//figuring out whether we have a meaningful name
-			std::string toPrint,name,molecule;
-			molecule=graph[substrateList[j+nrOfInternalMetabolites]].sub.molecule;
-			name=graph[substrateList[j+nrOfInternalMetabolites]].sub.name;
+			std::string toPrint=substrateVector[j].niceSubstrateName();
 
-			if (name.compare(emptyName) == 0){
-				toPrint=molecule;
-			}
-			else {
-				toPrint=name;
-			}
 			std::cout<<toPrint<<" + ";
 			//std::cout<<graph[substrateList[j+13]].sub.index<<" + ";
 		}
@@ -462,17 +454,9 @@ void cell::printHumanReadable(std::vector<Vertex>& substrateList){
 
 		for (int j:products){
 			//figuring out whether we have a meaningful name
-			std::string toPrint,name,molecule;
-			molecule=graph[substrateList[j+nrOfInternalMetabolites]].sub.molecule;
-			name=graph[substrateList[j+nrOfInternalMetabolites]].sub.name;
 
+			std::string toPrint=substrateVector[j].niceSubstrateName();
 
-			if (name.compare(emptyName) == 0){
-				toPrint=molecule;
-			}
-			else {
-				toPrint=name;
-			}
 			std::cout<<toPrint<<" + ";
 			//std::cout<<graph[substrateList[j+13]].sub.index<<" + ";
 
