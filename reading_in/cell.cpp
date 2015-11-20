@@ -3,8 +3,8 @@
 
 // static class variables
 
-std::vector<reaction> reactionVector;
-std::vector<substrate> substrateVector;
+std::vector<reaction> cell::reactionVector;
+std::vector<substrate> cell::substrateVector;
 int cell::nrOfInternalMetabolites;
 double cell::smallKforFitness;
 
@@ -32,11 +32,8 @@ void cell::printReacs() {
 	std::cout<<" END"<<std::endl;
 }
 
-void cell::printCytoscape(std::vector<Vertex> internals){
+void cell::printCytoscape(){
 
-	ReactionNetwork allReacs=allTheReactions;
-	std::vector<Vertex> Vertexlist=reactionVertexList;
-	std::vector<Vertex> substrateList=substrateVertexList;
 
 	std::ofstream outfile,typesfile;
 	outfile.open("test.txt");
@@ -152,8 +149,6 @@ std::vector<int> cell::canBeAdded(){
 void cell::mutate( RandomGeneratorType& generator ){
 
 
-	ReactionNetwork allReacs=allTheReactions;
-	std::vector<Vertex> Vertexlist=reactionVertexList;
 	//int compoundSize= substrateVertexList.size();
 //	std::cout<<"Random numbers:";
 //	for (int i=1; i<50; i++){
@@ -180,7 +175,7 @@ void cell::mutate( RandomGeneratorType& generator ){
 	//calculating current throughput
 	bool areWeAdding= doWeAdd<=addProb;
 	if(areWeAdding){
-		std::vector<int> whatCanWeAdd = canBeAdded(internals);
+		std::vector<int> whatCanWeAdd = canBeAdded();
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
 		std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
 		//+1 required as the file from which we read starts with line 1, but vectors number from 0 
@@ -287,8 +282,8 @@ double cell::calcThroughput(){
 	for(int metab=0; metab<nrOfInternalMetabolites; metab++){substrateSet.erase(metab);}
 
 	//in order to always have the source and sink nodes
-	substrateSet.insert(substrateVertexList[nrOfInternalMetabolites]);
-	substrateSet.insert(substrateVertexList[nrOfInternalMetabolites+908]);
+	substrateSet.insert(0);
+	substrateSet.insert(908);
 		
 	while(!substrateSet.empty()){
 
@@ -429,9 +424,6 @@ double cell::calcThroughput(){
 
 void cell::printHumanReadable(){
 
-	ReactionNetwork graph=allTheReactions;
-	std::vector<Vertex> reacList=reactionVertexList;
-	std::string emptyName = ("---");
 
 	for (int i: availableReactions){
 

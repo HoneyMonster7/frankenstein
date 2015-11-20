@@ -49,7 +49,7 @@ class cell{
 	inline std::vector<int> getReacs() {return availableReactions;}
 	inline double getPerformance() {return performance;}
 
-	void mutate(RandomGeneratorType& generator , std::vector<Vertex>& internals);
+	void mutate(RandomGeneratorType& generator);
 
 	void printReacs();
 
@@ -60,7 +60,7 @@ class cell{
 	//static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 
 
-	void printHumanReadable(std::vector<Vertex>& substrateList);
+	void printHumanReadable();
 	void printCytoscape();
 
 	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
