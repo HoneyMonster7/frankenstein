@@ -19,11 +19,12 @@ void substrate::addInvolved(int addThisReac){
 }
 
 void substrate::printInvolved(){
+	std::cout<<niceSubstrateName()<<" is involved in: ";
 	for (int i: involvedInReacs){
 		std::cout<<i<<", ";
 	}
 
-	std::cout<<"in substrate"<<molecule<<std::endl;
+	std::cout<<std::endl;
 }
 
 void substrate::buildNeighbourList(std::vector<reaction>& reacList, std::vector<substrate>& substrateVector){

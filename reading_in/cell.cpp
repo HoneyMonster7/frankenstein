@@ -15,7 +15,7 @@ cell::cell(std::vector<int>& tmpAvailReacs)
 {
 	double initialPerformance=calcThroughput();
 	performance=initialPerformance;
-	firstPerformance=initialPerformance;
+	firstPerformance=initialPerformance/22;
 }
 
 
@@ -122,7 +122,9 @@ std::vector<int> cell::canBeAdded(){
 	for (int i=0; i<nrOfAvailableReactions;i++){
 	//	std::cout<<"Reaction number:"<<i<<std::endl;
 
-		std::vector<int> neighboursOfCurrentReac=reactionVector[availableReactions[i]].getNeighbours();
+		std::vector<int> neighboursOfCurrentReac=reactionVector[availableReactions[i]-1].getNeighbours();
+		//reactionVector[availableReactions[i]-1].printReaction();
+		//reactionVector[availableReactions[i]-1].printNeighbours();
 
 		for (int j:neighboursOfCurrentReac){
 			canAdd.insert(j);
@@ -133,15 +135,19 @@ std::vector<int> cell::canBeAdded(){
 	for (int i:availableReactions){
 
 		//getting rid of reactions that are already in the network
-		canAdd.erase(i);
+	
+		int alreadyInReacNr=reactionVector[i-1].getListNr();
+		canAdd.erase(alreadyInReacNr);
 	}
 
 	std::vector<int> tobereturned(canAdd.begin(),canAdd.end());
 	
 	//uncomment for printing out the line numbers of possible reactions to be added 
+	//std::cout<<"We can add: ";
 	//for (auto whatever:tobereturned){
-	//	std::cout<<whatever+1<<std::endl;
+	//	std::cout<<whatever<<", ";
 	//}
+	//std::cout<<std::endl;
 		return tobereturned;
 
 }
@@ -155,7 +161,7 @@ void cell::mutate( RandomGeneratorType& generator ){
 //		std::cout<<gen()%availableReactions.size()<<", ";
 //	}
 
-	int currentReactionNumber = availableReactions.size();
+	//int currentReactionNumber = availableReactions.size();
 
 
 	int deleteThisOne,addThisOne;
@@ -168,7 +174,7 @@ void cell::mutate( RandomGeneratorType& generator ){
 	double addProb=0.5;
 
 	double doWeAdd=randomRealInRange(generator, 1);
-	double doWeDelete=randomRealInRange(generator,1);
+	//double doWeDelete=randomRealInRange(generator,1);
 	double doWeAccept=randomRealInRange(generator,1);
 
 
@@ -179,9 +185,10 @@ void cell::mutate( RandomGeneratorType& generator ){
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
 		std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
 		//+1 required as the file from which we read starts with line 1, but vectors number from 0 
-		//CHECK IF THE +1 IS REALLY NEEDED
+		//it is required, as the canbeAdded returns positions in the reactionVector and the
+		//availableReactions needs positions in the original file (vector position +1)
 		addThisOne=whatCanWeAdd[whichOneToAdd];
-		trialNewCell.push_back(addThisOne);
+		trialNewCell.push_back(addThisOne+1);
 	}
 
 	else{
@@ -205,9 +212,9 @@ void cell::mutate( RandomGeneratorType& generator ){
 	//}
 	//else{ std::cout<<"Changes too destructive, not implemented."<<std::endl;}
 	
-	if (doWeAccept<exp(-1.0*firstPerformance*(performance-proposedThroughput)))
+	if ((doWeAccept<exp(-1.0*(performance-proposedThroughput)/firstPerformance) && (availableReactions.size()>2)))
 	{
-		if(areWeAdding){availableReactions.push_back(addThisOne);}
+		if(areWeAdding){availableReactions.push_back(addThisOne+1);}
 		else{availableReactions.erase(availableReactions.begin()+deleteThisOne);}
 		performance=proposedThroughput;
 	}
@@ -266,15 +273,19 @@ double cell::calcThroughput(){
 
 
 		//CHECK IF THERE IS A +1 REQUIRED
-		reaction currentReac=reactionVector[i];
+		reaction currentReac=reactionVector[availableReactions[i]-1];
 
+		//std::cout<<"Reaction "<<currentReac.getListNr()<<" has ";
 		for (int j:currentReac.getsubstrates()){
-			substrateSet.insert(j);
+			substrateSet.insert(j+nrOfInternalMetabolites);
+		//	std::cout<<substrateVector[j+nrOfInternalMetabolites].niceSubstrateName()<<", ";
 		}
 		for (int j:currentReac.getproducts()){
-			substrateSet.insert(j);
+			substrateSet.insert(j+nrOfInternalMetabolites);
+		//	std::cout<<substrateVector[j+nrOfInternalMetabolites].niceSubstrateName()<<", ";
 		}
 
+		//std::cout<<std::endl;
 	}
 	
 	
@@ -282,12 +293,13 @@ double cell::calcThroughput(){
 	for(int metab=0; metab<nrOfInternalMetabolites; metab++){substrateSet.erase(metab);}
 
 	//in order to always have the source and sink nodes
-	substrateSet.insert(0);
-	substrateSet.insert(908);
+	substrateSet.insert(0+nrOfInternalMetabolites);
+	substrateSet.insert(911+nrOfInternalMetabolites);
 		
 	while(!substrateSet.empty()){
 
-		substrateIndex[*substrateSet.begin()+nrOfInternalMetabolites]=nextRowNumber;
+		substrateIndex[*substrateSet.begin()]=nextRowNumber;
+		//std::cout<<nextRowNumber<<" is "<<substrateVector[*substrateSet.begin()].niceSubstrateName()<<std::endl;
 		nextRowNumber++;
 		substrateSet.erase(substrateSet.begin());
 	}
@@ -317,7 +329,7 @@ double cell::calcThroughput(){
 	}
 	//extra column for the imaginary reaction getting rid of the final compound (objective function)
 	int listSize=availableReactions.size();
-	glp_add_cols(lp,listSize+4);
+	glp_add_cols(lp,listSize+5);
 
 	//for(int i=1; i<=listSize+4; i++){ glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);}
 
@@ -328,11 +340,14 @@ double cell::calcThroughput(){
 
 
 		//preparing the sparse matrix's values 
-		reaction tmpreac=reactionVector[availableReactions[i-1]];
+		//final -1 because the availableReactions stores the id form the file
+		//starting with 1, as opposed to the vector starting at 0
+		reaction tmpreac=reactionVector[availableReactions[i-1]-1];
 
 
 		double freeChange=tmpreac.getCurrentFreeEChange();
-		//std::cout<<"FreeEChange: "<<freeChange<<std::endl;
+		//std::cout<<"FreeEChange of : "<<tmpreac.getListNr()<<" is "<<freeChange<<std::endl;
+		//tmpreac.printReaction();
 		if(freeChange<0){
 		glp_set_col_bnds(lp,i,GLP_DB,0.0,1.0);
 		}
@@ -369,12 +384,14 @@ double cell::calcThroughput(){
 	glp_set_col_bnds(lp,listSize+1,GLP_DB,0.0,10.0);
 	glp_set_col_bnds(lp,listSize+2,GLP_DB,0.0,10.0);
 	glp_set_col_bnds(lp,listSize+3,GLP_DB,0.0,10.0);
+	glp_set_col_bnds(lp,listSize+5,GLP_DB,0.0,10.0);
 
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
-	ia.push_back(substrateIndex[908+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
+	ia.push_back(substrateIndex[911+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
 	ia.push_back(substrateIndex[-1+nrOfInternalMetabolites]);	ja.push_back(listSize+2); ar.push_back(1.0);
 	ia.push_back(substrateIndex[-2+nrOfInternalMetabolites]);	ja.push_back(listSize+3); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[-8+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(-1.0);
 	ia.push_back(substrateIndex[nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
 
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
@@ -393,9 +410,7 @@ double cell::calcThroughput(){
 	std::copy(ar.begin(),ar.end(),ararray+1);
 
 
-	//for (int i=0; i<=length; i++){
-
-
+	//for (int i=1; i<=length+1; i++){
 	//	std::cout<<"Matrix element: "<<iarray[i]<<", "<<jarray[i]<<", "<<ararray[i]<<std::endl;
 	//}
 
@@ -418,6 +433,8 @@ double cell::calcThroughput(){
 	//}
 	//std::cout<<std::endl;
 
+	//std::cout<<"goodness is "<<goodness<<std::endl;;
+	//std::cout<<"Fittness is "<<goodness-smallKforFitness*availableReactions.size()<<std::endl;;
 	return goodness-smallKforFitness*availableReactions.size();
 }
 

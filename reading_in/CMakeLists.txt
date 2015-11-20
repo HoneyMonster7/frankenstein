@@ -7,7 +7,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../cmake/")
 find_package(Boost REQUIRED)
 find_package(GLPK REQUIRED)
 
-add_executable(reaction main.cpp reaction.cpp cell cell.cpp)
+add_executable(reaction main.cpp reaction.cpp substrate.cpp cell cell.cpp)
+#add_executable(reaction main.cpp reaction.cpp cell cell.cpp)
 
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(reaction ${Boost_LIBRARIES})

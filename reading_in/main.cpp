@@ -12,7 +12,7 @@
 #include <algorithm>
 
 #include "reaction.h"
-//#include "cell.h"
+#include "cell.h"
 
 using namespace boost;
 
@@ -63,74 +63,55 @@ int main(int argc, char* argv[])
 	reacVector[129].printNeighbours();
 	reacVector[5108].printNeighbours();
 
-//	auto verts = vertices(lofasz);
-//	size_t count = std::distance(verts.first, verts.second);
-//
-//	std::cout<<"The graph has "<<count<<" vertices."<<std::endl;
-//
-//
-//	typedef graph_traits <ReactionNetwork> traits;
-//	typename traits::vertex_iterator vertex_iter, vertex_end;
-//
-//	bool bipartiteee = boost::is_bipartite(lofasz);
-//
-//	if (bipartiteee) {std::cout<<"The graph is bipartite"<<std::endl;}
-//	else {std::cout<<"The graph is not bipartite."<<std::endl;}
-//
-//
-//
-//	environment currentEnvironment;
-//	currentEnvironment.atpCont=1e-1;
-//	currentEnvironment.adpCont=1e-2;
-//	currentEnvironment.ampCont=1e-4;
-//	currentEnvironment.nadoxcont=1e-2;
-//	currentEnvironment.nadredcont=1e-2;
-//	currentEnvironment.piCont=1e-3;
-//	currentEnvironment.ppiCont=1e-3;
-//	currentEnvironment.co2cont=1e-5;
-//	currentEnvironment.nh3aqCont=1e-5;
-//	currentEnvironment.glutCont=1e-2;
-//	currentEnvironment.oxo2Cont=1e-3;
-//
-//
-//	for (Vertex current : reacVList){
-//
-//		lofasz[current].reac.recalcEchange(currentEnvironment);
-//	}
-//
-//
-//	std::vector<int> subset= {130,285,5107,5109};
-//	std::vector<Vertex> testReacList = cell::subsetVertices(subset,reacVList);
-//
-//
-//	cell::allTheReactions=lofasz;
-//	cell::reactionVertexList=reacVList;
-//	cell::substrateVertexList=compoundVList;
-//	cell::internalMetaboliteVList=internals;
-//	cell::nrOfInternalMetabolites=nrOfInternalMetabolites;
-//	//this is the k value for the fitness function
-//	cell::smallKforFitness=1e-2;
-//	cell trialcell(subset);
-//
-//	//int compsize=compoundVList.size();
-//
-//		trialcell.printCytoscape(internals);
-//
-//		std::cout<<"Adding&deleting tests."<<std::endl;
-//		for (int k=0; k<20; k++){
-//			//for testing
-//			//std::cout<<"Current reactions:";
-//			//std::vector<int> currentreacs=trialcell.getReacs();
-//			//for(auto i:currentreacs){std::cout<<i<<" ";}
-//			//std::cout<<k<<", "<<std::endl;
-//		trialcell.mutate(generator,internals);
-//		//trialcell.printHumanReadable(compoundVList);
-//
-//		trialcell.calcThroughput();
-//		}
-//
-//		trialcell.printCytoscape(internals);
-//	//cell::calcThroughput(compsize,lofasz,testReacList);
-//
-	std::cout<<"Tests completed."<<std::endl;
+	environment currentEnvironment;
+	currentEnvironment.atpCont=1e-1;
+	currentEnvironment.adpCont=1e-2;
+	currentEnvironment.ampCont=1e-4;
+	currentEnvironment.nadoxcont=1e-2;
+	currentEnvironment.nadredcont=1e-2;
+	currentEnvironment.piCont=1e-3;
+	currentEnvironment.ppiCont=1e-3;
+	currentEnvironment.co2cont=1e-5;
+	currentEnvironment.nh3aqCont=1e-5;
+	currentEnvironment.glutCont=1e-2;
+	currentEnvironment.oxo2Cont=1e-3;
+
+
+	for (reaction& current : reacVector){
+
+		current.recalcEchange(currentEnvironment);
+	}
+
+
+	std::vector<int> subset= {130,285,5107,5109,5146};
+
+
+	cell::nrOfInternalMetabolites=nrOfInternalMetabolites;
+	cell::reactionVector=reacVector;
+	cell::substrateVector=substrateVector;
+	//this is the k value for the fitness function
+	cell::smallKforFitness=1e-2;
+	cell trialcell(subset);
+
+	//int compsize=compoundVList.size();
+
+		trialcell.printCytoscape();
+
+		std::cout<<"Adding&deleting tests."<<std::endl;
+		for (int k=0; k<2000; k++){
+			//for testing
+			//std::cout<<"Current reactions:";
+			//std::vector<int> currentreacs=trialcell.getReacs();
+			//for(auto i:currentreacs){std::cout<<i<<" ";}
+			//std::cout<<k<<", "<<std::endl;
+		trialcell.mutate(generator);
+		//trialcell.printHumanReadable(compoundVList);
+
+		trialcell.calcThroughput();
+		}
+
+		//trialcell.printCytoscape();
+	//cell::calcThroughput(compsize,lofasz,testReacList);
+
+  std::cout<<"Tests completed."<<std::endl;
 }
