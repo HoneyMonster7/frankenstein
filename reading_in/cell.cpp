@@ -1,4 +1,5 @@
 #include "cell.h"
+#include <tuple>
 
 
 // static class variables
@@ -44,12 +45,15 @@ void cell::printCytoscape(){
 	std::set<int> reacNumbers;
 	std::set<int> compoundIDs;
 	std::set<int> internalMetIDs;
+	std::vector<std::tuple<int,double,int>> edgeVector;
 	typesfile.open("node_types.txt");
 	edgeFile.open("edge_attributes.txt");
 	xgmmlFile.open("test.xgmml");
 
 
 	//typesfile<<"Name Type"<<std::endl;
+	xgmmlFile<<"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"<<std::endl;
+	xgmmlFile<<"<graph label=\"justAGraph\" xmlns:cy=\"http://www.cytoscape.org\" xmlns=\"http://www.cs.rpi.edu/XGMML\" directed=\"1\">"<<std::endl;
 
 	outfile<<"Source	Type	Target"<<std::endl;
 
@@ -75,6 +79,8 @@ void cell::printCytoscape(){
 				outfile<<substrateName<<" cr "<<reacNR<<std::endl;
 				edgeFile<<substrateName<<" (cr) "<<reacNR<<" = "<<fluxOfCurrentReaction<<std::endl;
 					compoundIDs.insert(sub);
+					//-1 here because that will be the ID of the reactions
+					edgeVector.emplace_back(sub,fluxOfCurrentReaction,-1*reacNR);
 			//}
 
 		}
@@ -87,6 +93,8 @@ void cell::printCytoscape(){
 				outfile<<reacNR<<" rc "<<productName<<std::endl;
 				edgeFile<<reacNR<<" (rc) "<<productName<<" = "<<fluxOfCurrentReaction<<std::endl;
 					compoundIDs.insert(prod);
+					//-1 here because that will be the ID of the reactions
+					edgeVector.emplace_back(-1*reacNR,fluxOfCurrentReaction,prod);
 			//}
 
 		}
@@ -103,32 +111,64 @@ void cell::printCytoscape(){
 	compoundIDs.erase(sourceSubstrate);
 	compoundIDs.erase(sinkSubstrate);
 	typesfile<<sourceName<<" = Source"<<std::endl;
+	xgmmlFile<<"<node label=\""<<sourceName<<"\" id=\""<<sourceSubstrate+nrOfInternalMetabolites<<"\"/>"<<std::endl;
+	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Source\"/>"<<std::endl;
+	xgmmlFile<<"</node>"<<std::endl;
 	typesfile<<sinkName<<" = Sink"<<std::endl;
+	xgmmlFile<<"<node label=\""<<sinkName<<"\" id=\""<<sinkSubstrate+nrOfInternalMetabolites<<"\"/>"<<std::endl;
+	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Source\"/>"<<std::endl;
+	xgmmlFile<<"</node>"<<std::endl;
 
 
 	//looping through all the internalMet names writing them into the type file, removing them from the substrate list
 	while(!internalMetIDs.empty()){
 		compoundIDs.erase(*internalMetIDs.begin());
+		std::string currentName=substrateVector[*internalMetIDs.begin()+nrOfInternalMetabolites].niceSubstrateName();
 		typesfile<<substrateVector[*internalMetIDs.begin()+nrOfInternalMetabolites].niceSubstrateName()<<" = InternalMet"<<std::endl;
 		internalMetIDs.erase(internalMetIDs.begin());
+
+		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*internalMetIDs.begin()+nrOfInternalMetabolites<<"\"/>"<<std::endl;
+		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"InternalMet\"/>"<<std::endl;
+		xgmmlFile<<"</node>"<<std::endl;
 	}
 	//doing the same with reacnubmers
 	while(!reacNumbers.empty()){
+		int currentReacNumber=*reacNumbers.begin();
 		typesfile<<*reacNumbers.begin()<<" = Reaction"<<std::endl;
+		xgmmlFile<<"<node label=\""<<currentReacNumber<<"\" id=\""<<-1*currentReacNumber<<"\"/>"<<std::endl;
+		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Reaction\"/>"<<std::endl;
+		xgmmlFile<<"</node>"<<std::endl;
 		reacNumbers.erase(reacNumbers.begin());
 	}
 	//now with the normal substrates NEED TO DIFFERENTIATE BETWEEN SOURCE AND SINK LATER
 	
 
 	while(!compoundIDs.empty()){
-		
-		typesfile<<substrateVector[*compoundIDs.begin()+nrOfInternalMetabolites].niceSubstrateName()<<" = Compound"<<std::endl;
+		std::string currentName=substrateVector[*compoundIDs.begin()+nrOfInternalMetabolites].niceSubstrateName();
+		typesfile<<currentName<<" = Compound"<<std::endl;
+		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*compoundIDs.begin()+nrOfInternalMetabolites<<"\"/>"<<std::endl;
+		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Compound\"/>"<<std::endl;
+		xgmmlFile<<"</node>"<<std::endl;
 		compoundIDs.erase(compoundIDs.begin());
 	}
 
+	for (std::tuple<int,double,int> currentEdge:edgeVector){
+		int source, sink;
+		double flux;
+		std::tie (source,flux,sink) = currentEdge;
+
+		xgmmlFile<<"<edge label=\"justAnEdge\" source=\""<<source<<"\" target=\""<<sink<<"\"/>"<<std::endl;
+		xgmmlFile<<"\t <att name=\"flux\" type=\"double\" value=\""<<flux<<"\"/>"<<std::endl;
+		xgmmlFile<<"</edge>"<<std::endl;
+
+	}
+
+	xgmmlFile<<"</graph>"<<std::endl;
+	
 	outfile.close();
 	typesfile.close();
 	edgeFile.close();
+	xgmmlFile.close();
 	}
 
 
