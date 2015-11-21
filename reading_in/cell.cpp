@@ -38,14 +38,16 @@ void cell::printReacs() {
 void cell::printCytoscape(){
 
 
-	std::ofstream outfile,typesfile,edgeFile;
+	std::ofstream outfile,typesfile,edgeFile,xgmmlFile;
 	outfile.open("test.txt");
 	//for the node_types
 	std::set<int> reacNumbers;
-	std::set<std::string> compoundNames;
-	std::set<std::string> internalMetNames;
+	std::set<int> compoundIDs;
+	std::set<int> internalMetIDs;
 	typesfile.open("node_types.txt");
 	edgeFile.open("edge_attributes.txt");
+	xgmmlFile.open("test.xgmml");
+
 
 	//typesfile<<"Name Type"<<std::endl;
 
@@ -72,7 +74,7 @@ void cell::printCytoscape(){
 				std::cout<<substrateName<<" cr "<<reacNR<<std::endl;
 				outfile<<substrateName<<" cr "<<reacNR<<std::endl;
 				edgeFile<<substrateName<<" (cr) "<<reacNR<<" = "<<fluxOfCurrentReaction<<std::endl;
-					compoundNames.insert(substrateName);
+					compoundIDs.insert(sub);
 			//}
 
 		}
@@ -84,30 +86,31 @@ void cell::printCytoscape(){
 				std::cout<<reacNR<<" rc "<<productName<<std::endl;
 				outfile<<reacNR<<" rc "<<productName<<std::endl;
 				edgeFile<<reacNR<<" (rc) "<<productName<<" = "<<fluxOfCurrentReaction<<std::endl;
-					compoundNames.insert(productName);
+					compoundIDs.insert(prod);
 			//}
 
 		}
 	}
 
 	for (int i=0; i<nrOfInternalMetabolites; i++){
-		internalMetNames.insert(substrateVector[i].niceSubstrateName());
+		internalMetIDs.insert(i-nrOfInternalMetabolites);
 	}
+
 
 	std::string sourceName=substrateVector[sourceSubstrate+nrOfInternalMetabolites].niceSubstrateName();
 	std::string sinkName=substrateVector[sinkSubstrate+nrOfInternalMetabolites].niceSubstrateName();
 
-	compoundNames.erase(sourceName);
-	compoundNames.erase(sinkName);
+	compoundIDs.erase(sourceSubstrate);
+	compoundIDs.erase(sinkSubstrate);
 	typesfile<<sourceName<<" = Source"<<std::endl;
 	typesfile<<sinkName<<" = Sink"<<std::endl;
 
 
 	//looping through all the internalMet names writing them into the type file, removing them from the substrate list
-	while(!internalMetNames.empty()){
-		compoundNames.erase(*internalMetNames.begin());
-		typesfile<<*internalMetNames.begin()<<" = InternalMet"<<std::endl;
-		internalMetNames.erase(internalMetNames.begin());
+	while(!internalMetIDs.empty()){
+		compoundIDs.erase(*internalMetIDs.begin());
+		typesfile<<substrateVector[*internalMetIDs.begin()+nrOfInternalMetabolites].niceSubstrateName()<<" = InternalMet"<<std::endl;
+		internalMetIDs.erase(internalMetIDs.begin());
 	}
 	//doing the same with reacnubmers
 	while(!reacNumbers.empty()){
@@ -117,10 +120,10 @@ void cell::printCytoscape(){
 	//now with the normal substrates NEED TO DIFFERENTIATE BETWEEN SOURCE AND SINK LATER
 	
 
-	while(!compoundNames.empty()){
+	while(!compoundIDs.empty()){
 		
-		typesfile<<*compoundNames.begin()<<" = Compound"<<std::endl;
-		compoundNames.erase(compoundNames.begin());
+		typesfile<<substrateVector[*compoundIDs.begin()+nrOfInternalMetabolites].niceSubstrateName()<<" = Compound"<<std::endl;
+		compoundIDs.erase(compoundIDs.begin());
 	}
 
 	outfile.close();
