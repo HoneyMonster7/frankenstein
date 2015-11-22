@@ -80,7 +80,7 @@ void cell::printCytoscape(){
 				edgeFile<<substrateName<<" (cr) "<<reacNR<<" = "<<fluxOfCurrentReaction<<std::endl;
 					compoundIDs.insert(sub);
 					//-1 here because that will be the ID of the reactions
-					edgeVector.emplace_back(sub,fluxOfCurrentReaction,-1*reacNR);
+					edgeVector.emplace_back(sub+nrOfInternalMetabolites,fluxOfCurrentReaction,-1*reacNR);
 			//}
 
 		}
@@ -94,7 +94,7 @@ void cell::printCytoscape(){
 				edgeFile<<reacNR<<" (rc) "<<productName<<" = "<<fluxOfCurrentReaction<<std::endl;
 					compoundIDs.insert(prod);
 					//-1 here because that will be the ID of the reactions
-					edgeVector.emplace_back(-1*reacNR,fluxOfCurrentReaction,prod);
+					edgeVector.emplace_back(-1*reacNR,fluxOfCurrentReaction,prod+nrOfInternalMetabolites);
 			//}
 
 		}
@@ -111,11 +111,11 @@ void cell::printCytoscape(){
 	compoundIDs.erase(sourceSubstrate);
 	compoundIDs.erase(sinkSubstrate);
 	typesfile<<sourceName<<" = Source"<<std::endl;
-	xgmmlFile<<"<node label=\""<<sourceName<<"\" id=\""<<sourceSubstrate+nrOfInternalMetabolites<<"\"/>"<<std::endl;
+	xgmmlFile<<"<node label=\""<<sourceName<<"\" id=\""<<sourceSubstrate+nrOfInternalMetabolites<<"\">"<<std::endl;
 	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Source\"/>"<<std::endl;
 	xgmmlFile<<"</node>"<<std::endl;
 	typesfile<<sinkName<<" = Sink"<<std::endl;
-	xgmmlFile<<"<node label=\""<<sinkName<<"\" id=\""<<sinkSubstrate+nrOfInternalMetabolites<<"\"/>"<<std::endl;
+	xgmmlFile<<"<node label=\""<<sinkName<<"\" id=\""<<sinkSubstrate+nrOfInternalMetabolites<<"\">"<<std::endl;
 	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Source\"/>"<<std::endl;
 	xgmmlFile<<"</node>"<<std::endl;
 
@@ -127,7 +127,7 @@ void cell::printCytoscape(){
 		typesfile<<substrateVector[*internalMetIDs.begin()+nrOfInternalMetabolites].niceSubstrateName()<<" = InternalMet"<<std::endl;
 		internalMetIDs.erase(internalMetIDs.begin());
 
-		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*internalMetIDs.begin()+nrOfInternalMetabolites<<"\"/>"<<std::endl;
+		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*internalMetIDs.begin()+nrOfInternalMetabolites<<"\">"<<std::endl;
 		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"InternalMet\"/>"<<std::endl;
 		xgmmlFile<<"</node>"<<std::endl;
 	}
@@ -135,7 +135,7 @@ void cell::printCytoscape(){
 	while(!reacNumbers.empty()){
 		int currentReacNumber=*reacNumbers.begin();
 		typesfile<<*reacNumbers.begin()<<" = Reaction"<<std::endl;
-		xgmmlFile<<"<node label=\""<<currentReacNumber<<"\" id=\""<<-1*currentReacNumber<<"\"/>"<<std::endl;
+		xgmmlFile<<"<node label=\""<<currentReacNumber<<"\" id=\""<<-1*currentReacNumber<<"\">"<<std::endl;
 		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Reaction\"/>"<<std::endl;
 		xgmmlFile<<"</node>"<<std::endl;
 		reacNumbers.erase(reacNumbers.begin());
@@ -146,7 +146,7 @@ void cell::printCytoscape(){
 	while(!compoundIDs.empty()){
 		std::string currentName=substrateVector[*compoundIDs.begin()+nrOfInternalMetabolites].niceSubstrateName();
 		typesfile<<currentName<<" = Compound"<<std::endl;
-		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*compoundIDs.begin()+nrOfInternalMetabolites<<"\"/>"<<std::endl;
+		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*compoundIDs.begin()+nrOfInternalMetabolites<<"\">"<<std::endl;
 		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Compound\"/>"<<std::endl;
 		xgmmlFile<<"</node>"<<std::endl;
 		compoundIDs.erase(compoundIDs.begin());
@@ -157,7 +157,7 @@ void cell::printCytoscape(){
 		double flux;
 		std::tie (source,flux,sink) = currentEdge;
 
-		xgmmlFile<<"<edge label=\"justAnEdge\" source=\""<<source<<"\" target=\""<<sink<<"\"/>"<<std::endl;
+		xgmmlFile<<"<edge label=\"justAnEdge\" source=\""<<source<<"\" target=\""<<sink<<"\">"<<std::endl;
 		xgmmlFile<<"\t <att name=\"flux\" type=\"double\" value=\""<<flux<<"\"/>"<<std::endl;
 		xgmmlFile<<"</edge>"<<std::endl;
 
