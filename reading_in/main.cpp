@@ -100,10 +100,11 @@ int main(int argc, char* argv[])
 
 	//int compsize=compoundVList.size();
 
-		trialcell.printCytoscape();
+	std::string fileName="initial";
+		trialcell.printXGMML(fileName);
 
 		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<30; k++){
+		for (int k=0; k<30000; k++){
 			//for testing
 			//std::cout<<"Current reactions:";
 			//std::vector<int> currentreacs=trialcell.getReacs();
@@ -115,8 +116,8 @@ int main(int argc, char* argv[])
 		trialcell.calcThroughput();
 		}
 
-		//trialcell.printCytoscape();
-	//cell::calcThroughput(compsize,lofasz,testReacList);
+		fileName="final";
+		trialcell.printXGMML(fileName);
 
   std::cout<<"Tests completed."<<std::endl;
 }

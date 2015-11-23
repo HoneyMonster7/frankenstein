@@ -36,33 +36,31 @@ void cell::printReacs() {
 	std::cout<<" END"<<std::endl;
 }
 
-void cell::printCytoscape(){
+void cell::printXGMML(std::string filename){
 
 
 	std::ofstream outfile,typesfile,edgeFile,xgmmlFile;
-	outfile.open("test.txt");
 	//for the node_types
 	std::set<int> reacNumbers;
 	std::set<int> compoundIDs;
 	std::set<int> internalMetIDs;
 	std::vector<std::tuple<int,double,int>> edgeVector;
-	typesfile.open("node_types.txt");
-	edgeFile.open("edge_attributes.txt");
-	xgmmlFile.open("test.xgmml");
+
+	std::string fileToOpen=filename + ".xgmml";
+	xgmmlFile.open(fileToOpen);
 
 
 	//typesfile<<"Name Type"<<std::endl;
 	xgmmlFile<<"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"<<std::endl;
 	xgmmlFile<<"<graph label=\"justAGraph\" xmlns:cy=\"http://www.cytoscape.org\" xmlns=\"http://www.cs.rpi.edu/XGMML\" directed=\"1\">"<<std::endl;
 
-	outfile<<"Source	Type	Target"<<std::endl;
 
 	for (int j=0; j<availableReactions.size();j++){
 
 		int i=availableReactions[j];
 		double fluxOfCurrentReaction=fluxThroughReacs[j];
+		//in order to get rid of the 1e-300 kind of fluxes
 		if (std::abs(fluxOfCurrentReaction)<1e-6){fluxOfCurrentReaction=0;}
-		std::cout<<"The flux of "<<i<<" is "<<fluxOfCurrentReaction<<std::endl;
 		reaction currentReac= reactionVector[i-1];
 		std::vector<int> currentsubs=currentReac.getsubstrates();
 		std::vector<int> currentproducts=currentReac.getproducts();
@@ -72,30 +70,19 @@ void cell::printCytoscape(){
 		reacNumbers.insert(reacNR);
 
 		for (int sub:currentsubs){
-			//if (sub>=nrOfInternalMetabolites){
 				std::string substrateName=substrateVector[sub+nrOfInternalMetabolites].niceSubstrateName();
-
-				std::cout<<substrateName<<" cr "<<reacNR<<std::endl;
-				outfile<<substrateName<<" cr "<<reacNR<<std::endl;
-				edgeFile<<substrateName<<" (cr) "<<reacNR<<" = "<<fluxOfCurrentReaction<<std::endl;
 					compoundIDs.insert(sub);
 					//-1 here because that will be the ID of the reactions
 					edgeVector.emplace_back(sub+nrOfInternalMetabolites,fluxOfCurrentReaction,-1*reacNR);
-			//}
 
 		}
 
 		for (int prod:currentproducts){
-			//if (prod>=nrOfInternalMetabolites){
 				std::string productName=substrateVector[prod+nrOfInternalMetabolites].niceSubstrateName();
 
-				std::cout<<reacNR<<" rc "<<productName<<std::endl;
-				outfile<<reacNR<<" rc "<<productName<<std::endl;
-				edgeFile<<reacNR<<" (rc) "<<productName<<" = "<<fluxOfCurrentReaction<<std::endl;
 					compoundIDs.insert(prod);
 					//-1 here because that will be the ID of the reactions
 					edgeVector.emplace_back(-1*reacNR,fluxOfCurrentReaction,prod+nrOfInternalMetabolites);
-			//}
 
 		}
 	}
@@ -110,11 +97,9 @@ void cell::printCytoscape(){
 
 	compoundIDs.erase(sourceSubstrate);
 	compoundIDs.erase(sinkSubstrate);
-	typesfile<<sourceName<<" = Source"<<std::endl;
 	xgmmlFile<<"<node label=\""<<sourceName<<"\" id=\""<<sourceSubstrate+nrOfInternalMetabolites<<"\">"<<std::endl;
 	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Source\"/>"<<std::endl;
 	xgmmlFile<<"</node>"<<std::endl;
-	typesfile<<sinkName<<" = Sink"<<std::endl;
 	xgmmlFile<<"<node label=\""<<sinkName<<"\" id=\""<<sinkSubstrate+nrOfInternalMetabolites<<"\">"<<std::endl;
 	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Sink\"/>"<<std::endl;
 	xgmmlFile<<"</node>"<<std::endl;
@@ -124,17 +109,15 @@ void cell::printCytoscape(){
 	while(!internalMetIDs.empty()){
 		compoundIDs.erase(*internalMetIDs.begin());
 		std::string currentName=substrateVector[*internalMetIDs.begin()+nrOfInternalMetabolites].niceSubstrateName();
-		typesfile<<substrateVector[*internalMetIDs.begin()+nrOfInternalMetabolites].niceSubstrateName()<<" = InternalMet"<<std::endl;
-		internalMetIDs.erase(internalMetIDs.begin());
 
-		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*internalMetIDs.begin()+nrOfInternalMetabolites-1<<"\">"<<std::endl;
+		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*internalMetIDs.begin()+nrOfInternalMetabolites<<"\">"<<std::endl;
 		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"InternalMet\"/>"<<std::endl;
 		xgmmlFile<<"</node>"<<std::endl;
+		internalMetIDs.erase(internalMetIDs.begin());
 	}
 	//doing the same with reacnubmers
 	while(!reacNumbers.empty()){
 		int currentReacNumber=*reacNumbers.begin();
-		typesfile<<*reacNumbers.begin()<<" = Reaction"<<std::endl;
 		xgmmlFile<<"<node label=\""<<currentReacNumber<<"\" id=\""<<-1*currentReacNumber<<"\">"<<std::endl;
 		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Reaction\"/>"<<std::endl;
 		xgmmlFile<<"</node>"<<std::endl;
@@ -145,7 +128,6 @@ void cell::printCytoscape(){
 
 	while(!compoundIDs.empty()){
 		std::string currentName=substrateVector[*compoundIDs.begin()+nrOfInternalMetabolites].niceSubstrateName();
-		typesfile<<currentName<<" = Compound"<<std::endl;
 		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*compoundIDs.begin()+nrOfInternalMetabolites<<"\">"<<std::endl;
 		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Compound\"/>"<<std::endl;
 		xgmmlFile<<"</node>"<<std::endl;
@@ -165,9 +147,6 @@ void cell::printCytoscape(){
 
 	xgmmlFile<<"</graph>"<<std::endl;
 	
-	outfile.close();
-	typesfile.close();
-	edgeFile.close();
 	xgmmlFile.close();
 	}
 
@@ -248,7 +227,7 @@ void cell::mutate( RandomGeneratorType& generator ){
 	if(areWeAdding){
 		std::vector<int> whatCanWeAdd = canBeAdded();
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
-		std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
+		//std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
 		//+1 required as the file from which we read starts with line 1, but vectors number from 0 
 		//it is required, as the canbeAdded returns positions in the reactionVector and the
 		//availableReactions needs positions in the original file (vector position +1)
@@ -259,7 +238,7 @@ void cell::mutate( RandomGeneratorType& generator ){
 	else{
 
 		int whichOneToDel=randomIntInRange(generator,trialNewCell.size()-1);
-		std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
+		//std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
 		deleteThisOne=whichOneToDel;
 		trialNewCell.erase(trialNewCell.begin()+deleteThisOne);
 	}
@@ -502,17 +481,19 @@ double cell::calcThroughput(){
 
 	std::vector<double> tmpFluxes(availableReactions.size());
 
-	std::cout<<"Fluxes are: ";
+	//std::cout<<"Fluxes are: ";
 	for (int i=0;i<availableReactions.size();i++){
 
 		tmpFluxes[i]=glp_get_col_prim(lp,i+1);
-		std::cout<<tmpFluxes[i]<<", ";
+	//	std::cout<<tmpFluxes[i]<<", ";
 	}
-	std::cout<<std::endl;
+	//std::cout<<std::endl;
 
 	setFluxes(tmpFluxes);
 	//std::cout<<"goodness is "<<goodness<<std::endl;;
 	//std::cout<<"Fittness is "<<goodness-smallKforFitness*availableReactions.size()<<std::endl;;
+	glp_delete_prob(lp);
+
 	return goodness-smallKforFitness*availableReactions.size();
 }
 
