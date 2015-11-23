@@ -116,7 +116,7 @@ void cell::printCytoscape(){
 	xgmmlFile<<"</node>"<<std::endl;
 	typesfile<<sinkName<<" = Sink"<<std::endl;
 	xgmmlFile<<"<node label=\""<<sinkName<<"\" id=\""<<sinkSubstrate+nrOfInternalMetabolites<<"\">"<<std::endl;
-	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Source\"/>"<<std::endl;
+	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Sink\"/>"<<std::endl;
 	xgmmlFile<<"</node>"<<std::endl;
 
 
@@ -127,7 +127,7 @@ void cell::printCytoscape(){
 		typesfile<<substrateVector[*internalMetIDs.begin()+nrOfInternalMetabolites].niceSubstrateName()<<" = InternalMet"<<std::endl;
 		internalMetIDs.erase(internalMetIDs.begin());
 
-		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*internalMetIDs.begin()+nrOfInternalMetabolites<<"\">"<<std::endl;
+		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*internalMetIDs.begin()+nrOfInternalMetabolites-1<<"\">"<<std::endl;
 		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"InternalMet\"/>"<<std::endl;
 		xgmmlFile<<"</node>"<<std::endl;
 	}
@@ -157,8 +157,8 @@ void cell::printCytoscape(){
 		double flux;
 		std::tie (source,flux,sink) = currentEdge;
 
-		xgmmlFile<<"<edge label=\"justAnEdge\" source=\""<<source<<"\" target=\""<<sink<<"\">"<<std::endl;
-		xgmmlFile<<"\t <att name=\"flux\" type=\"double\" value=\""<<flux<<"\"/>"<<std::endl;
+		xgmmlFile<<"<edge label=\""<<source<<" - "<<sink<<"\" source=\""<<source<<"\" target=\""<<sink<<"\">"<<std::endl;
+		xgmmlFile<<"\t <att name=\"flux\" type=\"real\" value=\""<<flux<<"\"/>"<<std::endl;
 		xgmmlFile<<"</edge>"<<std::endl;
 
 	}
