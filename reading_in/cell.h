@@ -35,11 +35,12 @@ class cell{
 	std::vector<int> availableReactions;
 	double performance;
 	private: double firstPerformance;
-	public: static ReactionNetwork allTheReactions;
+			 std::vector<double> fluxThroughReacs;
+	public: 
 
-			static std::vector<Vertex> reactionVertexList;
-			static std::vector<Vertex> substrateVertexList;
-			static std::vector<Vertex> internalMetaboliteVList;
+			static int sourceSubstrate,sinkSubstrate;
+			static std::vector<reaction> reactionVector;
+			static std::vector<substrate> substrateVector;
 			static int nrOfInternalMetabolites;
 			static double smallKforFitness;
 
@@ -50,20 +51,21 @@ class cell{
 	inline std::vector<int> getReacs() {return availableReactions;}
 	inline double getPerformance() {return performance;}
 
-	void mutate(RandomGeneratorType& generator , std::vector<Vertex>& internals);
+	inline std::vector<double> getFluxes() {return fluxThroughReacs;}
+	void mutate(RandomGeneratorType& generator);
 
 	void printReacs();
 
-	 std::vector<int> canBeAdded(std::vector<Vertex>& internals);
+	 std::vector<int> canBeAdded();
 
 
+	void setFluxes(std::vector<double>& fluxVector);
 	double calcThroughput();
-	static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
-	static std::string niceSubstrateName(Vertex currentVertex);
+	//static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 
 
-	void printHumanReadable(std::vector<Vertex>& substrateList);
-	void printCytoscape(std::vector<Vertex> internals);
+	void printHumanReadable();
+	void printCytoscape();
 
 	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
 			 double randomRealInRange(RandomGeneratorType& generator, double maxNumber);

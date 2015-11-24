@@ -1,13 +1,14 @@
 #include "cell.h"
+#include <tuple>
 
 
 // static class variables
-ReactionNetwork cell::allTheReactions;
 
-std::vector<Vertex> cell::reactionVertexList;
-std::vector<Vertex> cell::substrateVertexList;
-std::vector<Vertex> cell::internalMetaboliteVList;
+std::vector<reaction> cell::reactionVector;
+std::vector<substrate> cell::substrateVector;
 int cell::nrOfInternalMetabolites;
+int cell::sourceSubstrate;
+int cell::sinkSubstrate;
 double cell::smallKforFitness;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
@@ -16,8 +17,9 @@ cell::cell(std::vector<int>& tmpAvailReacs)
 
 {
 	double initialPerformance=calcThroughput();
+	std::vector<double> fluxThroughReacs(availableReactions.size());
 	performance=initialPerformance;
-	firstPerformance=initialPerformance;
+	firstPerformance=initialPerformance/22;
 }
 
 
@@ -34,25 +36,32 @@ void cell::printReacs() {
 	std::cout<<" END"<<std::endl;
 }
 
-void cell::printCytoscape(std::vector<Vertex> internals){
+void cell::printXGMML(std::string filename){
 
-	ReactionNetwork allReacs=allTheReactions;
-	std::vector<Vertex> Vertexlist=reactionVertexList;
-	std::vector<Vertex> substrateList=substrateVertexList;
 
-	std::ofstream outfile,typesfile;
-	outfile.open("test.txt");
+	std::ofstream outfile,typesfile,edgeFile,xgmmlFile;
 	//for the node_types
 	std::set<int> reacNumbers;
-	std::set<std::string> compoundNames;
-	std::set<std::string> internalMetNames;
-	typesfile.open("node_types.txt");
+	std::set<int> compoundIDs;
+	std::set<int> internalMetIDs;
+	std::vector<std::tuple<int,double,int>> edgeVector;
 
-	typesfile<<"type"<<std::endl;
+	std::string fileToOpen=filename + ".xgmml";
+	xgmmlFile.open(fileToOpen);
 
-	for (int i: availableReactions){
 
-		reaction currentReac=allTheReactions[reactionVertexList[i-1]].reac;
+	//typesfile<<"Name Type"<<std::endl;
+	xgmmlFile<<"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"<<std::endl;
+	xgmmlFile<<"<graph label=\"justAGraph\" xmlns:cy=\"http://www.cytoscape.org\" xmlns=\"http://www.cs.rpi.edu/XGMML\" directed=\"1\">"<<std::endl;
+
+
+	for (int j=0; j<availableReactions.size();j++){
+
+		int i=availableReactions[j];
+		double fluxOfCurrentReaction=fluxThroughReacs[j];
+		//in order to get rid of the 1e-300 kind of fluxes
+		if (std::abs(fluxOfCurrentReaction)<1e-6){fluxOfCurrentReaction=0;}
+		reaction currentReac= reactionVector[i-1];
 		std::vector<int> currentsubs=currentReac.getsubstrates();
 		std::vector<int> currentproducts=currentReac.getproducts();
 		int reacNR=currentReac.getListNr();
@@ -61,50 +70,84 @@ void cell::printCytoscape(std::vector<Vertex> internals){
 		reacNumbers.insert(reacNR);
 
 		for (int sub:currentsubs){
-			std::string substrateName=cell::niceSubstrateName(substrateVertexList[sub+nrOfInternalMetabolites]);
-
-			std::cout<<substrateName<<" cr "<<reacNR<<std::endl;
-			outfile<<substrateName<<" cr "<<reacNR<<std::endl;
-			compoundNames.insert(substrateName);
+				std::string substrateName=substrateVector[sub+nrOfInternalMetabolites].niceSubstrateName();
+					compoundIDs.insert(sub);
+					//-1 here because that will be the ID of the reactions
+					edgeVector.emplace_back(sub+nrOfInternalMetabolites,fluxOfCurrentReaction,-1*reacNR);
 
 		}
 
 		for (int prod:currentproducts){
-			std::string productName=cell::niceSubstrateName(substrateVertexList[prod+nrOfInternalMetabolites]);
+				std::string productName=substrateVector[prod+nrOfInternalMetabolites].niceSubstrateName();
 
-			std::cout<<reacNR<<" rc "<<productName<<std::endl;
-			outfile<<reacNR<<" rc "<<productName<<std::endl;
-			compoundNames.insert(productName);
+					compoundIDs.insert(prod);
+					//-1 here because that will be the ID of the reactions
+					edgeVector.emplace_back(-1*reacNR,fluxOfCurrentReaction,prod+nrOfInternalMetabolites);
 
 		}
 	}
 
-	for (auto met:internalMetaboliteVList){
-		internalMetNames.insert(cell::niceSubstrateName(met));
+	for (int i=0; i<nrOfInternalMetabolites; i++){
+		internalMetIDs.insert(i-nrOfInternalMetabolites);
 	}
+
+
+	std::string sourceName=substrateVector[sourceSubstrate+nrOfInternalMetabolites].niceSubstrateName();
+	std::string sinkName=substrateVector[sinkSubstrate+nrOfInternalMetabolites].niceSubstrateName();
+
+	compoundIDs.erase(sourceSubstrate);
+	compoundIDs.erase(sinkSubstrate);
+	xgmmlFile<<"<node label=\""<<sourceName<<"\" id=\""<<sourceSubstrate+nrOfInternalMetabolites<<"\">"<<std::endl;
+	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Source\"/>"<<std::endl;
+	xgmmlFile<<"</node>"<<std::endl;
+	xgmmlFile<<"<node label=\""<<sinkName<<"\" id=\""<<sinkSubstrate+nrOfInternalMetabolites<<"\">"<<std::endl;
+	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Sink\"/>"<<std::endl;
+	xgmmlFile<<"</node>"<<std::endl;
 
 
 	//looping through all the internalMet names writing them into the type file, removing them from the substrate list
-	while(!internalMetNames.empty()){
-		compoundNames.erase(*internalMetNames.begin());
-		typesfile<<*internalMetNames.begin()<<"=InternalMet"<<std::endl;
-		internalMetNames.erase(internalMetNames.begin());
+	while(!internalMetIDs.empty()){
+		compoundIDs.erase(*internalMetIDs.begin());
+		std::string currentName=substrateVector[*internalMetIDs.begin()+nrOfInternalMetabolites].niceSubstrateName();
+
+		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*internalMetIDs.begin()+nrOfInternalMetabolites<<"\">"<<std::endl;
+		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"InternalMet\"/>"<<std::endl;
+		xgmmlFile<<"</node>"<<std::endl;
+		internalMetIDs.erase(internalMetIDs.begin());
 	}
 	//doing the same with reacnubmers
 	while(!reacNumbers.empty()){
-		typesfile<<*reacNumbers.begin()<<"=Reaction"<<std::endl;
+		int currentReacNumber=*reacNumbers.begin();
+		xgmmlFile<<"<node label=\""<<currentReacNumber<<"\" id=\""<<-1*currentReacNumber<<"\">"<<std::endl;
+		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Reaction\"/>"<<std::endl;
+		xgmmlFile<<"</node>"<<std::endl;
 		reacNumbers.erase(reacNumbers.begin());
 	}
 	//now with the normal substrates NEED TO DIFFERENTIATE BETWEEN SOURCE AND SINK LATER
 	
 
-	while(!compoundNames.empty()){
-		typesfile<<*compoundNames.begin()<<"=Compound"<<std::endl;
-		compoundNames.erase(compoundNames.begin());
+	while(!compoundIDs.empty()){
+		std::string currentName=substrateVector[*compoundIDs.begin()+nrOfInternalMetabolites].niceSubstrateName();
+		xgmmlFile<<"<node label=\""<<currentName<<"\" id=\""<<*compoundIDs.begin()+nrOfInternalMetabolites<<"\">"<<std::endl;
+		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Compound\"/>"<<std::endl;
+		xgmmlFile<<"</node>"<<std::endl;
+		compoundIDs.erase(compoundIDs.begin());
 	}
 
-	outfile.close();
-	typesfile.close();
+	for (std::tuple<int,double,int> currentEdge:edgeVector){
+		int source, sink;
+		double flux;
+		std::tie (source,flux,sink) = currentEdge;
+
+		xgmmlFile<<"<edge label=\""<<source<<" - "<<sink<<"\" source=\""<<source<<"\" target=\""<<sink<<"\">"<<std::endl;
+		xgmmlFile<<"\t <att name=\"flux\" type=\"real\" value=\""<<flux<<"\"/>"<<std::endl;
+		xgmmlFile<<"</edge>"<<std::endl;
+
+	}
+
+	xgmmlFile<<"</graph>"<<std::endl;
+	
+	xgmmlFile.close();
 	}
 
 
@@ -112,94 +155,57 @@ void cell::printCytoscape(std::vector<Vertex> internals){
 
 
 
-std::vector<int> cell::canBeAdded(std::vector<Vertex>& internals){
+std::vector<int> cell::canBeAdded(){
 
 
-	ReactionNetwork allReacs =allTheReactions;
-	std::vector<Vertex> Vertexlist=reactionVertexList;
 
-	//set to keep the substrate vertices that are currently used in the network
-	std::set<Vertex> substrateSet;
 	int nrOfAvailableReactions=availableReactions.size();
+	
+	std::set<int> canAdd;
 
 	for (int i=0; i<nrOfAvailableReactions;i++){
 	//	std::cout<<"Reaction number:"<<i<<std::endl;
 
-	typename boost::graph_traits<ReactionNetwork>::adjacency_iterator vi, vi_end;
+		std::vector<int> neighboursOfCurrentReac=reactionVector[availableReactions[i]-1].getNeighbours();
+		//reactionVector[availableReactions[i]-1].printReaction();
+		//reactionVector[availableReactions[i]-1].printNeighbours();
 
-
-	//for testing
-	//allReacs[Vertexlist[availableReactions[i]-1]].reac.printReaction();
-	//std::cout<<"Compounds:";
-
-	//iterating through the vertices connected to the current reaction (the compounds taking part)
-	for (boost::tie(vi,vi_end)=boost::adjacent_vertices(Vertexlist[availableReactions[i]-1],allReacs); vi!=vi_end; ++vi){
-
-		//adding the substrate vertex to the list (only unique elements are kept)
-		substrateSet.insert(vi.dereference());
-
-	}
-
-	//testin
-	//std::cout<<std::endl;
-	}
-
-	//getting rid of the internal metabolites in there
-	for(auto metab:internals){ substrateSet.erase(metab);}
-
-
-	//the set that the possible new (and existing) reactions will be stored in
-	std::set<Vertex> setOfNewReactions;
-
-	while(!substrateSet.empty()){
-		int substrateid;
-		substrateid=allReacs[*substrateSet.begin()].sub.index;
-		//std::cout<<", "<<substrateid ;
-
-		//looping through the substrates currently in play
-		typename boost::graph_traits<ReactionNetwork>::adjacency_iterator inner, inner_end;
-
-
-		for(boost::tie(inner,inner_end)=boost::adjacent_vertices(*substrateSet.begin(),allReacs); inner!=inner_end; ++inner){
-
-			setOfNewReactions.insert(inner.dereference());
+		for (int j:neighboursOfCurrentReac){
+			canAdd.insert(j);
 		}
-
-		substrateSet.erase(substrateSet.begin());
 	}
 
 
+	for (int i:availableReactions){
 
-	std::vector<int> tobereturned;
-	while(!setOfNewReactions.empty()){
-
-		//testing
-		//allReacs[*setOfNewReactions.begin()].reac.printReaction();
-		int reacnumber=allReacs[*setOfNewReactions.begin()].reac.getListNr();
-		tobereturned.emplace_back(reacnumber);
-		setOfNewReactions.erase(setOfNewReactions.begin());
+		//getting rid of reactions that are already in the network
+	
+		int alreadyInReacNr=reactionVector[i-1].getListNr();
+		canAdd.erase(alreadyInReacNr);
 	}
+
+	std::vector<int> tobereturned(canAdd.begin(),canAdd.end());
+	
 	//uncomment for printing out the line numbers of possible reactions to be added 
+	//std::cout<<"We can add: ";
 	//for (auto whatever:tobereturned){
-	//	std::cout<<whatever+1<<std::endl;
+	//	std::cout<<whatever<<", ";
 	//}
+	//std::cout<<std::endl;
 		return tobereturned;
 
 }
 
-void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internals){
+void cell::mutate( RandomGeneratorType& generator ){
 
 
-	ReactionNetwork allReacs=allTheReactions;
-	std::vector<Vertex> Vertexlist=reactionVertexList;
 	//int compoundSize= substrateVertexList.size();
 //	std::cout<<"Random numbers:";
 //	for (int i=1; i<50; i++){
 //		std::cout<<gen()%availableReactions.size()<<", ";
 //	}
 
-	int desiredNetworkSize=10;
-	int currentReactionNumber = availableReactions.size();
+	//int currentReactionNumber = availableReactions.size();
 
 
 	int deleteThisOne,addThisOne;
@@ -210,28 +216,29 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 	//double delProb=0.1*exp(currentReactionNumber-desiredNetworkSize);
 
 	double addProb=0.5;
-	double delProb=0.5;
 
 	double doWeAdd=randomRealInRange(generator, 1);
-	double doWeDelete=randomRealInRange(generator,1);
+	//double doWeDelete=randomRealInRange(generator,1);
 	double doWeAccept=randomRealInRange(generator,1);
 
 
 	//calculating current throughput
 	bool areWeAdding= doWeAdd<=addProb;
 	if(areWeAdding){
-		std::vector<int> whatCanWeAdd = canBeAdded(internals);
+		std::vector<int> whatCanWeAdd = canBeAdded();
 		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
-		std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
+		//std::cout<<"We add reaction nr: "<<whatCanWeAdd[whichOneToAdd]<<"from a possible "<<whatCanWeAdd.size()<<"reactions"<<std::endl;
 		//+1 required as the file from which we read starts with line 1, but vectors number from 0 
-		addThisOne=whatCanWeAdd[whichOneToAdd]+1;
-		trialNewCell.push_back(addThisOne);
+		//it is required, as the canbeAdded returns positions in the reactionVector and the
+		//availableReactions needs positions in the original file (vector position +1)
+		addThisOne=whatCanWeAdd[whichOneToAdd];
+		trialNewCell.push_back(addThisOne+1);
 	}
 
 	else{
 
 		int whichOneToDel=randomIntInRange(generator,trialNewCell.size()-1);
-		std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
+		//std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
 		deleteThisOne=whichOneToDel;
 		trialNewCell.erase(trialNewCell.begin()+deleteThisOne);
 	}
@@ -249,11 +256,13 @@ void cell::mutate( RandomGeneratorType& generator, std::vector<Vertex>& internal
 	//}
 	//else{ std::cout<<"Changes too destructive, not implemented."<<std::endl;}
 	
-	if (doWeAccept<exp(-1.0*firstPerformance*(performance-proposedThroughput)))
+	if ((doWeAccept<exp(-1.0*(performance-proposedThroughput)/firstPerformance) && (availableReactions.size()>2)))
 	{
-		if(areWeAdding){availableReactions.push_back(addThisOne);}
+		if(areWeAdding){availableReactions.push_back(addThisOne+1);}
 		else{availableReactions.erase(availableReactions.begin()+deleteThisOne);}
 		performance=proposedThroughput;
+		std::vector<double> tmpFluxes=tryIfWorks.getFluxes();
+		setFluxes(tmpFluxes);
 	}
 	else
 	{
@@ -289,17 +298,14 @@ double cell::randomRealInRange(RandomGeneratorType& generator, double maxNumber)
 double cell::calcThroughput(){
 
 
-	ReactionNetwork graph=allTheReactions;
-	std::vector<Vertex> allreacList=reactionVertexList;
-	std::vector<Vertex> reacList=subsetVertices(availableReactions,allreacList);
 
 	//need to find a way to only include compounds that are used in current reactions
 	//
 	
-	//plan: create a vector<int> with the same length as substrateVertices that lists which row corresponds to which substrate
+	//plan: create a vector<int> with the same length as substrateVector that lists which row corresponds to which substrate
 	
 	//first nrOfInternalMetabolites is the internal metabolites (need to use variable instead of 13 later)
-	std::vector<int> substrateIndex(substrateVertexList.size());
+	std::vector<int> substrateIndex(substrateVector.size());
 
 	for(int i=0; i<nrOfInternalMetabolites; i++){
 		substrateIndex[i]=i+1;
@@ -307,29 +313,39 @@ double cell::calcThroughput(){
 
 	//counter to keep track of which row of the GLPK problem the next substrate will belong to
 	int nextRowNumber=14;
-	std::set<Vertex> substrateSet;
+	std::set<int> substrateSet;
 
 	for (int i=0; i<availableReactions.size();i++){
 
-		typename boost::graph_traits<ReactionNetwork>::adjacency_iterator vi, vi_end;
 
-		for(boost::tie(vi,vi_end)=boost::adjacent_vertices(reactionVertexList[availableReactions[i]-1],allTheReactions); vi!=vi_end; ++vi){
+		//CHECK IF THERE IS A +1 REQUIRED
+		reaction currentReac=reactionVector[availableReactions[i]-1];
 
-			substrateSet.insert(vi.dereference());
+		//std::cout<<"Reaction "<<currentReac.getListNr()<<" has ";
+		for (int j:currentReac.getsubstrates()){
+			substrateSet.insert(j+nrOfInternalMetabolites);
+		//	std::cout<<substrateVector[j+nrOfInternalMetabolites].niceSubstrateName()<<", ";
 		}
+		for (int j:currentReac.getproducts()){
+			substrateSet.insert(j+nrOfInternalMetabolites);
+		//	std::cout<<substrateVector[j+nrOfInternalMetabolites].niceSubstrateName()<<", ";
+		}
+
+		//std::cout<<std::endl;
 	}
 	
+	
 	//erasing internal metabolites from the set, as we already have those at the beginning of the list
-	for(auto metab:internalMetaboliteVList){substrateSet.erase(metab);}
+	for(int metab=0; metab<nrOfInternalMetabolites; metab++){substrateSet.erase(metab);}
 
 	//in order to always have the source and sink nodes
-	substrateSet.insert(substrateVertexList[nrOfInternalMetabolites]);
-	substrateSet.insert(substrateVertexList[nrOfInternalMetabolites+908]);
+	substrateSet.insert(sinkSubstrate+nrOfInternalMetabolites);
+	substrateSet.insert(sourceSubstrate+nrOfInternalMetabolites);
 		
 	while(!substrateSet.empty()){
-		int substrateid=allTheReactions[*substrateSet.begin()].sub.index;
 
-		substrateIndex[substrateid+nrOfInternalMetabolites]=nextRowNumber;
+		substrateIndex[*substrateSet.begin()]=nextRowNumber;
+		//std::cout<<nextRowNumber<<" is "<<substrateVector[*substrateSet.begin()].niceSubstrateName()<<std::endl;
 		nextRowNumber++;
 		substrateSet.erase(substrateSet.begin());
 	}
@@ -358,8 +374,8 @@ double cell::calcThroughput(){
 		glp_set_row_bnds(lp,i,GLP_FX,0.0,0.0);
 	}
 	//extra column for the imaginary reaction getting rid of the final compound (objective function)
-	int listSize=reacList.size();
-	glp_add_cols(lp,listSize+4);
+	int listSize=availableReactions.size();
+	glp_add_cols(lp,listSize+5);
 
 	//for(int i=1; i<=listSize+4; i++){ glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);}
 
@@ -370,15 +386,18 @@ double cell::calcThroughput(){
 
 
 		//preparing the sparse matrix's values 
-		reaction tmpreac=graph[reacList[i-1]].reac;
+		//final -1 because the availableReactions stores the id form the file
+		//starting with 1, as opposed to the vector starting at 0
+		reaction tmpreac=reactionVector[availableReactions[i-1]-1];
 
 
 		double freeChange=tmpreac.getCurrentFreeEChange();
-		//std::cout<<"FreeEChange: "<<freeChange<<std::endl;
+		//std::cout<<"FreeEChange of : "<<tmpreac.getListNr()<<" is "<<freeChange<<std::endl;
+		//tmpreac.printReaction();
 		if(freeChange<0){
 		glp_set_col_bnds(lp,i,GLP_DB,0.0,1.0);
 		}
-		else{glp_set_col_bnds(lp,i,GLP_UP,-1.0,0.0);}
+		else{glp_set_col_bnds(lp,i,GLP_DB,-1.0,0.0);}
 
 
 		std::vector<int> tmpsubs=tmpreac.getsubstrates();
@@ -411,13 +430,15 @@ double cell::calcThroughput(){
 	glp_set_col_bnds(lp,listSize+1,GLP_DB,0.0,10.0);
 	glp_set_col_bnds(lp,listSize+2,GLP_DB,0.0,10.0);
 	glp_set_col_bnds(lp,listSize+3,GLP_DB,0.0,10.0);
+	glp_set_col_bnds(lp,listSize+5,GLP_DB,0.0,10.0);
 
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
-	ia.push_back(substrateIndex[908+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
+	ia.push_back(substrateIndex[sourceSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
 	ia.push_back(substrateIndex[-1+nrOfInternalMetabolites]);	ja.push_back(listSize+2); ar.push_back(1.0);
 	ia.push_back(substrateIndex[-2+nrOfInternalMetabolites]);	ja.push_back(listSize+3); ar.push_back(-1.0);
-	ia.push_back(substrateIndex[nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[-8+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[sinkSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
 
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
 	//ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
@@ -435,9 +456,7 @@ double cell::calcThroughput(){
 	std::copy(ar.begin(),ar.end(),ararray+1);
 
 
-	//for (int i=0; i<=length; i++){
-
-
+	//for (int i=1; i<=length+1; i++){
 	//	std::cout<<"Matrix element: "<<iarray[i]<<", "<<jarray[i]<<", "<<ararray[i]<<std::endl;
 	//}
 
@@ -460,61 +479,40 @@ double cell::calcThroughput(){
 	//}
 	//std::cout<<std::endl;
 
+	std::vector<double> tmpFluxes(availableReactions.size());
+
+	//std::cout<<"Fluxes are: ";
+	for (int i=0;i<availableReactions.size();i++){
+
+		tmpFluxes[i]=glp_get_col_prim(lp,i+1);
+	//	std::cout<<tmpFluxes[i]<<", ";
+	}
+	//std::cout<<std::endl;
+
+	setFluxes(tmpFluxes);
+	//std::cout<<"goodness is "<<goodness<<std::endl;;
+	//std::cout<<"Fittness is "<<goodness-smallKforFitness*availableReactions.size()<<std::endl;;
+	glp_delete_prob(lp);
+
 	return goodness-smallKforFitness*availableReactions.size();
 }
 
- std::vector<Vertex> cell::subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList){
-	 //sort not required? 
-	 std::sort(vertexIDs.begin(),vertexIDs.end());
 
-	 std::vector<Vertex> tobeReturned;
+void cell::printHumanReadable(){
 
-	 for(int i :vertexIDs){
-		 //uses i-1 in order to correspond to line numbers in the input reaction list
-		 tobeReturned.push_back(reacList[i-1]);
-	 }
-	 return tobeReturned;
- }
-
-std::string cell::niceSubstrateName(Vertex currentVertex){
-
-	std::string emptyName=("---");
-	std::string tobereturned;
-	substrate currentSub=allTheReactions[currentVertex].sub;
-	if (currentSub.name.compare(emptyName) ==0)
-	{tobereturned=currentSub.molecule;}
-	else
-	{tobereturned=currentSub.name;}
-	return tobereturned;
-
-}
-
-void cell::printHumanReadable(std::vector<Vertex>& substrateList){
-
-	ReactionNetwork graph=allTheReactions;
-	std::vector<Vertex> reacList=reactionVertexList;
-	std::string emptyName = ("---");
 
 	for (int i: availableReactions){
 
-		int id=graph[reacList[i]].reac.getListNr();
+		int id=reactionVector[i].getListNr();
 
-		std::vector<int> products = graph[reacList[i-1]].reac.getproducts();
-		std::vector<int> substrates = graph[reacList[i-1]].reac.getsubstrates();
+		std::vector<int> products = reactionVector[i].getproducts();
+		std::vector<int> substrates = reactionVector[i].getsubstrates();
 
 		std::cout<<id<<": ";
 		for (int j:substrates){
 			//figuring out whether we have a meaningful name
-			std::string toPrint,name,molecule;
-			molecule=graph[substrateList[j+nrOfInternalMetabolites]].sub.molecule;
-			name=graph[substrateList[j+nrOfInternalMetabolites]].sub.name;
+			std::string toPrint=substrateVector[j].niceSubstrateName();
 
-			if (name.compare(emptyName) == 0){
-				toPrint=molecule;
-			}
-			else {
-				toPrint=name;
-			}
 			std::cout<<toPrint<<" + ";
 			//std::cout<<graph[substrateList[j+13]].sub.index<<" + ";
 		}
@@ -524,17 +522,9 @@ void cell::printHumanReadable(std::vector<Vertex>& substrateList){
 
 		for (int j:products){
 			//figuring out whether we have a meaningful name
-			std::string toPrint,name,molecule;
-			molecule=graph[substrateList[j+nrOfInternalMetabolites]].sub.molecule;
-			name=graph[substrateList[j+nrOfInternalMetabolites]].sub.name;
 
+			std::string toPrint=substrateVector[j].niceSubstrateName();
 
-			if (name.compare(emptyName) == 0){
-				toPrint=molecule;
-			}
-			else {
-				toPrint=name;
-			}
 			std::cout<<toPrint<<" + ";
 			//std::cout<<graph[substrateList[j+13]].sub.index<<" + ";
 
@@ -542,4 +532,8 @@ void cell::printHumanReadable(std::vector<Vertex>& substrateList){
 		std::cout<<std::endl;
 	
 	}
+}
+void cell::setFluxes(std::vector<double>& fluxVector){
+
+	fluxThroughReacs=fluxVector;
 }

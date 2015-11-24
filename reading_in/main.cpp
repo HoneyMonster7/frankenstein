@@ -28,19 +28,19 @@ int main(int argc, char* argv[])
 	std::cout<<"Tests begin."<<std::endl;
 
 	std::vector<reaction> reacVector;
+	std::vector<substrate> substrateVector;
 
-	std::vector<Vertex> reacVList, compoundVList,internals;
-	ReactionNetwork lofasz;
 
 	try
 	{
 		//reaction::readCompounds(DATA_PATH "compounds_list__4C_v3_2_2_ext_100.dat",lofasz,compoundVList);
-		reaction::readCompounds(DATA_PATH "fullnewcompounds.dat", lofasz, compoundVList,internals);
+		reaction::readCompounds(DATA_PATH "fullnewcompounds.dat", substrateVector);
 
-		std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
+		std::cout<<"length of the reaction vector is: "<<reacVector.size()<<std::endl;
 		//reaction::readReactions(DATA_PATH "reactions__4C_v3_2_2_ext_100.dat", reacVector,lofasz,reacVList,compoundVList);
-		reaction::readReactions(DATA_PATH "fullnewreactions.dat", reacVector, lofasz, reacVList, compoundVList);
-		std::cout<<"length of the vector is: "<<reacVector.size()<<std::endl;
+		reaction::readReactions(DATA_PATH "fullnewreactions.dat", reacVector, substrateVector);
+		std::cout<<"length of the reaction vector is: "<<reacVector.size()<<std::endl;
+		std::cout<<"length of the substrate vector is: "<<substrateVector.size()<<std::endl;
 	}
 	catch(std::runtime_error& e)
 	{
@@ -55,24 +55,13 @@ int main(int argc, char* argv[])
 	}
 
 	reacVector[13].printReaction();
-	reacVector[299].printReaction();
+	reacVector[209].printReaction();
 
+	substrate::buildNeighbourList(reacVector,substrateVector);
 
-	auto verts = vertices(lofasz);
-	size_t count = std::distance(verts.first, verts.second);
-
-	std::cout<<"The graph has "<<count<<" vertices."<<std::endl;
-
-
-	typedef graph_traits <ReactionNetwork> traits;
-	typename traits::vertex_iterator vertex_iter, vertex_end;
-
-	bool bipartiteee = boost::is_bipartite(lofasz);
-
-	if (bipartiteee) {std::cout<<"The graph is bipartite"<<std::endl;}
-	else {std::cout<<"The graph is not bipartite."<<std::endl;}
-
-
+	
+	reacVector[129].printNeighbours();
+	reacVector[5108].printNeighbours();
 
 	environment currentEnvironment;
 	currentEnvironment.atpCont=1e-1;
@@ -88,44 +77,47 @@ int main(int argc, char* argv[])
 	currentEnvironment.oxo2Cont=1e-3;
 
 
-	for (Vertex current : reacVList){
+	for (reaction& current : reacVector){
 
-		lofasz[current].reac.recalcEchange(currentEnvironment);
+		current.recalcEchange(currentEnvironment);
 	}
 
 
-	std::vector<int> subset= {130,285,5107,5109};
-	std::vector<Vertex> testReacList = cell::subsetVertices(subset,reacVList);
+	std::vector<int> subset= {130,285,5107,5109,5146};
 
 
-	cell::allTheReactions=lofasz;
-	cell::reactionVertexList=reacVList;
-	cell::substrateVertexList=compoundVList;
-	cell::internalMetaboliteVList=internals;
 	cell::nrOfInternalMetabolites=nrOfInternalMetabolites;
+	cell::reactionVector=reacVector;
+	cell::substrateVector=substrateVector;
 	//this is the k value for the fitness function
 	cell::smallKforFitness=1e-2;
+	//don't add nrofinternalmetabolites here
+	cell::sourceSubstrate=911;
+	cell::sinkSubstrate=0;
+
+
 	cell trialcell(subset);
 
 	//int compsize=compoundVList.size();
 
-		trialcell.printCytoscape(internals);
+	std::string fileName="initial";
+		trialcell.printXGMML(fileName);
 
 		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<20; k++){
+		for (int k=0; k<30000; k++){
 			//for testing
 			//std::cout<<"Current reactions:";
 			//std::vector<int> currentreacs=trialcell.getReacs();
 			//for(auto i:currentreacs){std::cout<<i<<" ";}
 			//std::cout<<k<<", "<<std::endl;
-		trialcell.mutate(generator,internals);
+		trialcell.mutate(generator);
 		//trialcell.printHumanReadable(compoundVList);
 
 		trialcell.calcThroughput();
 		}
 
-		trialcell.printCytoscape(internals);
-	//cell::calcThroughput(compsize,lofasz,testReacList);
+		fileName="final";
+		trialcell.printXGMML(fileName);
 
-	std::cout<<"Tests completed."<<std::endl;
+  std::cout<<"Tests completed."<<std::endl;
 }

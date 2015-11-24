@@ -25,8 +25,8 @@ void reaction::printReaction()
 	std::cout<<"Free energy change: "<<freeEChange<<std::endl;
 }
 
-
-void reaction::readCompounds(std::string fileName, ReactionNetwork& graph, std::vector<Vertex>& vertexList, std::vector<Vertex>& internals)
+//possibly move this function to the substrate class
+void reaction::readCompounds(std::string fileName,  std::vector<substrate>& substrateVector)
 {
 	std::ifstream inFile(fileName);
 	std::string line, nameChem, namenorm;
@@ -38,38 +38,35 @@ void reaction::readCompounds(std::string fileName, ReactionNetwork& graph, std::
 
 	while(std::getline(inFile, line))
 	{
-		substrate tmpsubstrate;
 
+		int tmpindex, tmpcharge;
+		double tmpfreeEofcreation;
+		std::string tmpname, tmpmolecule;
 		std::stringstream iss(line);
-		iss>>tmpsubstrate.index;
-		iss>>tmpsubstrate.freeOfCreation;
-		iss>>tmpsubstrate.molecule;
-		iss>>tmpsubstrate.name;
-		iss>>tmpsubstrate.charge;
-		vertexList.emplace_back(boost::add_vertex(graph));
+		iss>>tmpindex;
+		iss>>tmpfreeEofcreation;
+		iss>>tmpmolecule;
+		iss>>tmpname;
+		iss>>tmpcharge;
 
-		graph[vertexList[vertexList.size()-1]].sub=tmpsubstrate;
+		//creating substrate and putting it into the vector
+		substrate tmpsubstrate(tmpindex,tmpfreeEofcreation,tmpmolecule,tmpname, tmpcharge);
 
-		//std::cout<<graph[vertexList[vertexList.size()-1]].sub.name<<std::endl;
-		if(tmpsubstrate.index<0){
-			internals.emplace_back(vertexList[vertexList.size()-1]);
-		}
+		substrateVector.emplace_back(tmpsubstrate);
 
 	}
 }
 
 int reaction::getListNr(){ return listNR;}
 
-void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPointer, ReactionNetwork& graph, std::vector<Vertex>& vertexList, const std::vector<Vertex>& compoundVList)
+void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPointer, std::vector<substrate>& substrateVector)
 {
 	std::ifstream inFile(fileName);
 	std::string line,tmpsubs,tmpprods;
 
-	//InternalMetsT tmpinternalMets = {};
 
 	double tmpfreeE;
 
-	typedef boost::graph_traits<ReactionNetwork>::edge_descriptor Edge;
 
 	if(!inFile)
 	{
@@ -118,23 +115,24 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 		reacPointer.emplace_back(counter,tmpfreeE, tmpsubstrates, tmproducts, tmpinternalMets);
 
 
-		vertexList.emplace_back(boost::add_vertex(graph));
-		graph[vertexList[vertexList.size()-1]].reac=reaction(counter,tmpfreeE,tmpsubstrates,tmproducts,tmpinternalMets);
 
 
 		for(int i : tmpsubstrates)
 		{
-			Edge e1;
-			e1=(boost::add_edge(compoundVList[i+nrOfInternalMetabolites],vertexList[vertexList.size()-1],graph)).first;
+		if(i>=0){
+			substrateVector[i+nrOfInternalMetabolites].addInvolved(counter);	
+			//std::cout<<counter<<" has substrate: "<<i<<std::endl;
+		}
 		}
 
 
-		for(int i: tmproducts)
+		for(int j: tmproducts)
 		{
-			Edge e1;
-			e1=(boost::add_edge(vertexList[vertexList.size()-1],compoundVList[i+nrOfInternalMetabolites],graph)).first;
+		if(j>=0){
+			//std::cout<<counter<<" has product: "<<i<<std::endl;
+			substrateVector[j+nrOfInternalMetabolites].addInvolved(counter);	
 		}
-
+		}
 
 		counter++;
 	}
@@ -152,5 +150,17 @@ void reaction::recalcEchange(const environment& env)
 
 	currentFreeEChange=freeEChange+8.3144598e-3*env.temperature*std::log(insideLog);
 	//std::cout<<"Inside the log: "<<insideLog<<"freechange now: "<<currentFreeEChange<<std::endl;
+}
+
+void reaction::setNeighbours(std::vector<int>& neighbourList){
+neighbourOf=neighbourList;
+}
+
+void reaction::printNeighbours(){
+	std::cout<<listNR<<" has neighbours: ";
+	for (const int & i:neighbourOf){
+		std::cout<<i<<", ";
+	}
+	std::cout<<std::endl;
 }
 
