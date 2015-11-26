@@ -266,10 +266,10 @@ void cell::mutate( RandomGeneratorType& generator ){
 	}
 	else
 	{
-		std::cout<<"Changes not implemented."<<std::endl;
+	//	std::cout<<"Changes not implemented."<<std::endl;
 	}
 
-	std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions, with a fittness of "<<performance<<"."<<std::endl;
+	//std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions, with a fittness of "<<performance<<"."<<std::endl;
 }
 
  int cell::randomIntInRange(RandomGeneratorType& generator, int maxNumber){

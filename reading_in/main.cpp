@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
 		trialcell.printXGMML(fileName);
 
 		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<30000; k++){
+		for (int k=0; k<20000; k++){
 			//for testing
 			//std::cout<<"Current reactions:";
 			//std::vector<int> currentreacs=trialcell.getReacs();
@@ -113,9 +113,10 @@ int main(int argc, char* argv[])
 		trialcell.mutate(generator);
 		//trialcell.printHumanReadable(compoundVList);
 
-		trialcell.calcThroughput();
+		//trialcell.calcThroughput();
 		}
 
+		std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
 		fileName="final";
 		trialcell.printXGMML(fileName);
 
