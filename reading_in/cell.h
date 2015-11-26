@@ -65,7 +65,7 @@ class cell{
 
 
 	void printHumanReadable();
-	void printCytoscape();
+	void printXGMML(std::string fileName);
 
 	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
 			 double randomRealInRange(RandomGeneratorType& generator, double maxNumber);
