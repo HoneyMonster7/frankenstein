@@ -53,6 +53,7 @@ class cell{
 
 	inline std::vector<double> getFluxes() {return fluxThroughReacs;}
 	void mutate(RandomGeneratorType& generator);
+	cell  mutateAndReturn(RandomGeneratorType& generator);
 
 	void printReacs();
 
@@ -63,11 +64,14 @@ class cell{
 	double calcThroughput();
 	//static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 
+	static void mutatePopulation(std::vector<cell>& population, RandomGeneratorType& generator);
+	static std::vector<double> getPopulationFittness(std::vector<cell>& population);
+	static void printPopulationFittnesses(std::vector<cell>& population);
 
 	void printHumanReadable();
 	void printXGMML(std::string fileName);
 
-	private: int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
-			 double randomRealInRange(RandomGeneratorType& generator, double maxNumber);
+	private: static int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
+			 static double randomRealInRange(RandomGeneratorType& generator, double maxNumber);
 
 };

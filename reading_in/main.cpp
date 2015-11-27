@@ -98,13 +98,14 @@ int main(int argc, char* argv[])
 
 	cell trialcell(subset);
 
+	std::vector<cell> cellVector(10,trialcell);
 	//int compsize=compoundVList.size();
 
 	std::string fileName="initial";
 		trialcell.printXGMML(fileName);
 
 		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<20000; k++){
+		for (int k=0; k<200; k++){
 			//for testing
 			//std::cout<<"Current reactions:";
 			//std::vector<int> currentreacs=trialcell.getReacs();
@@ -115,8 +116,20 @@ int main(int argc, char* argv[])
 
 		//trialcell.calcThroughput();
 		}
-
 		std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
+
+		for (int k=0; k<20; k++){
+			cell::mutatePopulation(cellVector,generator);
+			if (k%100==0){
+				
+			std::cout<<k<<": ";
+			cell::printPopulationFittnesses(cellVector);
+			}
+
+		}
+
+		cell::printPopulationFittnesses(cellVector);
+
 		fileName="final";
 		trialcell.printXGMML(fileName);
 

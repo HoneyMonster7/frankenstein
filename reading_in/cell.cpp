@@ -272,6 +272,46 @@ void cell::mutate( RandomGeneratorType& generator ){
 	//std::cout<<"Currently in network: "<<availableReactions.size()<<" reactions, with a fittness of "<<performance<<"."<<std::endl;
 }
 
+
+cell cell::mutateAndReturn( RandomGeneratorType& generator ){
+	//this function is for the population mutation. in this case there is no acceptance
+	//probability, every mutation is accepted, as survival of the fittest is dealt with 
+	//in chosing the cells to reproduce
+
+
+	int deleteThisOne,addThisOne;
+
+	std::vector<int> trialNewCell = availableReactions;
+
+	double addProb=0.5;
+
+	double doWeAdd=randomRealInRange(generator, 1);
+
+
+	//calculating current throughput
+	bool areWeAdding= doWeAdd<=addProb;
+	if(areWeAdding){
+		std::vector<int> whatCanWeAdd = canBeAdded();
+		int whichOneToAdd=randomIntInRange(generator,whatCanWeAdd.size()-1);
+
+		addThisOne=whatCanWeAdd[whichOneToAdd];
+		trialNewCell.push_back(addThisOne+1);
+	}
+
+	else{
+
+		int whichOneToDel=randomIntInRange(generator,trialNewCell.size()-1);
+		//std::cout<<"We delete nr: "<<availableReactions[whichOneToDel]<<std::endl;
+		deleteThisOne=whichOneToDel;
+		trialNewCell.erase(trialNewCell.begin()+deleteThisOne);
+	}
+
+	
+	cell tryIfWorks(trialNewCell);
+
+	return tryIfWorks;
+
+}
  int cell::randomIntInRange(RandomGeneratorType& generator, int maxNumber){
 
 	Gen_Type intgenerator(generator, UniIntDistType(0,maxNumber));
@@ -292,6 +332,53 @@ double cell::randomRealInRange(RandomGeneratorType& generator, double maxNumber)
 		return currentRandomNumber;
 		}
 
+
+void cell::mutatePopulation(std::vector<cell>& population, RandomGeneratorType& generator){
+
+	bool gotOneToMutate=false;
+	double maxPossibleFittness=10;
+	int whichOneToMutate;
+
+	while(!gotOneToMutate){
+
+		//implementing the moran process selection
+		whichOneToMutate=cell::randomIntInRange(generator,population.size()-1);
+		double compareFittnesWithThis=cell::randomRealInRange(generator,maxPossibleFittness);
+		double fittnessOfCurrentCell=population[whichOneToMutate].getPerformance();
+		if(fittnessOfCurrentCell>compareFittnesWithThis){gotOneToMutate=true;}
+
+	}
+
+	int whichCellDies=cell::randomIntInRange(generator,population.size()-1);
+	//now mutate the selected cell, and put it in the place of the dying cell
+	
+	cell offspringOfChosenCell=population[whichOneToMutate].mutateAndReturn(generator);
+	population[whichCellDies]=offspringOfChosenCell;
+	
+}
+
+
+std::vector<double> cell::getPopulationFittness(std::vector<cell>& population){
+
+	std::vector<double> toReturn(population.size());
+
+	for (int k=0; k<population.size();k++){
+
+		toReturn[k]=population[k].getPerformance();
+	}
+
+
+	return toReturn;
+}
+
+void cell::printPopulationFittnesses(std::vector<cell>& population){
+
+	std::vector<double> fittnesses=getPopulationFittness(population);
+	for (auto i:fittnesses){
+		std::cout<<i<<", ";
+	}
+	std::cout<<std::endl;
+}
 
 
 
@@ -349,14 +436,6 @@ double cell::calcThroughput(){
 		nextRowNumber++;
 		substrateSet.erase(substrateSet.begin());
 	}
-
-
-
-
-
-
-
-
 
 
 	glp_prob *lp;
