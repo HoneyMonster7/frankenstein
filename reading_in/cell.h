@@ -67,6 +67,7 @@ class cell{
 	static void mutatePopulation(std::vector<cell>& population, RandomGeneratorType& generator);
 	static std::vector<double> getPopulationFittness(std::vector<cell>& population);
 	static void printPopulationFittnesses(std::vector<cell>& population);
+	static void printNFittest(std::vector<cell>& population, int N);
 
 	void printHumanReadable();
 	void printXGMML(std::string fileName);

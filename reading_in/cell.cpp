@@ -345,6 +345,7 @@ void cell::mutatePopulation(std::vector<cell>& population, RandomGeneratorType& 
 		whichOneToMutate=cell::randomIntInRange(generator,population.size()-1);
 		double compareFittnesWithThis=cell::randomRealInRange(generator,maxPossibleFittness);
 		double fittnessOfCurrentCell=population[whichOneToMutate].getPerformance();
+		//std::cout<<"Trying if the lucky one is nr "<<whichOneToMutate<<std::endl;
 		if(fittnessOfCurrentCell>compareFittnesWithThis){gotOneToMutate=true;}
 
 	}
@@ -354,6 +355,7 @@ void cell::mutatePopulation(std::vector<cell>& population, RandomGeneratorType& 
 	
 	cell offspringOfChosenCell=population[whichOneToMutate].mutateAndReturn(generator);
 	population[whichCellDies]=offspringOfChosenCell;
+	//std::cout<<"The unlucky one is: "<<whichCellDies<<std::endl;
 	
 }
 
@@ -380,6 +382,21 @@ void cell::printPopulationFittnesses(std::vector<cell>& population){
 	std::cout<<std::endl;
 }
 
+void cell::printNFittest(std::vector<cell>& population,int N){
+	std::vector<double> allFittnesses=getPopulationFittness(population);
+
+	std::vector<double> bestFittnesses(allFittnesses.size());
+	
+	std::partial_sort_copy(allFittnesses.begin(),allFittnesses.end(),bestFittnesses.begin(),bestFittnesses.end());
+
+
+			std::cout<<"The best "<<N<<" are:";
+			for (int i=0;i<N;i++){
+			std::cout<<*(bestFittnesses.end()-i-1)<<", ";
+			}
+			std::cout<<std::endl;
+
+}
 
 
 double cell::calcThroughput(){
