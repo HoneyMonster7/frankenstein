@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 		}
 		std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
 
-		for (int k=0; k<2000; k++){
+		for (int k=0; k<60000; k++){
 			cell::mutatePopulation(cellVector,generator);
 			if (k%500==0){
 				
@@ -130,6 +130,14 @@ int main(int argc, char* argv[])
 		}
 
 		cell::printPopulationFittnesses(cellVector);
+		int N=10;
+		std::vector<cell> bestCells=cell::getBestNCells(cellVector,N);
+		for (int i=0; i<N; i++){
+			std::ostringstream forFileName;
+			forFileName<<"NR"<<i+1<<"cell";
+			bestCells[i].printXGMML(forFileName.str());
+		}
+		
 
 		fileName="final";
 		trialcell.printXGMML(fileName);

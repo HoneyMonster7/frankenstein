@@ -398,6 +398,28 @@ void cell::printNFittest(std::vector<cell>& population,int N){
 
 }
 
+std::vector<cell> cell::getBestNCells(std::vector<cell>& population, int N){
+
+	std::vector<cell> toReturn(N);
+	std::vector<double> allFittnesses=getPopulationFittness(population);
+	std::vector<double> sortedFittness(allFittnesses.size());
+	std::partial_sort_copy(allFittnesses.begin(),allFittnesses.end(),sortedFittness.begin(),sortedFittness.end());
+
+	for (int i=0; i<N; i++){
+
+		double currentFittness=*(sortedFittness.end()-i-1);
+		int position=find(allFittnesses.begin(),allFittnesses.end(),currentFittness)-allFittnesses.begin();
+		if(position<allFittnesses.size()){
+			toReturn[i]=population[position];
+		}
+		else {
+			std::cout<<"There was a problem in finding the best "<<N<<" elements of the population."<<std::endl;
+		}
+
+	}
+	return toReturn;
+}
+
 
 double cell::calcThroughput(){
 
@@ -524,8 +546,8 @@ double cell::calcThroughput(){
 
 	//bounding the imaginary reactions, only certain amount of material can be taken at once
 	glp_set_col_bnds(lp,listSize+1,GLP_DB,0.0,10.0);
-	glp_set_col_bnds(lp,listSize+2,GLP_DB,0.0,10.0);
-	glp_set_col_bnds(lp,listSize+3,GLP_DB,0.0,10.0);
+	glp_set_col_bnds(lp,listSize+2,GLP_DB,0.0,40.0);
+	glp_set_col_bnds(lp,listSize+3,GLP_DB,0.0,40.0);
 	glp_set_col_bnds(lp,listSize+5,GLP_DB,0.0,10.0);
 
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-10.0,10.0);

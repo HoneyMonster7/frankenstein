@@ -68,6 +68,7 @@ class cell{
 	static std::vector<double> getPopulationFittness(std::vector<cell>& population);
 	static void printPopulationFittnesses(std::vector<cell>& population);
 	static void printNFittest(std::vector<cell>& population, int N);
+	static std::vector<cell> getBestNCells(std::vector<cell>& population, int N);
 
 	void printHumanReadable();
 	void printXGMML(std::string fileName);
