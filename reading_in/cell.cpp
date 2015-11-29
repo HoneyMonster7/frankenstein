@@ -36,6 +36,12 @@ void cell::printReacs() {
 	std::cout<<" END"<<std::endl;
 }
 
+bool cell::operator<( cell other) {
+
+	//orders such that the largest performance wil be [0]
+	return getPerformance()>other.getPerformance();
+}
+
 void cell::printXGMML(std::string filename){
 
 
@@ -401,21 +407,29 @@ void cell::printNFittest(std::vector<cell>& population,int N){
 std::vector<cell> cell::getBestNCells(std::vector<cell>& population, int N){
 
 	std::vector<cell> toReturn(N);
-	std::vector<double> allFittnesses=getPopulationFittness(population);
-	std::vector<double> sortedFittness(allFittnesses.size());
-	std::partial_sort_copy(allFittnesses.begin(),allFittnesses.end(),sortedFittness.begin(),sortedFittness.end());
+	//std::vector<double> allFittnesses=getPopulationFittness(population);
+	//std::vector<double> sortedFittness(allFittnesses.size());
+	//std::partial_sort_copy(allFittnesses.begin(),allFittnesses.end(),sortedFittness.begin(),sortedFittness.end());
 
+	//for (int i=0; i<N; i++){
+
+	//	double currentFittness=*(sortedFittness.end()-i-1);
+	//	int position=find(allFittnesses.begin(),allFittnesses.end(),currentFittness)-allFittnesses.begin();
+	//	if(position<allFittnesses.size()){
+	//		toReturn[i]=population[position];
+	//	}
+	//	else {
+	//		std::cout<<"There was a problem in finding the best "<<N<<" elements of the population."<<std::endl;
+	//	}
+
+	//0}
+	//doesn't matter if population is sorted even when the Moran process is running, random selection 
+	//doesn't care for ordered vector
+	std::sort(population.begin(),population.end());
 	for (int i=0; i<N; i++){
 
-		double currentFittness=*(sortedFittness.end()-i-1);
-		int position=find(allFittnesses.begin(),allFittnesses.end(),currentFittness)-allFittnesses.begin();
-		if(position<allFittnesses.size()){
-			toReturn[i]=population[position];
-		}
-		else {
-			std::cout<<"There was a problem in finding the best "<<N<<" elements of the population."<<std::endl;
-		}
-
+		toReturn[i]=population[i];
+		//std::cout<<"Added a cell with fittness: "<<population[i].getPerformance()<<std::endl;
 	}
 	return toReturn;
 }
@@ -512,10 +526,11 @@ double cell::calcThroughput(){
 		double freeChange=tmpreac.getCurrentFreeEChange();
 		//std::cout<<"FreeEChange of : "<<tmpreac.getListNr()<<" is "<<freeChange<<std::endl;
 		//tmpreac.printReaction();
-		if(freeChange<0){
+		if(freeChange<-10){
 		glp_set_col_bnds(lp,i,GLP_DB,0.0,1.0);
 		}
-		else{glp_set_col_bnds(lp,i,GLP_DB,-1.0,0.0);}
+		else if(freeChange>10){glp_set_col_bnds(lp,i,GLP_DB,-1.0,0.0);}
+		else {glp_set_col_bnds(lp,i,GLP_DB,-0.5,0.5);}
 
 
 		std::vector<int> tmpsubs=tmpreac.getsubstrates();

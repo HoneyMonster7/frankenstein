@@ -47,6 +47,7 @@ class cell{
 	//public: 
 	cell(std::vector<int>& availableReactons);
 	cell();
+	bool operator<(cell other);
 	
 	inline std::vector<int> getReacs() {return availableReactions;}
 	inline double getPerformance() {return performance;}
