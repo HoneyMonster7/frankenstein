@@ -578,7 +578,7 @@ double cell::calcThroughput(){
 	//ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
 	//
 	//target is to maximize the imaginary reactions throughput
-	glp_set_obj_coef(lp,listSize+4,1.0);
+	glp_set_obj_coef(lp,listSize+5,1.0);
 
 
 	//creating the arrays now

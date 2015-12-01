@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 		}
 		std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
 
-		for (int k=0; k<600000; k++){
+		for (int k=0; k<100000; k++){
 			cell::mutatePopulation(cellVector,generator);
 			if (k%500==0){
 				
