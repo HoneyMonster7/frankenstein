@@ -58,7 +58,7 @@ void cell::printXGMML(std::string filename){
 
 	//typesfile<<"Name Type"<<std::endl;
 	xgmmlFile<<"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"<<std::endl;
-	xgmmlFile<<"<graph label=\"justAGraph\" xmlns:cy=\"http://www.cytoscape.org\" xmlns=\"http://www.cs.rpi.edu/XGMML\" directed=\"1\">"<<std::endl;
+	xgmmlFile<<"<graph label=\""<<filename<<"\" xmlns:cy=\"http://www.cytoscape.org\" xmlns=\"http://www.cs.rpi.edu/XGMML\" directed=\"1\">"<<std::endl;
 
 
 	for (int j=0; j<availableReactions.size();j++){
@@ -570,7 +570,8 @@ double cell::calcThroughput(){
 	ia.push_back(substrateIndex[sourceSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
 	ia.push_back(substrateIndex[-1+nrOfInternalMetabolites]);	ja.push_back(listSize+2); ar.push_back(1.0);
 	ia.push_back(substrateIndex[-2+nrOfInternalMetabolites]);	ja.push_back(listSize+3); ar.push_back(-1.0);
-	ia.push_back(substrateIndex[-8+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[-6+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(1.0);
+	ia.push_back(substrateIndex[-7+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(-1.0);
 	ia.push_back(substrateIndex[sinkSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
 
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);

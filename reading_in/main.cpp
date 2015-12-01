@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 	}
 
 
-	std::vector<int> subset= {130,285,5107,5109,5146};
+	std::vector<int> subset= {132,5144,5152};
 
 
 	cell::nrOfInternalMetabolites=nrOfInternalMetabolites;
@@ -92,8 +92,8 @@ int main(int argc, char* argv[])
 	//this is the k value for the fitness function
 	cell::smallKforFitness=1e-2;
 	//don't add nrofinternalmetabolites here
-	cell::sourceSubstrate=911;
-	cell::sinkSubstrate=0;
+	cell::sourceSubstrate=1596;
+	cell::sinkSubstrate=43;
 
 
 	cell trialcell(subset);
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 		}
 		std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
 
-		for (int k=0; k<6000; k++){
+		for (int k=0; k<600000; k++){
 			cell::mutatePopulation(cellVector,generator);
 			if (k%500==0){
 				
