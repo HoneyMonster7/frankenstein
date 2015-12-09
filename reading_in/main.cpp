@@ -10,6 +10,8 @@
 #include <fstream>
 #include <utility>
 #include <algorithm>
+#include <ctime>
+#include <cstdlib>
 
 #include "reaction.h"
 #include "cell.h"
@@ -21,7 +23,25 @@ int main(int argc, char* argv[])
 	//defined in cell.h
 	RandomGeneratorType generator(1);
 
+	//for automatically creating an output file named from current time
+	time_t now=time(0); 
+	tm *ltm = localtime(&now);
+	std::ostringstream forDateTime;
+	forDateTime<<1900+ltm->tm_year<<"."<<1+ltm->tm_mon<<"."<<ltm->tm_mday<<"_"<<1+ltm->tm_hour<<":"<<1+ltm->tm_min<<":"<<1+ltm->tm_sec;
+	std::string dateForFileName=forDateTime.str();
+
+	std::string dirCommand="mkdir "+dateForFileName;
+	const int dir_err = system(dirCommand.c_str());
+	if (-1 == dir_err)
+	{
+		std::cout<<"Error creating directory!"<<std::endl;
+		exit(1);
+	}
+
+	std::ofstream improvementlog;
+	improvementlog.open(dateForFileName+"/"+dateForFileName+".fitt");
 	//set the number of internalmetabolites here:
+	
 	int nrOfInternalMetabolites=13;
 	reaction::nrOfInternalMetabolites=nrOfInternalMetabolites;
 
@@ -100,6 +120,9 @@ int main(int argc, char* argv[])
 
 	std::vector<cell> cellVector(100,trialcell);
 	//int compsize=compoundVList.size();
+	double previousFittness=trialcell.getPerformance();
+	std::vector<int> previousNetwork=trialcell.getReacs();
+
 
 	std::string fileName="initial";
 		trialcell.printXGMML(fileName);
@@ -118,13 +141,29 @@ int main(int argc, char* argv[])
 		}
 		std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
 
-		for (int k=0; k<100000; k++){
+		for (int k=0; k<80000; k++){
 			cell::mutatePopulation(cellVector,generator);
 			if (k%500==0){
 				
 			std::cout<<k<<": ";
+			cell currentBest=cell::printNFittest(cellVector,10);
+
+			if (previousFittness+0.5<currentBest.getPerformance()){
+				cell previousBest=cell(previousNetwork);
+				std::ostringstream fname;
+				fname<<dateForFileName<<"/"<<dateForFileName<<"_before_step_"<<k;
+				previousBest.printXGMML(fname.str());
+				fname.str("");
+				fname.clear();
+				fname<<dateForFileName<<"/"<<dateForFileName<<"_after_step_"<<k;
+				currentBest.printXGMML(fname.str());
+			}
+			previousFittness=currentBest.getPerformance();
+			previousNetwork=currentBest.getReacs();
+			improvementlog<<k<<" "<<previousFittness<<std::endl;
+			
 			//cell::printPopulationFittnesses(cellVector);
-			cell::printNFittest(cellVector,10);
+
 			}
 
 		}
@@ -134,7 +173,7 @@ int main(int argc, char* argv[])
 		std::vector<cell> bestCells=cell::getBestNCells(cellVector,N);
 		for (int i=0; i<N; i++){
 			std::ostringstream forFileName;
-			forFileName<<"NR"<<i+1<<"cell";
+			forFileName<<dateForFileName<<"/NR"<<i+1<<"cell";
 			bestCells[i].printXGMML(forFileName.str());
 		}
 		
@@ -142,5 +181,6 @@ int main(int argc, char* argv[])
 		fileName="final";
 		trialcell.printXGMML(fileName);
 
+		improvementlog.close();
   std::cout<<"Tests completed."<<std::endl;
 }

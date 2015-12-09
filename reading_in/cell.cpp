@@ -388,19 +388,18 @@ void cell::printPopulationFittnesses(std::vector<cell>& population){
 	std::cout<<std::endl;
 }
 
-void cell::printNFittest(std::vector<cell>& population,int N){
-	std::vector<double> allFittnesses=getPopulationFittness(population);
+cell cell::printNFittest(std::vector<cell>& population,int N){
 
-	std::vector<double> bestFittnesses(allFittnesses.size());
 	
-	std::partial_sort_copy(allFittnesses.begin(),allFittnesses.end(),bestFittnesses.begin(),bestFittnesses.end());
+	std::sort(population.begin(),population.end());
 
 
 			std::cout<<"The best "<<N<<" are:";
 			for (int i=0;i<N;i++){
-			std::cout<<*(bestFittnesses.end()-i-1)<<", ";
+			std::cout<<population[i].getPerformance()<<", ";
 			}
 			std::cout<<std::endl;
+			return population[0];
 
 }
 
@@ -670,4 +669,33 @@ void cell::printHumanReadable(){
 void cell::setFluxes(std::vector<double>& fluxVector){
 
 	fluxThroughReacs=fluxVector;
+}
+
+void cell::findThePaths(std::vector<std::pair<int,int>> freeCompounds, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction> ReactionVector, std::vector<substrate> SubstrateVector){
+
+	if (currentReactions.empty()){
+
+		int whatisThesource=freeCompounds[0].first;
+		std::vector<int> possibleReactions = SubstrateVector[whatisThesource].getinvolved();
+
+		for (int reacNumbers:possibleReactions){
+			reaction Inspected=ReactionVector[reacNumbers];
+			std::vector<int> fromComps,toComps;
+			if (Inspected.getCurrentFreeEChange()<0)
+			{
+				fromComps=Inspected.getsubstrates();
+				toComps=Inspected.getproducts();
+			}
+			else{
+				fromComps=Inspected.getproducts();
+				toComps=Inspected.getsubstrates();
+			}
+			if (std::find(fromComps.begin(),fromComps.end(),whatisThesource) != fromComps.end()){
+				
+			}
+			}
+		}
+
+
+	}
 }
