@@ -671,7 +671,7 @@ void cell::setFluxes(std::vector<double>& fluxVector){
 	fluxThroughReacs=fluxVector;
 }
 
-void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction> ReactionVector, std::vector<substrate> SubstrateVector){
+void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction>& ReactionVector, std::vector<substrate>& SubstrateVector){
 
 	std::vector<int> doesntHaveToBalance = {-7, -6, -1, -2};
 
@@ -693,17 +693,17 @@ void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, st
 
 	std::vector<int> PossibleReactionsToAdd(canWeAdd.begin(),canWeAdd.end());
 
-	std::cout<<"We can add:";
-	for (auto whatever:PossibleReactionsToAdd){
-		std::cout<<whatever<<", ";
-	}
-	std::cout<<std::endl;
+	//std::cout<<"We can add:";
+	//for (auto whatever:PossibleReactionsToAdd){
+	//	std::cout<<whatever<<", ";
+	//}
+	//std::cout<<std::endl;
 
 	for (int j:canWeAdd){
 
 		std::vector<int> substrates, products;
 		if (reactionVector[j].getCurrentFreeEChange()>0){
-			std::cout<<"For "<<j<<" freeechange is greater than zero."<<std::endl;
+			//std::cout<<"For "<<j<<" freeechange is greater than zero."<<std::endl;
 			substrates=ReactionVector[j].getproducts();
 			products=ReactionVector[j].getsubstrates();
 		}
@@ -733,14 +733,28 @@ void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, st
 
 		//now if adding the reaction solves a need or a too much problem, we add it
 
-		std::cout<<"solveless: "<<doesItSolveALess<<" solvemore: "<<doesItSolveANeed<<std::endl;
+		//std::cout<<"solveless: "<<doesItSolveALess<<" solvemore: "<<doesItSolveANeed<<std::endl;
 		if (doesItSolveALess || doesItSolveANeed){
 
 			std::vector<int> currentReactionsInLoop=currentReactions;
 			std::vector<int> needMoreInLoop=needMore;
 			std::vector<int> needLessInLoop=needLess;
 
-			currentReactions.emplace_back(j);
+			//std::cout<<"Needmore: ";
+			//for (int m:needMoreInLoop){
+			//	std::cout<<m<<", ";
+			//}
+			//std::cout<<std::endl;
+			//
+			//std::cout<<"Needless: ";
+			//for (int m:needLessInLoop){
+			//	std::cout<<m<<", ";
+			//}
+			//std::cout<<std::endl;
+
+
+
+			currentReactionsInLoop.emplace_back(j);
 			// and we note the problems it creates, and solves
 	
 			for (int noBalance:doesntHaveToBalance){
@@ -751,26 +765,46 @@ void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, st
 
 			for (int k:substrates){
 
-				if (std::find(needMoreInLoop.begin(), needMoreInLoop.end(), k)!=needMoreInLoop.end()){
-					needMoreInLoop.erase(std::remove(needMoreInLoop.begin(), needMoreInLoop.end(), k), needMoreInLoop.end());
-					std::cout<<"We no longer need more "<<k<<" thanks to "<<j<<std::endl;
+				if (std::find(needLessInLoop.begin(), needLessInLoop.end(), k)!=needLessInLoop.end()){
+					needLessInLoop.erase(std::remove(needLessInLoop.begin(), needLessInLoop.end(), k), needLessInLoop.end());
+					//std::cout<<"We no longer need less "<<k<<" thanks to "<<j<<std::endl;
 				}
 				else{
-				needLessInLoop.emplace_back(k);
-					std::cout<<"We now need less "<<k<<" thanks to "<<j<<std::endl;
+				needMoreInLoop.emplace_back(k);
+					//std::cout<<"We now need more "<<k<<" thanks to "<<j<<std::endl;
 				}
 			}
 			for (int k:products){
-				if (std::find(needLessInLoop.begin(), needLessInLoop.end(), k)!= needLessInLoop.end()){
-					needLessInLoop.erase(std::remove(needLessInLoop.begin(), needLessInLoop.end(), k), needLessInLoop.end());
-					std::cout<<"We no longer need less "<<k<<" thanks to "<<j<<std::endl;
+				if (std::find(needMoreInLoop.begin(), needMoreInLoop.end(), k) != needMoreInLoop.end()){
+					needMoreInLoop.erase(std::remove(needMoreInLoop.begin(), needMoreInLoop.end(), k), needMoreInLoop.end());
+					//std::cout<<"We no longer need more "<<k<<" thanks to "<<j<<std::endl;
 				}
-				else{needMoreInLoop.emplace_back(k);
-				std::cout<<"We now need more "<<k<<" thanks to "<<j<<std::endl;}
+				else{needLessInLoop.emplace_back(k);
+				//std::cout<<"We now need less "<<k<<" thanks to "<<j<<std::endl;
+				}
 			
 
+				}
+
+			//now writing out the current state, and calling it again
+
+			int thingsInNeed=needMoreInLoop.size()+needLessInLoop.size();
+
+			if(thingsInNeed<2){
+				std::cout<<std::endl<<"Current state of the system:"<<std::endl;
+
+				std::cout<<"Reactions: ";
+				for (int k:currentReactionsInLoop){std::cout<<k<<", ";}
+				std::cout<<std::endl<<"Needmore: ";
+				for (int k:needMoreInLoop){std::cout<<k<<", ";}
+				std::cout<<std::endl<<"Needless: ";
+				for (int k:needLessInLoop){std::cout<<k<<", ";}
+				std::cout<<std::endl;
 			}
 
+			if (currentReactionsInLoop.size()<10){
+				cell::findThePaths(needMoreInLoop,needLessInLoop, currentReactionsInLoop, TargetCompound, ReactionVector, SubstrateVector);
+			}
 		}
 	}
 
