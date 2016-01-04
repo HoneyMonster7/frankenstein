@@ -141,7 +141,17 @@ int main(int argc, char* argv[])
 		}
 		std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
 
-		for (int k=0; k<80000; k++){
+
+		std::vector<int> needMore, needLess, currentReactions;
+		int targetCompound = 54; //target is pyruvate - 54
+
+		needLess.emplace_back(19);
+		currentReactions.emplace_back(24);
+
+		cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector);
+
+
+		for (int k=0; k<800; k++){
 			cell::mutatePopulation(cellVector,generator);
 			if (k%500==0){
 				

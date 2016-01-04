@@ -671,31 +671,111 @@ void cell::setFluxes(std::vector<double>& fluxVector){
 	fluxThroughReacs=fluxVector;
 }
 
-void cell::findThePaths(std::vector<std::pair<int,int>> freeCompounds, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction> ReactionVector, std::vector<substrate> SubstrateVector){
+void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction> ReactionVector, std::vector<substrate> SubstrateVector){
 
-	if (currentReactions.empty()){
+	std::vector<int> doesntHaveToBalance = {-7, -6, -1, -2};
 
-		int whatisThesource=freeCompounds[0].first;
-		std::vector<int> possibleReactions = SubstrateVector[whatisThesource].getinvolved();
+	doesntHaveToBalance.emplace_back(TargetCompound);
 
-		for (int reacNumbers:possibleReactions){
-			reaction Inspected=ReactionVector[reacNumbers];
-			std::vector<int> fromComps,toComps;
-			if (Inspected.getCurrentFreeEChange()<0)
-			{
-				fromComps=Inspected.getsubstrates();
-				toComps=Inspected.getproducts();
-			}
-			else{
-				fromComps=Inspected.getproducts();
-				toComps=Inspected.getsubstrates();
-			}
-			if (std::find(fromComps.begin(),fromComps.end(),whatisThesource) != fromComps.end()){
-				
-			}
+	std::set<int> canWeAdd;
+	//first figure out what can be added
+	for (int i=0; i<currentReactions.size();i++)
+	{
+		std::vector<int> neighboursOfCurrentReac=ReactionVector[currentReactions[i]].getNeighbours();
+		for (int j:neighboursOfCurrentReac){
+			canWeAdd.insert(j);
+		}
+	}
+
+	for (int j:currentReactions){
+		canWeAdd.erase(j);
+	}
+
+	std::vector<int> PossibleReactionsToAdd(canWeAdd.begin(),canWeAdd.end());
+
+	std::cout<<"We can add:";
+	for (auto whatever:PossibleReactionsToAdd){
+		std::cout<<whatever<<", ";
+	}
+	std::cout<<std::endl;
+
+	for (int j:canWeAdd){
+
+		std::vector<int> substrates, products;
+		if (reactionVector[j].getCurrentFreeEChange()>0){
+			std::cout<<"For "<<j<<" freeechange is greater than zero."<<std::endl;
+			substrates=ReactionVector[j].getproducts();
+			products=ReactionVector[j].getsubstrates();
+		}
+		else{
+			substrates=ReactionVector[j].getsubstrates();
+			products=ReactionVector[j].getproducts();
+		}
+
+		bool doesItSolveANeed=false;
+		bool doesItSolveALess=false;
+
+		for (int currProduct:products){
+			doesItSolveANeed= doesItSolveANeed || (std::find(needMore.begin(), needMore.end(),currProduct)!=needMore.end());
+			if (std::find(needMore.begin(), needMore.end(), currProduct) != needMore.end()){
+				doesItSolveANeed=true;
+			//	std::cout<<j<<" solves a more."<<std::endl;
+			}	
+		}
+		for (int currSubs:substrates){
+			//doesItSolveALess=doesItSolveALess || (std::find(needLess.begin(), needLess.end(), currSubs) != needLess.end());
+		
+			if (std::find(needLess.begin(), needLess.end(), currSubs) != needLess.end()){
+				doesItSolveALess=true;
+				//std::cout<<j<<" solves a less."<<std::endl;
 			}
 		}
 
+		//now if adding the reaction solves a need or a too much problem, we add it
 
+		std::cout<<"solveless: "<<doesItSolveALess<<" solvemore: "<<doesItSolveANeed<<std::endl;
+		if (doesItSolveALess || doesItSolveANeed){
+
+			std::vector<int> currentReactionsInLoop=currentReactions;
+			std::vector<int> needMoreInLoop=needMore;
+			std::vector<int> needLessInLoop=needLess;
+
+			currentReactions.emplace_back(j);
+			// and we note the problems it creates, and solves
+	
+			for (int noBalance:doesntHaveToBalance){
+
+				substrates.erase(std::remove(substrates.begin(), substrates.end(), noBalance), substrates.end());
+				products.erase(std::remove(products.begin(), products.end(), noBalance), products.end());
+			}	
+
+			for (int k:substrates){
+
+				if (std::find(needMoreInLoop.begin(), needMoreInLoop.end(), k)!=needMoreInLoop.end()){
+					needMoreInLoop.erase(std::remove(needMoreInLoop.begin(), needMoreInLoop.end(), k), needMoreInLoop.end());
+					std::cout<<"We no longer need more "<<k<<" thanks to "<<j<<std::endl;
+				}
+				else{
+				needLessInLoop.emplace_back(k);
+					std::cout<<"We now need less "<<k<<" thanks to "<<j<<std::endl;
+				}
+			}
+			for (int k:products){
+				if (std::find(needLessInLoop.begin(), needLessInLoop.end(), k)!= needLessInLoop.end()){
+					needLessInLoop.erase(std::remove(needLessInLoop.begin(), needLessInLoop.end(), k), needLessInLoop.end());
+					std::cout<<"We no longer need less "<<k<<" thanks to "<<j<<std::endl;
+				}
+				else{needMoreInLoop.emplace_back(k);
+				std::cout<<"We now need more "<<k<<" thanks to "<<j<<std::endl;}
+			
+
+			}
+
+		}
 	}
+
+
 }
+	
+
+
