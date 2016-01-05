@@ -23,20 +23,30 @@
 	Hello \cite{BartekLower}
 	
 	
-	The core of the energy producing metabolic pathways of organisms are very similar, for all three domains of life, however there are many chemically viable such pathways.  The throughput of these pathways greatly influences the fitness of any given organism. 
+	The core of the energy producing metabolic pathways of organisms are very similar, for all three domains of life, however there are many pathways that are chemically viable.  The throughput of these pathways greatly influences the fitness of any given organism. 
 	
-	Cells usually convert their input sugars into precursor molecules, which are then converted into the biomass of the cell and energy. This method is very robust in terms of input molecules, as described in \cite{latent} the ability to synthesize all biomass from a single source of carbon and energy enables the cell to use molecules similar to the original to be converted to the precursors and then biomass. Eg. if the cell is capable of processing glucose using the same enzymatic pathways it is also capable of processing 40 other similar molecules.  In \cite{latent} the authors examine how an evolutionary advantage can originate from an exaptation. 
+	Cells usually convert their input material into precursor molecules, which are then converted into the biomass of the cell and energy. This method is robust in terms of input molecules, as described in \cite{latent} the ability to synthesize all biomass from a single source of carbon and energy enables the cell to use molecules similar to the original. Eg. if the cell is capable of processing glucose, using the same enzymatic pathways it is also capable of processing 40 other similar molecules.  In \cite{latent} the authors examine how an evolutionary advantage can originate from an exaptation. 
 	
 	  
-	Most modern cells use the the Embden-Meyerhof-Parnas (EMP) pathway
+	Most modern cells use the the Embden-Meyerhof-Parnas (EMP) pathway for the upper part of the glycotic  pathway, while some prokaryotes use the Entner-Doudoroff (ED) pathway \cite{EDpathway}. The trunk of the pathway however is highly conserved and so are the enzymes used \cite{latent}. 
 	
-		The similarity can occur for multiple reasons. It can be due to the current pathways being the most optimal one given the set of constraints posed by the environment of the cells. They can also occur because of historical reasons \cite{historical}. In this article the authors examine whether chemically viable metabolic pathways are connected in the sense of being able to mutate (using one-reaction mutations) from one pathway to an other while preserving viability. They find that in all but the simplest metabolisms this is possible.
+	The similarity can occur for a variety of reasons, it can be due to the current pathways being the most optimal one given the set of constraints posed by the environment of the cells as described in \cite{theoretical}, \cite{central}. It can also occur because of historical reasons \cite{historical}. In this article the authors examine whether chemically viable metabolic pathways are connected in the sense of being able to mutate (using one-reaction mutations) from one pathway to an other while preserving viability. They find that in all but the simplest metabolisms this is possible.
 	
 	In \cite{theoretical} it is found that the metabolic network of modern cell (the EMP pathway) is optimized to provide the highest possible ATP production flux, while maintaining a high kinetic efficiency. 
 	
 	The central carbon metabolism of the E. coli. bacteria is examined in \cite{central}. This converts sugars into metabolic precursors which are then in turn converted to the biomass of the cell, and energy. The authors try to find a simplifying principle for the structure of the metabolic network, and find that it can be considered as a minimal walk (in terms of enzymatic steps) between any pair of the 12 metabolic precursors for the biomass of the cell, and the one that is responsible for the ATP balance. In addition the enzymatic distance between the precursors and the input sugars is also minimized suggesting that the pathway used is optimal in this sense. 
 	
 	There are exceptions of this similarity, as mentioned in \cite{strategy} the glucose metabolism of procaryotic cells shows a great variety. The canonical pathway used by most organisms is the EMP pathway producing 2 ATP molecules for every glucose consumed, but the alternative Entner-Doudoroff (ED) pathway which only produces 1 ATP per glucose is still viable, as it requires much less enzymatic proteins than the EMP pathway to achieve the same glucose conversion rate. This is thought to present an evolutionary advantage that makes up for the reduced ATP production. rate. 
+	
+	\subsection{Computational approach}
+	
+	Apart from the analytic work done in the field, with the increase of processing power simulations became a valuable tool in modelling metabolic networks. Simulations can be exhaustive (looking through all the chemically feasible reaction chains), or simulating evolution. 
+	
+	According to Daniel Dennett "... evolution will occure whenever and wherever three conditions are met: replication, variation (mutation), and differential fitness (competition)". REFERENCE THIS 
+	Simulating the evolution of metabolic networks is a difficult task even for today's computers. To accurately calculate efficiencies in different environments we would have to implement chemistry as a whole. Some reduced problems have already been explored by scientists. 
+	
+
+	Charles Darwin having discovered evolution \cite{darwin} realized that the highly  sophisticated organs such as the eye must have evolved through many steps. In \cite{latent} the authors argue that as other complex structures (such as feathers for flight) have evolved non-adaptively as exaptations, as byproducts of evolution of other functions. In \cite{complexfeatures} the authors consider simple digital organisms that can obtain energy by performing logic functions. The organisms are provided an environment where they can reproduce and mutate, and the more complex logical function they perform, the more energy they receive. They find that although to get to the most complex (and most energy yielding) operations many mutations are needed, once it is present, it provides such value that offsprings that don't have it are quickly eliminated by the competition. 
 	
 	
 	\bibliography{dissertation}
