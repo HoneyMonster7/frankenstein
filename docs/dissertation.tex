@@ -20,9 +20,18 @@
 	\end{abstract}
 	
 	\section{Introduction}
-	Hello \cite{BartekLower}
+
+	A metabolic network is a set of chemical reactions and compounds that organisms use to process their input chemicals into energy and building blocks of themselves. Examples of metabolic networks include glycolysis, gluconeogenesis, and photosynthesis. The natural representation for these networks are bipartite graphs, where the two types of nodes are reactions and the chemical compounds used. 
+	
+	Chemically speaking it is easy to see that the number of possible reactions in a cell are nearly infinite, if we only impose the constraint that the individual atoms have to be conserved on both sides of a reaction.  Despite this cells mostly use a well defined set of reactions, that can be controlled through the use of enzymes and the careful control of the concentration of the reactants. This way, depending on the specific needs of the cell the speed and even the direction of reactions can be manipulated. (example glycolysis and glyconeogenesis?)
+	
+	The enzymes a cell can manufacture are coded in it's genome, the genetic program of the organism, therefore knowing the genome of the cell we can infer the metabolic network it uses, and in theory even reconstruct the cell itself. The genes are also very important in the evolution of metabolic networks (and the cells themselves) as when cells divide sometimes errors are made when copying the genome, thus resulting in a cell not identical to it's predecessor.  Thanks to large-scale gene sequencing research \cite{20yearsof} we now have a number of organisms whose genome is fully known along many others that are partially known, providing an insight in how different properties of the metabolic networks are encoded into the genome of the organism in question \cite{sequencing}. 
+	
+	Thorough mathematical investigation of these networks reveal interesting topological properties, that make them similar to eg. the social network of humans or the internet. These are small world character, scale-freeness, error-tolerance \cite{largescale} and modularity . A small-world network \cite{smallworld} is one in which the number of steps to connect any given pair of nodes (in our case chemical compounds) this number stays constant even as the network grows. In case of the human social networks this is known as the six degrees of separation \cite{sixdegrees}. In a scale-free network the probability that a uniformly chosen node is connected to $n$ other nodes is $P(n)=n^{-V}$ for some constant $V$, resulting in a few highly connected nodes (Hubs) and many scarcely connected nodes. This provides error-tolerance against random errors to the network, as unless a hub is removed, the performance doesn't decrease significantly. 
 	
 	
+	
+	\section{trol}
 	The core of the energy producing metabolic pathways of organisms are very similar, for all three domains of life, however there are many pathways that are chemically viable.  The throughput of these pathways greatly influences the fitness of any given organism. 
 	
 	Cells usually convert their input material into precursor molecules, which are then converted into the biomass of the cell and energy. This method is robust in terms of input molecules, as described in \cite{latent} the ability to synthesize all biomass from a single source of carbon and energy enables the cell to use molecules similar to the original. Eg. if the cell is capable of processing glucose, using the same enzymatic pathways it is also capable of processing 40 other similar molecules.  In \cite{latent} the authors examine how an evolutionary advantage can originate from an exaptation. 
