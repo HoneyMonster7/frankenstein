@@ -674,7 +674,7 @@ void cell::setFluxes(std::vector<double>& fluxVector){
 void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction>& ReactionVector, std::vector<substrate>& SubstrateVector, std::string fnameString){
 
 	int writeoutcounter=1;
-	std::vector<int> doesntHaveToBalance = {-7, -6, -1, -2};
+	std::vector<int> doesntHaveToBalance = {-3, -4, -1, -2, 94};
 
 	doesntHaveToBalance.emplace_back(TargetCompound);
 
@@ -814,7 +814,7 @@ void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, st
 				}
 			}
 
-			if (currentReactionsInLoop.size()<10){
+			if (currentReactionsInLoop.size()<7){
 				cell::findThePaths(needMoreInLoop,needLessInLoop, currentReactionsInLoop, TargetCompound, ReactionVector, SubstrateVector, fnameString);
 			}
 		}

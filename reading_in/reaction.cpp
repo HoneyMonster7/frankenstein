@@ -119,7 +119,7 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 
 		for(int i : tmpsubstrates)
 		{
-		if(i>=0){
+		if(i>=0 || i==-6 || i==-7){
 			substrateVector[i+nrOfInternalMetabolites].addInvolved(counter);	
 			//std::cout<<counter<<" has substrate: "<<i<<std::endl;
 		}
@@ -128,7 +128,7 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 
 		for(int j: tmproducts)
 		{
-		if(j>=0){
+		if(j>=0 || j==-6 || j==-7){
 			//std::cout<<counter<<" has product: "<<i<<std::endl;
 			substrateVector[j+nrOfInternalMetabolites].addInvolved(counter);	
 		}

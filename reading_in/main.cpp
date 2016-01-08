@@ -145,8 +145,10 @@ int main(int argc, char* argv[])
 		std::vector<int> needMore, needLess, currentReactions;
 		int targetCompound = 54; //target is pyruvate - 54
 
-		needLess.emplace_back((int)53);
-		currentReactions.emplace_back(321);
+		needLess.emplace_back((int)-6);
+		needMore.emplace_back((int)-7);
+		currentReactions.emplace_back(11790);
+		reacVector[11790].printReaction();
 
 		cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, dateForFileName);
 
