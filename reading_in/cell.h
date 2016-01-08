@@ -71,7 +71,7 @@ class cell{
 	static cell printNFittest(std::vector<cell>& population, int N);
 	static std::vector<cell> getBestNCells(std::vector<cell>& population, int N);
 
-	static void findThePaths(std::vector<int> needMore, std::vector<int> needLess, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction>& ReactionVector, std::vector<substrate>& SubstrateVector);
+	static void findThePaths(std::vector<int> needMore, std::vector<int> needLess, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction>& ReactionVector, std::vector<substrate>& SubstrateVector, std::string fnameString);
 	void printHumanReadable();
 	void printXGMML(std::string fileName);
 

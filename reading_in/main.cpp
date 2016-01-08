@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
 		needLess.emplace_back((int)53);
 		currentReactions.emplace_back(321);
 
-		cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector);
+		cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, dateForFileName);
 
 
 		for (int k=0; k<800; k++){

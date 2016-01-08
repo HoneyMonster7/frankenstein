@@ -671,8 +671,9 @@ void cell::setFluxes(std::vector<double>& fluxVector){
 	fluxThroughReacs=fluxVector;
 }
 
-void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction>& ReactionVector, std::vector<substrate>& SubstrateVector){
+void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction>& ReactionVector, std::vector<substrate>& SubstrateVector, std::string fnameString){
 
+	int writeoutcounter=1;
 	std::vector<int> doesntHaveToBalance = {-7, -6, -1, -2};
 
 	doesntHaveToBalance.emplace_back(TargetCompound);
@@ -800,10 +801,21 @@ void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, st
 				std::cout<<std::endl<<"Needless: ";
 				for (int k:needLessInLoop){std::cout<<k<<", ";}
 				std::cout<<std::endl;
+				if (thingsInNeed<1){
+
+					std::ostringstream forFileName;
+					forFileName<<fnameString<<"/NR"<<writeoutcounter<<"cell";
+
+
+					cell tmpcell(currentReactionsInLoop);
+					tmpcell.printXGMML(forFileName.str());
+
+					writeoutcounter++;
+				}
 			}
 
 			if (currentReactionsInLoop.size()<10){
-				cell::findThePaths(needMoreInLoop,needLessInLoop, currentReactionsInLoop, TargetCompound, ReactionVector, SubstrateVector);
+				cell::findThePaths(needMoreInLoop,needLessInLoop, currentReactionsInLoop, TargetCompound, ReactionVector, SubstrateVector, fnameString);
 			}
 		}
 	}
