@@ -4,6 +4,8 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage[numbers]{natbib}
+
 
 %opening
 \title{Evolution of metabolic networks}
@@ -31,11 +33,22 @@
 	
 	When modelling metabolic networks one often has to make simplifications both in theoretical and computational research. These simplifications occur in defining the chemistry the cells can use, the goal function of cells, the environment the cells live in, as well as the anatomy of the cells themselves. 
 	
-	Modelling the intricacies of chemistry is a hopeless task with today's computers, the fully quantum mechanical treatment of even a few atoms is beyond the capabilities of supercomputers. To overcome this barrier artificial chemistries are often used, that simplify the rules, but grasp some important detail of them. \cite{artificialreview}
+	Modelling the intricacies of chemistry is a hopeless task with today's computers, the fully quantum mechanical treatment of even a few atoms is beyond the capabilities of supercomputers. To overcome this barrier artificial chemistries are often used, that simplify the rules, but grasp some important detail of them. \citeauthor{artificialreview} describes some of these methods used. \citeauthor{evolutioncomplex} use linear molecules consisting of 3 possible  artificial atoms to construct a metabolic network of organisms, and examine how they evolve. \citeauthor{computationalframework} considers "chemical reactions as graph rewriting operations, and uses a toy-version of quantum chemistry to derive thermodynamic parameters". 
 	
-	Many metabolic pathways are highly conserved in organisms throughout all three domains of life. 
+	I will restrict reactions available to the organisms I simulate to those using CHOPN molecules (containing only carbon, hydrogen, oxygen, phosphor and nitrogen) of at most 3 carbon atoms. This is a realistic constraint as the trunk of the glycolytic pathway consists of only such molecules. The list of the molecules and reactions I used are the same that were used in \citeauthor{BartekLower}, and were provided to me by my supervisor. The list included the free energy of formation $\Delta_fG $ of the molecules, as well as the free energy change of the reactions, determined experimentally, where data was available, and estimated where there were none. 
+	
+	Among the known metabolic networks of organisms remarkable similarities can be found, among all three domains of life. Certain pathways are conserved partially  eg. in the glycolytic pathway the Embden-Meyerhof-Parnas (EMP) pathway \cite{EMPpathway} is used by most modern cells for the upper part,  some prokaryotes  use the Entner-Doudoroff (ED) pathway \cite{EDpathway}, however the trunk of the glycolytic pathway is highly conserved. OTHER EXAMPLES NEEDED?
 	
 	
+	
+	\subsection{where is the physis?}
+	\subsection{evolution}
+	\subsection{simulation}
+	
+	\section{methods}
+	\section{what was i provided}
+	\section{what did i do}
+	\iffalse
 	
 	\section{trol}
 	The core of the energy producing metabolic pathways of organisms are very similar, for all three domains of life, however there are many pathways that are chemically viable.  The throughput of these pathways greatly influences the fitness of any given organism. 
@@ -67,7 +80,9 @@
 	
 	In \cite{computationalframework} the authors "employ an artificial chemistry that views chemical reactions graph rewriting operations and utilizes a toy-version of quantum chemistry to derive thermodynamic parameters." 
 	
+	\fi
+	
 	
 	\bibliography{dissertation}
-	\bibliographystyle{plain}
+	\bibliographystyle{plainnat}
 \end{document}
