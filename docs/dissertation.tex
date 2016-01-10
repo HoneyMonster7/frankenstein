@@ -30,7 +30,7 @@
 	
 	The enzymes a cell can manufacture are coded in it's genome, the genetic program of the organism, therefore knowing the genome of the cell we can infer the metabolic network it uses, and in theory even reconstruct the cell itself. The genes are also very important in the evolution of metabolic networks (and the cells themselves) as when cells divide sometimes errors are made when copying the genome, thus resulting in a cell not identical to it's predecessor.  Thanks to large-scale gene sequencing research \cite{20yearsof} we now have a number of organisms whose genome is fully known along many others that are partially known, providing an insight in how different properties of the metabolic networks are encoded into the genome of the organism in question \cite{sequencing}. 
 	
-	\subsection{graphtheory part}
+	\subsection{Graph theory part}
 	Thorough mathematical investigation of these networks reveal interesting topological properties, that make them similar to eg. the social network of humans or the internet. These are small world character, scale-freeness, error-tolerance \cite{largescale} and modularity .
 	
 	A small-world network \cite{smallworld} is one in which the number of steps to connect any given pair of nodes (in our case chemical compounds) is small, and this number stays constant even as the network grows. In case of the human social networks this is known as the six degrees of separation \cite{sixdegrees}.
@@ -44,7 +44,7 @@
 	
 	Modelling the intricacies of chemistry is a hopeless task with today's computers, the fully quantum mechanical treatment of even a few atoms is beyond the capabilities of supercomputers. To overcome this barrier artificial chemistries are often used, that simplify the rules, but grasp some important detail of them. \citeauthor{artificialreview} describes some of these methods used. \citeauthor{evolutioncomplex} use linear molecules consisting of 3 possible  artificial atoms to construct a metabolic network of organisms, and examine how they evolve. \citeauthor{computationalframework} considers "chemical reactions as graph rewriting operations, and uses a toy-version of quantum chemistry to derive thermodynamic parameters". 
 	
-	I will restrict the reactions available to the organisms I simulate to those using CHOPN molecules (containing only carbon, hydrogen, oxygen, phosphor and nitrogen) of at most 3 carbon atoms. This is a realistic constraint as the trunk of the glycolytic pathway consists of only such molecules. The list of the molecules and reactions I used are the same that were used in \citeauthor{BartekLower}, and were provided to me by my supervisor. The list included the free energy of formation $\Delta_fG $ of the molecules, as well as the free energy change of the reactions, determined experimentally, where data was available, and estimated where there were there wasn't. I will also use flux balance analysis \cite{whatisfluxbalance} to determine the performance of the metabolic networks.
+	I will restrict the reactions available to the organisms I simulate to those using CHOPN molecules (containing only carbon, hydrogen, oxygen, phosphor and nitrogen) of at most 3 carbon atoms. This is a realistic constraint as the trunk of the glycolytic pathway consists of only such molecules. The list of the molecules and reactions I used are the same that were used in \citeauthor{BartekLower}, and were provided to me by my supervisor as described in Section \ref{chap:whatwasprovided}. 
 	
 	Among the known metabolic networks of organisms remarkable similarities can be found, among all three domains of life. Certain pathways are conserved partially  eg. in the glycolytic pathway the Embden-Meyerhof-Parnas (EMP) pathway \cite{EMPpathway} is used by most modern cells for the upper part,  some prokaryotes  use the Entner-Doudoroff (ED) pathway \cite{EDpathway}, while the trunk of the glycolytic pathway is highly conserved. OTHER EXAMPLES NEEDED? The reason for these similarities is yet to be discovered, but two potential reasons are the most common: 
 	\begin{enumerate}[label=(\alph*)]
@@ -54,7 +54,7 @@
 	
 	 \citeauthor{historical} reasons that (b) is unlikely, as they find that  "most viable metabolisms can be transformed into one another by single viability-preserving reaction changes."  
 	
-	\subsection{evolution}
+	\subsection{Evolution}
 	
 	Evolution works by exploiting the copying errors made when cells divide. After such a division one of the resulting cell may perform slightly better than it's predecessor at a certain task, therefore allowing itself to multiply faster than the non-changed cell. It is also possible that the resulting cell will be less fit than the original, in which case it will be out-competed by the original and it's offsprings. As Charles Darwin wrote "...Natural selection acts only by taking advantage of slight successive variations; she can never take a great and sudden leap, but must advance by short and sure, though slow steps." \cite{darwin} 
 	
@@ -66,13 +66,13 @@
 	
 	When duplicating my digital organisms either gain a reaction that uses compounds that link them to one of the already present reactions, or lose one reaction at random. 
 	
-	\subsection{simulation}
+	\subsection{Simulation}
 	
 	To simulate evolution on a computer we need three things: replication, mutation and competition. Algorithms empowered by the evolutionary principles \cite{evolutionaryalgorithms} are used every day now to find optimal solutions to problems in all fields of science. These algorithms need a function for which to optimize the given system, called the goal function. The goal function of real-world cells is rather complex, with goals reaching from growth to reproduction. Translating these goals to the language of mathematics and computers is not an easy task. \citeauthor{complexfeatures} sets the execution of more complex logical operations as a goal for the digital organisms in question. \citeauthor{evolutioncomplex} use the import of precursors and their procession to more complex molecules as the goal function. 
 	
 	In my simulations I consider the rate of ADP-ATP conversion as the goal function after \citeauthor{BartekLower}, however later I plan to experiment with different goal functions that also consider the amount of carbon products produced (that can be used for building the cell). 
 	
-	\subsection{where is the physics?}
+	\subsection{Where is the physics?}
 	
 	When calculating the direction of reactions I consider the free-energy change only. This does not take into account the free energy landscape of the reactions. PICTURE? we can imagine two reactions with equal free energies at the substrates and products, one transitioning smooth from substrate to product, the other having a large energy barrier between. Clearly the one with the barrier would not (or much more rarely) happen in a cell than the smooth transitioning. This is simplification is balanced by the fact that cells can use enzymes to act as catalysts to these reactions lowering such energy barriers. Should they need cells can also raise such barriers to otherwise smoothly transitioning reactions to stop them from occurring. 
 	
@@ -84,6 +84,12 @@
 	
 	Having been provided by the list of compounds and reactions I wrote a C++ program that simulates the evolution of the metabolic network of first only a single organism, later a population of such organisms. 
 	
+	\subsection{What was i provided}\label{chap:whatwasprovided}
+	
+	I was provided with the list of compounds and reactions used by \citeauthor{BartekLower} The list of compounds consists of 1966 CHOPN molecules of at most 3 carbon atoms, along with 13 so called internal metabolites
+	
+	
+	The list included the free energy of formation $\Delta_fG $ of the molecules, as well as the free energy change of the reactions, determined experimentally, where data was available, and estimated where there were there wasn't. I will also use flux balance analysis \cite{whatisfluxbalance} to determine the performance of the metabolic networks.
 	MORE ABOUT THE REACTIONS INTERNAL METABOLITES ETC
 	
 	\subsection{How to store the reaction network?}
@@ -140,7 +146,7 @@
 	
 	\subsection{How to calculate throughput?}
 	
-	\section{what was i provided}
+
 	\section{what did i do}
 	\iffalse
 	
