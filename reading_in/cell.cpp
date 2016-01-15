@@ -506,7 +506,7 @@ double cell::calcThroughput(){
 	}
 	//extra column for the imaginary reaction getting rid of the final compound (objective function)
 	int listSize=availableReactions.size();
-	glp_add_cols(lp,listSize+5);
+	glp_add_cols(lp,listSize+6);
 
 	//for(int i=1; i<=listSize+4; i++){ glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);}
 
@@ -525,11 +525,18 @@ double cell::calcThroughput(){
 		double freeChange=tmpreac.getCurrentFreeEChange();
 		//std::cout<<"FreeEChange of : "<<tmpreac.getListNr()<<" is "<<freeChange<<std::endl;
 		//tmpreac.printReaction();
-		if(freeChange<-10){
+		if(freeChange<-20){
 		glp_set_col_bnds(lp,i,GLP_DB,0.0,1.0);
+		//std::cout<<"going normal"<<std::endl;
 		}
-		else if(freeChange>10){glp_set_col_bnds(lp,i,GLP_DB,-1.0,0.0);}
-		else {glp_set_col_bnds(lp,i,GLP_DB,-0.5,0.5);}
+		else if(freeChange>20){
+			glp_set_col_bnds(lp,i,GLP_DB,-1.0,0.0); 
+			//std::cout<<"going backwards"<<std::endl;
+		}
+		else {
+			glp_set_col_bnds(lp,i,GLP_DB,-0.5,0.5);
+			//std::cout<<"Going both ways"<<std::endl;
+		}
 
 
 		std::vector<int> tmpsubs=tmpreac.getsubstrates();
@@ -563,20 +570,31 @@ double cell::calcThroughput(){
 	glp_set_col_bnds(lp,listSize+2,GLP_DB,0.0,40.0);
 	glp_set_col_bnds(lp,listSize+3,GLP_DB,0.0,40.0);
 	glp_set_col_bnds(lp,listSize+5,GLP_DB,0.0,10.0);
+	glp_set_col_bnds(lp,listSize+6,GLP_DB,-10.0,10.0);
 
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
+	//adding source substrate
 	ia.push_back(substrateIndex[sourceSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
+	//adding water
 	ia.push_back(substrateIndex[-1+nrOfInternalMetabolites]);	ja.push_back(listSize+2); ar.push_back(1.0);
+	//adding or removing co2
 	ia.push_back(substrateIndex[-2+nrOfInternalMetabolites]);	ja.push_back(listSize+3); ar.push_back(-1.0);
+	//adding ADP
 	ia.push_back(substrateIndex[-6+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(1.0);
+	//removing ATP
 	ia.push_back(substrateIndex[-7+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(-1.0);
+	//removing the sink substrate
 	ia.push_back(substrateIndex[sinkSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
 
+	//adding NadOx
+	ia.push_back(substrateIndex[-3+nrOfInternalMetabolites]);	ja.push_back(listSize+6); ar.push_back(1.0);
+	//removing Nad_red
+	ia.push_back(substrateIndex[-4+nrOfInternalMetabolites]);	ja.push_back(listSize+6); ar.push_back(-1.0);
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
 	//ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
 	//
-	//target is to maximize the imaginary reactions throughput
+	//target is to maximize the imaginary reactions throughput of the ADP->ATP reaction
 	glp_set_obj_coef(lp,listSize+5,1.0);
 
 

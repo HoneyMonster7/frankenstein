@@ -77,7 +77,9 @@ int main(int argc, char* argv[])
 	reacVector[13].printReaction();
 	reacVector[209].printReaction();
 
+	std::cout<<"Building the neighbour list..."<<std::endl;
 	substrate::buildNeighbourList(reacVector,substrateVector);
+	std::cout<<"Neighbour list built."<<std::endl;
 
 	
 	reacVector[129].printNeighbours();
@@ -103,7 +105,7 @@ int main(int argc, char* argv[])
 	}
 
 
-	std::vector<int> subset= {132,5144,5152};
+	std::vector<int> subset= {417,884,1070,448,816,629};
 
 
 	cell::nrOfInternalMetabolites=nrOfInternalMetabolites;
@@ -112,8 +114,8 @@ int main(int argc, char* argv[])
 	//this is the k value for the fitness function
 	cell::smallKforFitness=1e-2;
 	//don't add nrofinternalmetabolites here
-	cell::sourceSubstrate=1596;
-	cell::sinkSubstrate=43;
+	cell::sourceSubstrate=104;
+	cell::sinkSubstrate=54;
 
 
 	cell trialcell(subset);
@@ -128,12 +130,16 @@ int main(int argc, char* argv[])
 		trialcell.printXGMML(fileName);
 
 		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<200; k++){
+		for (int k=0; k<2000; k++){
 			//for testing
 			//std::cout<<"Current reactions:";
 			//std::vector<int> currentreacs=trialcell.getReacs();
 			//for(auto i:currentreacs){std::cout<<i<<" ";}
 			//std::cout<<k<<", "<<std::endl;
+			if (k%1000 ==0){
+				std::cout<<k<<" iterations done..."<<std::endl;
+				std::cout<<"Performance is; "<<trialcell.getPerformance()<<std::endl;
+			}
 		trialcell.mutate(generator);
 		//trialcell.printHumanReadable(compoundVList);
 
@@ -142,20 +148,21 @@ int main(int argc, char* argv[])
 		std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
 
 
-		std::vector<int> needMore, needLess, currentReactions;
-		int targetCompound = 54; //target is pyruvate - 54
+		//std::vector<int> needMore, needLess, currentReactions;
+		//int targetCompound = 54; //target is pyruvate - 54
 
-		needLess.emplace_back((int)-6);
-		needMore.emplace_back((int)-7);
-		currentReactions.emplace_back(11790);
-		reacVector[11790].printReaction();
+		//needLess.emplace_back((int)-6);
+		//needMore.emplace_back((int)-7);
+		//currentReactions.emplace_back(11790);
+		//reacVector[11790].printReaction();
 
-		cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, dateForFileName);
+		// this is the pathfinding algorithm, not used now
+		//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, dateForFileName);
 
 
-		for (int k=0; k<800; k++){
+		for (int k=0; k<8000000; k++){
 			cell::mutatePopulation(cellVector,generator);
-			if (k%500==0){
+			if (k%2500==0){
 				
 			std::cout<<k<<": ";
 			cell currentBest=cell::printNFittest(cellVector,10);
