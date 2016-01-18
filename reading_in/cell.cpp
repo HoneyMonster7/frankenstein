@@ -36,7 +36,7 @@ void cell::printReacs() {
 	std::cout<<" END"<<std::endl;
 }
 
-bool cell::operator<( cell other) {
+bool cell::operator<(const cell& other) const {
 
 	//orders such that the largest performance wil be [0]
 	return getPerformance()>other.getPerformance();
