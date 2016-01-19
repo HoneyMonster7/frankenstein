@@ -89,8 +89,8 @@ int main(int argc, char* argv[])
 	currentEnvironment.atpCont=1e-1;
 	currentEnvironment.adpCont=1e-2;
 	currentEnvironment.ampCont=1e-4;
-	currentEnvironment.nadoxcont=1e-2;
-	currentEnvironment.nadredcont=1e-2;
+	currentEnvironment.nadoxcont=1e-1;
+	currentEnvironment.nadredcont=1e-4;
 	currentEnvironment.piCont=1e-3;
 	currentEnvironment.ppiCont=1e-3;
 	currentEnvironment.co2cont=1e-5;

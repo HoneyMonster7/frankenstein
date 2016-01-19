@@ -525,11 +525,11 @@ double cell::calcThroughput(){
 		double freeChange=tmpreac.getCurrentFreeEChange();
 		//std::cout<<"FreeEChange of : "<<tmpreac.getListNr()<<" is "<<freeChange<<std::endl;
 		//tmpreac.printReaction();
-		if(freeChange<-20){
+		if(freeChange<-10){
 		glp_set_col_bnds(lp,i,GLP_DB,0.0,1.0);
 		//std::cout<<"going normal"<<std::endl;
 		}
-		else if(freeChange>20){
+		else if(freeChange>10){
 			glp_set_col_bnds(lp,i,GLP_DB,-1.0,0.0); 
 			//std::cout<<"going backwards"<<std::endl;
 		}
