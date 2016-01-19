@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
 		//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, dateForFileName);
 
 
-		for (int k=0; k<8000000; k++){
+		for (int k=0; k<80000000; k++){
 			cell::mutatePopulation(cellVector,generator);
 			if (k%2500==0){
 				
