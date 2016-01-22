@@ -13,6 +13,13 @@ nrofmachines=10
 
 firstToTry=3
 
+#first get the kerberos credentials right
+
+export KRB5CCNAME=/home/s1134965/krbrealm
+
+kinit
+
+#now get to work
 
 for i in `seq 1 "$nrofmachines"`
 do
@@ -71,7 +78,7 @@ do
 
 	echo "hostname is $hostname, thishostsname is $thishostsname, thisfolder is $thisdirectory"
 	#echo "sed \"s/NODENR/$hostname/\" distribution/onNode.sh | sed  \"s/MOTHERHOST/$thishostsname/\"| sed  \"s#FOLDERTOCOLLECT#$thisdirectory#\" > oncurrentNode.sh"
-	sed "s/NODENR/$hostname/" distribution/onNode.sh | sed  "s/MOTHERHOST/$thishostsname/"| sed  "s#FOLDERTOCOLLECT#$thisdirectory#" > oncurrentNode.sh
+	sed "s/NODENR/$hostname/g" distribution/onNode.sh | sed  "s/MOTHERHOST/$thishostsname/g"| sed  "s#FOLDERTOCOLLECT#$thisdirectory#g" > oncurrentNode.sh
 
 
 	#sed -i "s/MOTHERHOST/$thishostsname/g/" oncurrentNode.sh
@@ -82,7 +89,7 @@ do
 	echo "sending script to $hostname"
 	rsync -aPhq {oncurrentNode.sh,backup.tar.gz,simplescript.sh} "$hostname":/scratch/s1134965/frankenstein
 	echo "running script at $hostname"
-	ssh "$hostname" '/scratch/s1134965/frankenstein/oncurrentNode.sh >/scratch/s1134965/frankensten/out 2>/scratch/s1134965/frankenstein/err </dev/null &' &
+	ssh  -t "$hostname" 'bash -l -c /scratch/s1134965/frankenstein/oncurrentNode.sh >/scratch/s1134965/frankenstein/out 2>/scratch/s1134965/frankenstein/err </dev/null &' &
 
 	firstToTry=$((firstToTry+1))
 
