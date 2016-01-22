@@ -89,8 +89,8 @@ int main(int argc, char* argv[])
 	currentEnvironment.atpCont=1e-1;
 	currentEnvironment.adpCont=1e-2;
 	currentEnvironment.ampCont=1e-4;
-	currentEnvironment.nadoxcont=1e-2;
-	currentEnvironment.nadredcont=1e-2;
+	currentEnvironment.nadoxcont=1e-1;
+	currentEnvironment.nadredcont=1e-4;
 	currentEnvironment.piCont=1e-3;
 	currentEnvironment.ppiCont=1e-3;
 	currentEnvironment.co2cont=1e-5;
@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
 		//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, dateForFileName);
 
 
-		for (int k=0; k<8000000; k++){
+		for (int k=0; k<80000000; k++){
 			cell::mutatePopulation(cellVector,generator);
 			if (k%2500==0){
 				

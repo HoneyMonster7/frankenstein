@@ -47,10 +47,10 @@ class cell{
 	//public: 
 	cell(std::vector<int>& availableReactons);
 	cell();
-	bool operator<(cell other);
+	bool operator<(const cell& other) const;
 	
 	inline std::vector<int> getReacs() {return availableReactions;}
-	inline double getPerformance() {return performance;}
+	inline double getPerformance() const {return performance;}
 
 	inline std::vector<double> getFluxes() {return fluxThroughReacs;}
 	void mutate(RandomGeneratorType& generator);
