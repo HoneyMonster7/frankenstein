@@ -24,8 +24,9 @@ int main(int argc, char **argv)
 {
 	int seedForGenerator=1;
 	int c;
+	std::string jobName;
 
-	while ((c = getopt(argc,argv,"hs:")) != -1)
+	while ((c = getopt(argc,argv,"hs:j:")) != -1)
 		switch(c)
 		{
 			case 's':
@@ -36,11 +37,17 @@ int main(int argc, char **argv)
 			case 'h':
 				std::cout<<"Accepted options:"<<std::endl;
 				std::cout<<"\t -s [intSeed] seed for the MersenneTwister, default is 1, max is 2147483647"<<std::endl;
+				std::cout<<"\t -j [jobName] name for the folder to output the results into. If skipped a timestamped directory will be used for this."<<std::endl;
 				exit(0);
+				break;
+			case 'j':
+				jobName=optarg;
 				break;
 			case '?':
 				if (optopt =='s')
 					std::cout<<"Option -s requires an integer argument"<<std::endl;
+				else if (optopt =='j')
+					std::cout<<"Option -j requires the desired folder name (jobName)"<<std::endl;
 				else
 					std::cout<<"Unknown option, try -h for allowed options."<<std::endl;
 				return 1;
@@ -62,7 +69,15 @@ int main(int argc, char **argv)
 	forDateTime<<1900+ltm->tm_year<<"."<<1+ltm->tm_mon<<"."<<ltm->tm_mday<<"_"<<1+ltm->tm_hour<<":"<<1+ltm->tm_min<<":"<<1+ltm->tm_sec;
 	std::string dateForFileName=forDateTime.str();
 
-	std::string dirCommand="mkdir "+dateForFileName;
+	std::string actualFilename;
+	if (!jobName.empty()){
+		actualFilename=jobName;
+	}
+	else {
+		actualFilename=dateForFileName;
+	}
+
+	std::string dirCommand="mkdir "+actualFilename;
 	const int dir_err = system(dirCommand.c_str());
 	if (-1 == dir_err)
 	{
@@ -71,7 +86,7 @@ int main(int argc, char **argv)
 	}
 
 	std::ofstream improvementlog;
-	improvementlog.open(dateForFileName+"/"+dateForFileName+".fitt");
+	improvementlog.open(actualFilename+"/"+actualFilename+".fitt");
 	//set the number of internalmetabolites here:
 	
 	int nrOfInternalMetabolites=13;
@@ -189,7 +204,7 @@ int main(int argc, char **argv)
 		//reacVector[11790].printReaction();
 
 		// this is the pathfinding algorithm, not used now
-		//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, dateForFileName);
+		//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, actualFilename);
 
 
 		for (int k=0; k<80000000; k++){
@@ -202,11 +217,11 @@ int main(int argc, char **argv)
 			if (previousFittness+0.5<currentBest.getPerformance()){
 				cell previousBest=cell(previousNetwork);
 				std::ostringstream fname;
-				fname<<dateForFileName<<"/"<<dateForFileName<<"_before_step_"<<k;
+				fname<<actualFilename<<"/"<<actualFilename<<"_before_step_"<<k;
 				previousBest.printXGMML(fname.str());
 				fname.str("");
 				fname.clear();
-				fname<<dateForFileName<<"/"<<dateForFileName<<"_after_step_"<<k;
+				fname<<actualFilename<<"/"<<actualFilename<<"_after_step_"<<k;
 				currentBest.printXGMML(fname.str());
 			}
 			previousFittness=currentBest.getPerformance();
@@ -224,7 +239,7 @@ int main(int argc, char **argv)
 		std::vector<cell> bestCells=cell::getBestNCells(cellVector,N);
 		for (int i=0; i<N; i++){
 			std::ostringstream forFileName;
-			forFileName<<dateForFileName<<"/NR"<<i+1<<"cell";
+			forFileName<<actualFilename<<"/NR"<<i+1<<"cell";
 			bestCells[i].printXGMML(forFileName.str());
 		}
 		
