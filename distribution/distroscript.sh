@@ -13,11 +13,30 @@ nrofmachines=10
 
 firstToTry=3
 
+echo "Find a job name:"
+read jobname
+
+if [ -d "$jobname" ]; then
+
+	echo "Job name already used. Remove or find an other name. Exiting now. "
+	exit
+fi
+
+if [ ! -e reading_in/build/reaction ]; then
+	echo "Can't find the executable. Are you running in frankenstein?"
+	exit
+fi
+
+if [ ! -d data ]; then
+	echo "Can't find the data folder. Are you running in frankenstein?"
+	exit
+fi
+
+mkdir $jobname
+
 #first get the kerberos credentials right
 
-export KRB5CCNAME=/home/s1134965/krbrealm
 
-kinit
 
 #now get to work
 
@@ -25,22 +44,22 @@ for i in `seq 1 "$nrofmachines"`
 do
 
 	#change the seed in main.cpp will need to change that file actually
-	sed -i  "s/RandomGeneratorType\ generator(1);/RandomGeneratorType\ generator($i);/" reading_in/main.cpp
+	#sed -i  "s/RandomGeneratorType\ generator(1);/RandomGeneratorType\ generator($i);/" reading_in/main.cpp
 
-	#compile reaction 
+	##compile reaction 
 
-	cd reading_in
-	cd build
+	#cd reading_in
+	#cd build
 
-	make
+	#make
 
-	cd ../../
+	#cd ../../
 
 	# CHANGE THE RANDOM SEED BACK SO NEXT CYCLE CAN USE UNMODIFIED MAIN.CPP
-	sed -i "s/RandomGeneratorType\ generator($i);/RandomGeneratorType\ generator(1);/" reading_in/main.cpp
+	#sed -i "s/RandomGeneratorType\ generator($i);/RandomGeneratorType\ generator(1);/" reading_in/main.cpp
 
 
-	echo "executable built, main.cpp changed back, now tarring"
+	#echo "executable built, main.cpp changed back, now tarring"
 
 	# tar the exectuable and the data files needed
 
@@ -78,7 +97,7 @@ do
 
 	echo "hostname is $hostname, thishostsname is $thishostsname, thisfolder is $thisdirectory"
 	#echo "sed \"s/NODENR/$hostname/\" distribution/onNode.sh | sed  \"s/MOTHERHOST/$thishostsname/\"| sed  \"s#FOLDERTOCOLLECT#$thisdirectory#\" > oncurrentNode.sh"
-	sed "s/NODENR/$hostname/g" distribution/onNode.sh | sed  "s/MOTHERHOST/$thishostsname/g"| sed  "s#FOLDERTOCOLLECT#$thisdirectory#g" > oncurrentNode.sh
+	sed "s/JOBNR/$i/g" distribution/onNode.sh | sed  "s/MOTHERHOST/$thishostsname/g"| sed  "s#FOLDERTOCOLLECT#$thisdirectory#g"| sed "s/RANDOMSEED/$i/" > oncurrentNode.sh
 
 
 	#sed -i "s/MOTHERHOST/$thishostsname/g/" oncurrentNode.sh
@@ -87,7 +106,7 @@ do
 	chmod +x oncurrentNode.sh
 
 	echo "sending script to $hostname"
-	rsync -aPhq {oncurrentNode.sh,backup.tar.gz,simplescript.sh} "$hostname":/scratch/s1134965/frankenstein
+	rsync -aPhq {oncurrentNode.sh,backup.tar.gz} "$hostname":/scratch/s1134965/frankenstein
 	echo "running script at $hostname"
 	ssh  -t "$hostname" 'bash -l -c /scratch/s1134965/frankenstein/oncurrentNode.sh >/scratch/s1134965/frankenstein/out 2>/scratch/s1134965/frankenstein/err </dev/null &' &
 
