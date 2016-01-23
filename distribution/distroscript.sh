@@ -97,7 +97,7 @@ do
 
 	echo "hostname is $hostname, thishostsname is $thishostsname, thisfolder is $thisdirectory"
 	#echo "sed \"s/NODENR/$hostname/\" distribution/onNode.sh | sed  \"s/MOTHERHOST/$thishostsname/\"| sed  \"s#FOLDERTOCOLLECT#$thisdirectory#\" > oncurrentNode.sh"
-	sed "s/JOBNR/$i/g" distribution/onNode.sh | sed  "s/MOTHERHOST/$thishostsname/g"| sed  "s#FOLDERTOCOLLECT#$thisdirectory#g"| sed "s/RANDOMSEED/$i/" > oncurrentNode.sh
+	sed "s/JOBNR/$i/g" distribution/onNode.sh | sed  "s/MOTHERHOST/$thishostsname/g"| sed  "s#FOLDERTOCOLLECT#$thisdirectory/$jobname#g"| sed "s/RANDOMSEED/$i/" > oncurrentNode.sh
 
 
 	#sed -i "s/MOTHERHOST/$thishostsname/g/" oncurrentNode.sh

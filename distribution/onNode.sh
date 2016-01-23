@@ -7,14 +7,15 @@ source /etc/profile
 #set >y
 cd /scratch/s1134965/frankenstein
 
+longname="jobJOBNR"
 
 tar xvf backup.tar.gz
 
-nohup reading_in/build/reaction -s $seedtostartwith
+nohup reading_in/build/reaction -s $seedtostartwith -j $longname
 
 latestfolder=$(ls -dt */| head -1)
 
-tar acf response.from.job.JOBNR.tar.gz --exclude reaction  $latestfolder
+tar acf response.JOBNR.tar.gz --exclude reaction  $longname
 
 klist -f
 
