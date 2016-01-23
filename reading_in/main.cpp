@@ -30,9 +30,9 @@ int main(int argc, char **argv)
 		switch(c)
 		{
 			case 's':
-				std::cout<<"Input is: "<<optarg<<std::endl;
+				//std::cout<<"Input is: "<<optarg<<std::endl;
 				seedForGenerator=std::stoi(optarg);
-				std::cout<<"Parsed, it is: "<<seedForGenerator<<std::endl;
+				//std::cout<<"Parsed, it is: "<<seedForGenerator<<std::endl;
 				break;
 			case 'h':
 				std::cout<<"Accepted options:"<<std::endl;
@@ -207,40 +207,76 @@ int main(int argc, char **argv)
 		//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, actualFilename);
 
 
-		for (int k=0; k<80000000; k++){
-			cell::mutatePopulation(cellVector,generator);
-			if (k%2500==0){
+		int NRofCheckpoints=10;
+		int checkPointLength=10000;
+		//outer loop is there in order to save networks every 10% of the simulation
+		for (int outerLoop=0; outerLoop<NRofCheckpoints; outerLoop++){
+
+			for (int k=0; k<checkPointLength; k++){
+				cell::mutatePopulation(cellVector,generator);
+				if (k%2500==0){
+					
+				std::cout<<k+outerLoop*checkPointLength<<": ";
+				cell currentBest=cell::printNFittest(cellVector,10);
+
+				if (previousFittness+0.5<currentBest.getPerformance()){
+					cell previousBest=cell(previousNetwork);
+					std::ostringstream fname;
+					fname<<actualFilename<<"/"<<actualFilename<<"_before_step_"<<k;
+					previousBest.printXGMML(fname.str());
+					fname.str("");
+					fname.clear();
+					fname<<actualFilename<<"/"<<actualFilename<<"_after_step_"<<k;
+					currentBest.printXGMML(fname.str());
+				}
+				previousFittness=currentBest.getPerformance();
+				previousNetwork=currentBest.getReacs();
+				improvementlog<<k<<" "<<previousFittness<<std::endl;
 				
-			std::cout<<k<<": ";
-			cell currentBest=cell::printNFittest(cellVector,10);
+				//cell::printPopulationFittnesses(cellVector);
 
-			if (previousFittness+0.5<currentBest.getPerformance()){
-				cell previousBest=cell(previousNetwork);
-				std::ostringstream fname;
-				fname<<actualFilename<<"/"<<actualFilename<<"_before_step_"<<k;
-				previousBest.printXGMML(fname.str());
-				fname.str("");
-				fname.clear();
-				fname<<actualFilename<<"/"<<actualFilename<<"_after_step_"<<k;
-				currentBest.printXGMML(fname.str());
-			}
-			previousFittness=currentBest.getPerformance();
-			previousNetwork=currentBest.getReacs();
-			improvementlog<<k<<" "<<previousFittness<<std::endl;
-			
-			//cell::printPopulationFittnesses(cellVector);
+				}
 
 			}
 
-		}
+			cell::printPopulationFittnesses(cellVector);
+			int N=10;
+			std::vector<cell> bestCells=cell::getBestNCells(cellVector,N);
 
-		cell::printPopulationFittnesses(cellVector);
-		int N=10;
-		std::vector<cell> bestCells=cell::getBestNCells(cellVector,N);
-		for (int i=0; i<N; i++){
-			std::ostringstream forFileName;
-			forFileName<<actualFilename<<"/NR"<<i+1<<"cell";
-			bestCells[i].printXGMML(forFileName.str());
+
+			if (outerLoop != NRofCheckpoints-1){
+
+				std::cout<<"Checkpointing now..."<<std::endl;
+				//the checkpoints will be saved into separate folders
+				
+				//creating a directory for saving the checkpoints into
+				std::ostringstream forCheckpointFolder;
+				forCheckpointFolder<<actualFilename<<"/CP"<<outerLoop+1;
+				std::string dirCommand="mkdir "+forCheckpointFolder.str();
+				const int dir_err = system(dirCommand.c_str());
+
+				//the script starting reaction will make sure the folder is empty
+				//
+				//const int dir_err = system(dirCommand.c_str());
+				//if (-1 == dir_err)
+				//{
+				//	std::cout<<"Error creating directory!"<<std::endl;
+				//	exit(1);
+				//}
+				for (int i=0; i<N; i++){
+					std::ostringstream forFileName;
+					forFileName<<forCheckpointFolder.str()<<"/"<<actualFilename<<"CP"<<outerLoop+1<<"NR"<<i+1<<"cell";
+					bestCells[i].printXGMML(forFileName.str());
+				}
+			}
+			else {
+				//final network doesn't need a checkpoint folder
+				for (int i=0; i<N; i++){
+					std::ostringstream forFileName;
+					forFileName<<actualFilename<<"/"<<actualFilename<<"CP"<<outerLoop+1<<"NR"<<i+1<<"cell";
+					bestCells[i].printXGMML(forFileName.str());
+				}
+			}
 		}
 		
 
