@@ -23,3 +23,5 @@ klist -f
 
 
 rsync -aPhq response.JOBNR.tar.gz MOTHERHOST:FOLDERTOCOLLECT
+
+mv $longname previousJob
