@@ -12,16 +12,48 @@
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
+//for the command line flags
+#include <unistd.h>
 
 #include "reaction.h"
 #include "cell.h"
 
 using namespace boost;
 
-int main(int argc, char* argv[])
+int main(int argc, char **argv)
 {
+	int seedForGenerator=1;
+	int c;
+
+	while ((c = getopt(argc,argv,"hs:")) != -1)
+		switch(c)
+		{
+			case 's':
+				std::cout<<"Input is: "<<optarg<<std::endl;
+				seedForGenerator=std::stoi(optarg);
+				std::cout<<"Parsed, it is: "<<seedForGenerator<<std::endl;
+				break;
+			case 'h':
+				std::cout<<"Accepted options:"<<std::endl;
+				std::cout<<"\t -s [intSeed] seed for the MersenneTwister, default is 1, max is 2147483647"<<std::endl;
+				exit(0);
+				break;
+			case '?':
+				if (optopt =='s')
+					std::cout<<"Option -s requires an integer argument"<<std::endl;
+				else
+					std::cout<<"Unknown option, try -h for allowed options."<<std::endl;
+				return 1;
+			default:
+				exit(1);
+		}
+
+
+
+		
+
 	//defined in cell.h
-	RandomGeneratorType generator(1);
+	RandomGeneratorType generator(seedForGenerator);
 
 	//for automatically creating an output file named from current time
 	time_t now=time(0); 
