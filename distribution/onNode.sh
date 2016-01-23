@@ -22,4 +22,4 @@ klist -f
 #scp response.from.NODENR.tar.gz MOTHERHOST:FOLDERTOCOLLECT
 
 
-rsync -aPhq response.from.NODENR.tar.gz MOTHERHOST:FOLDERTOCOLLECT
+rsync -aPhq response.JOBNR.tar.gz MOTHERHOST:FOLDERTOCOLLECT
