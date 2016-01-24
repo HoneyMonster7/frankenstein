@@ -5,12 +5,17 @@
 
 echo "Which job do you want analysed?"
 
-#read jobtoan
+read jobtoan
 
-jobtoan="newtars"
+#jobtoan="newtars"
 
 if [ ! -d $jobtoan ]; then
 	echo "$jobtoan folder doesn't exist. "
+	exit 1
+fi
+
+if [ ! $( ls $jobtoan | grep tar.gz) ]; then
+	echo "Can't find jobs in that folder. Are you sure it's the right one?"
 	exit 1
 fi
 
@@ -24,6 +29,11 @@ for fname in $( ls $jobtoan | grep tar.gz); do
 
 
 done
+
+if [ $? != 0 ]; then
+	echo "There was a problem while extracting job results. Check if the folder contains jobs. Exiting."
+	exit 1
+fi
 
 cp simChecker/similarityCalc.sh $jobtoan
 
