@@ -15,7 +15,7 @@ if [ ! -d $jobtoan ]; then
 fi
 
 if [ ! $( ls $jobtoan | grep tar.gz) ]; then
-	echo "Can't find jobs in that folder. Are you sure it's the right one?"
+	echo "Can't find jobs in $jobtoan. Are you sure it's the right folder?"
 	exit 1
 fi
 
@@ -39,6 +39,7 @@ cp simChecker/similarityCalc.sh $jobtoan
 
 cp simChecker/simMatrix $jobtoan
 
+cp simChecker/plotter.gnup $jobtoan
 cd $jobtoan
 
 ./similarityCalc.sh
@@ -47,3 +48,4 @@ cd $jobtoan
 
 #rm similarityCalc.sh
 #rm simMatrix
+#rm plotter.gnup

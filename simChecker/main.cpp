@@ -48,6 +48,7 @@ int main(int argc, char **argv){
 	std::ifstream infile(listOfFiles);
 
 	std::vector<std::set<int>> reacMatrix;
+	std::vector<std::string> names;
 
 	if (infile)
 	{
@@ -57,6 +58,8 @@ int main(int argc, char **argv){
 			std::vector<int> tmpVector;
 			std::set<int> tmpSet;
 			int tmpInt;
+
+			names.emplace_back(filenames);
 
 			while (nowReading>>tmpInt){
 
@@ -101,6 +104,7 @@ int main(int argc, char **argv){
 			//std::cout<<"Between "<<i+1<<" and "<<j+1<<" there are "<<similarities.size()<<" similarities"<<std::endl;
 			double coeff=similarities.size()/(double)std::max(firstSet.size(),secondSet.size());
 			std::cout<<coeff<<" ";
+			//std::cout<<coeff<<" "<<names[i]<<" "<<names[j]<<std::endl;
 		}
 		std::cout<<std::endl;
 	}

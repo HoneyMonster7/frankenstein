@@ -2,7 +2,9 @@
 
 
 rm columns.list
+rm rows.list
 
+counter=1;
 for i in `ls *.xgmml`
 do
 
@@ -10,6 +12,11 @@ do
 	grep Reaction -B1 $i | grep label | cut -d\" -f2 | sort -n > $jnkname
 
 	echo $jnkname >> columns.list
+	echo -n "$jnkname " | sed 's/CP10//g' | sed 's/cell.jnk//g' >> rows.list
+
+
+	counter=$(($counter +1))
+
 done
 
 #this is now done by simMatrix much faster (doesn't have to read from files every iteration)
@@ -53,3 +60,5 @@ fi
 
 echo "Removing .jnk files now."
 rm *.jnk
+
+gnuplot plotter.gnup
