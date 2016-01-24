@@ -22,7 +22,7 @@ void reaction::printReaction()
 	std::cout<<"To: ";
 	for(auto i=products.begin(); i!=products.end(); ++i) std::cout<<*i<<' ';
 	std::cout<<std::endl;
-	std::cout<<"Free energy change: "<<freeEChange<<std::endl;
+	std::cout<<"standard conditions free energy change: "<<freeEChange<<std::endl;
 }
 
 //possibly move this function to the substrate class
@@ -119,7 +119,7 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 
 		for(int i : tmpsubstrates)
 		{
-		if(i>=0){
+		if(i>=0 ){
 			substrateVector[i+nrOfInternalMetabolites].addInvolved(counter);	
 			//std::cout<<counter<<" has substrate: "<<i<<std::endl;
 		}
@@ -128,7 +128,7 @@ void reaction::readReactions(std::string fileName, std::vector<reaction>& reacPo
 
 		for(int j: tmproducts)
 		{
-		if(j>=0){
+		if(j>=0 ){
 			//std::cout<<counter<<" has product: "<<i<<std::endl;
 			substrateVector[j+nrOfInternalMetabolites].addInvolved(counter);	
 		}

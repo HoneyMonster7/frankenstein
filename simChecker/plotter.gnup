@@ -1,0 +1,38 @@
+
+# find out where gnuplot lives
+
+
+
+
+XTICS="`cat rows.list`"
+
+nrofthem="`cat columns.list | wc -l`"
+
+#unset xtics
+#unset ytics
+
+set for [i=5:words(XTICS):10] xtics (word(XTICS,i) i-1)
+set for [i=5:words(XTICS):10] ytics (word(XTICS,i) i-1)
+
+set xtics rotate
+set view map
+
+set autoscale xfix
+set autoscale yfix
+
+set tics scale 0,0.001
+set mxtics 2
+set mytics 2
+
+set grid front mxtics mytics lw 1.5 lt -1 lc rgb 'white'
+
+set xrange [-0.5:nrofthem-0.5]
+set yrange [-0.5:nrofthem-0.5]
+
+#set xtics 0.5,1
+#set ytics 0.5,1
+
+
+splot "similarityMatrix.dat" matrix with image noti
+
+pause -1

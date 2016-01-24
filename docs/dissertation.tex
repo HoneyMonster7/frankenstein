@@ -1,0 +1,216 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage[numbers]{natbib}
+
+
+%opening
+\title{Evolution of metabolic networks}
+\author{Balint Borgulya}
+
+\begin{document}
+	
+	
+	
+	\maketitle
+	
+	\begin{abstract}
+		
+	\end{abstract}
+	
+	\section{Introduction}
+
+	A metabolic network is a set of chemical reactions and compounds that organisms use to process their input chemicals into energy and building blocks of themselves. Examples of metabolic networks include glycolysis, gluconeogenesis, and photosynthesis. The natural representation for these networks are bipartite graphs, where the two types of nodes are reactions and the chemical compounds used. 
+	
+	Chemically speaking it is easy to see that the number of possible reactions in a cell are nearly infinite, if we only impose the constraint that the individual atoms have to be conserved on both sides of a reaction.  Despite this cells mostly use a well defined set of reactions, that can be controlled through the use of enzymes and the careful control of the concentration of the reactants. This way, depending on the specific needs of the cell the speed and even the direction of reactions can be manipulated. (example glycolysis and glyconeogenesis?)
+	
+	The enzymes a cell can manufacture are coded in it's genome, the genetic program of the organism, therefore knowing the genome of the cell we can infer the metabolic network it uses, and in theory even reconstruct the cell itself. The genes are also very important in the evolution of metabolic networks (and the cells themselves) as when cells divide sometimes errors are made when copying the genome, thus resulting in a cell not identical to it's predecessor.  Thanks to large-scale gene sequencing research \cite{20yearsof} we now have a number of organisms whose genome is fully known along many others that are partially known, providing an insight in how different properties of the metabolic networks are encoded into the genome of the organism in question \cite{sequencing}. 
+	
+	\subsection{Graph theory part}
+	Thorough mathematical investigation of these networks reveal interesting topological properties, that make them similar to eg. the social network of humans or the internet. These are small world character, scale-freeness, error-tolerance \cite{largescale} and modularity .
+	
+	A small-world network \cite{smallworld} is one in which the number of steps to connect any given pair of nodes (in our case chemical compounds) is small, and this number stays constant even as the network grows. In case of the human social networks this is known as the six degrees of separation \cite{sixdegrees}.
+	 
+	In a scale-free network the connectivity (the probability that a uniformly chosen node is connected to $n$ other nodes) is $P(n)=n^{-V}$ for some constant $V$, resulting in a few highly connected nodes (Hubs) and many scarcely connected nodes. This provides error-tolerance against random errors to the network, as unless a hub is removed, the performance doesn't decrease significantly. It also makes the network different from a random graph \cite{randomgraphs}, where every node is connected with a constant probability $p$, resulting in a Poisson distribution for the connectivity ($P(n) \approx e^{-n}$), as well as from a regular lattice, where every node is connected to a constant number of other nodes.
+	  
+	Modules are "by definition, a discrete entity whose function is separable from those of other modules" \cite{modulardef}. Within a module, generally there are multiple possible pathways to achieve the same goal using so called precursor molecules. The module first converts it's input to precursors, and then these are converted to the final product of the module. Usually the module also has the capability to transform precursors to other precursors, providing redundancy to the pathways. Precursors are useful, as if the module lacks one of it's inputs, it is possible that through the conversion of other precursors it can still be functional (even if it functions at a reduced efficiency). Precursors also help evolution, and adaptation, as if the module can use one type of input and process it to precursors, a similar molecule can also be easily converted to the same precursor using perhaps a few additional reactions. Eg. if the cell is capable of processing glucose, using the same enzymatic pathways it is also capable of processing 40 other similar molecules \cite{latent}.
+	
+	
+	When modelling metabolic networks one often has to make simplifications both in theoretical and computational research. These simplifications occur in defining the chemistry the cells can use, the goal function of cells, the environment the cells live in, as well as the anatomy of the cells themselves. SIMPLIFICATION SECTION IN METHODS? GOALS IN SIMULATION, CHEMISTRY BELOW, CELLS BELOW
+	
+	Modelling the intricacies of chemistry is a hopeless task with today's computers, the fully quantum mechanical treatment of even a few atoms is beyond the capabilities of supercomputers. To overcome this barrier artificial chemistries are often used, that simplify the rules, but grasp some important detail of them. \citeauthor{artificialreview} describes some of these methods used. \citeauthor{evolutioncomplex} use linear molecules consisting of 3 possible  artificial atoms to construct a metabolic network of organisms, and examine how they evolve. \citeauthor{computationalframework} considers "chemical reactions as graph rewriting operations, and uses a toy-version of quantum chemistry to derive thermodynamic parameters". 
+	
+	I will restrict the reactions available to the organisms I simulate to those using CHOPN molecules (containing only carbon, hydrogen, oxygen, phosphor and nitrogen) of at most 3 carbon atoms. This is a realistic constraint as the trunk of the glycolytic pathway consists of only such molecules. The list of the molecules and reactions I used are the same that were used in \citeauthor{BartekLower}, and were provided to me by my supervisor as described in Section \ref{chap:whatwasprovided}. 
+	
+	The anatomy of my cells is as follows: the cells are stationary with certain compounds present within them with concentrations as shown in Table \ref{environmentTable}. The cells can import and export $H_2$O and CO$_2$ to and from their environments to keep the concentrations steady. They can also import one (planning to include more) predefined source molecule to process, and dispose (build into their mass or use in further metabolism) one (planning to allow more) target molecule. The goal of cells is in the test runs to create as much of the target compound as possible. Later the goal function changed to the amount of ATP the cell can create using ADP. The implementation of more complex goal functions along with multiple inpout and output molecules is planned. 
+	
+	Among the known metabolic networks of organisms remarkable similarities can be found, among all three domains of life. Certain pathways are conserved partially  eg. in the glycolytic pathway the Embden-Meyerhof-Parnas (EMP) pathway \cite{EMPpathway} is used by most modern cells for the upper part,  some prokaryotes  use the Entner-Doudoroff (ED) pathway \cite{EDpathway}, while the trunk of the glycolytic pathway is highly conserved. OTHER EXAMPLES NEEDED? The reason for these similarities is yet to be discovered, but two potential reasons are the most common: 
+	\begin{enumerate}[label=(\alph*)]
+	\item the best possible metabolic network has been found, evolution finished the optimization and there is no possible further improvement \cite{theoretical} \cite{latent} \cite{strategy}, or 
+	\item there is a better solution but to get there cells have to evolve through such suboptimal states, that are outcompeted by the current metabolic networks. FIND SOURCE HERE
+	\end{enumerate} 
+	
+	 \citeauthor{historical} reasons that (b) is unlikely, as they find that  "most viable metabolisms can be transformed into one another by single viability-preserving reaction changes."  
+	
+	\subsection{Evolution}\label{chap:evolution}
+	
+	Evolution works by exploiting the copying errors made when cells divide. After such a division one of the resulting cell may perform slightly better than it's predecessor at a certain task, therefore allowing itself to multiply faster than the non-changed cell. It is also possible that the resulting cell will be less fit than the original, in which case it will be out-competed by the original and it's non-changed offsprings. As Charles Darwin wrote "...Natural selection acts only by taking advantage of slight successive variations; she can never take a great and sudden leap, but must advance by short and sure, though slow steps." \cite{darwin} 
+	
+	It is difficult to imagine how highly sophisticated functions (such as the eye, or feathers for flight, or even a metabolic network) could have evolved using slight variations. \citeauthor{latent} argue that complex structures have evolved non-adaptively as exaptations, as byproducts of evolution of other functions. \citeauthor{complexfeatures}  consider simple digital organisms that can obtain energy by performing logic functions. The organisms are provided an environment where they can reproduce (depending on the energy available to them) and mutate, and the more complex logical function they perform, the more energy they receive. They find that although to get to the most complex logical operation (yielding the most amount of energy) many mutations are needed, and when appearing it often destroys other less complex logical operations, once it is present, it provides such value that offsprings that don't have it are quickly eliminated by the competition.
+	
+	Apart from random point mutations, other important methods of evolution are horizontal gene transfer and gene duplication. 
+	
+	Horizontal gene transfer is a method allowing Bacteria and Archaea to exchange genetic material between cells. This is thought to be the main reason why bacteria can "learn" from each other eg. resistance to antibiotics \cite{horizontalAntibiotics}\cite{horizontalgenetransfer}. Gene duplication is a specific type of error made when copying the genetic material of the cell, resulting in a part of the genetic material to appear twice in the copy \cite{geneduplication}. This is the main source of new genetic material in eukaryotes \cite{horizontalgenetransfer}. Gene duplication is particularly important in light of the modularity of the networks. The robustness of the modules can originate from gene duplication, when a function inside a module is duplicated, and later one copy is evolved to fulfil the function slightly differently. Even if one copy is changed, deleted or (perhaps only temporarily) dysfunctional due to a point mutation the other copy can compensate for this \cite{duplicaterole} \cite{complexfeatures}. 
+	
+	When duplicating my digital organisms either gain a reaction that uses compounds that link them to one of the already present reactions, or lose one reaction at random. 
+	
+	\subsection{Simulation}
+	
+	To simulate evolution on a computer we need three things: replication, mutation and competition. Algorithms empowered by the evolutionary principles \cite{evolutionaryalgorithms} are used every day now to find optimal solutions to problems in all fields of science. These algorithms need a function for which to optimize the given system, called the goal function. The goal function of real-world cells is rather complex, with goals reaching from growth to reproduction. Translating these goals to the language of mathematics and computers is not an easy task. \citeauthor{complexfeatures} sets the execution of more complex logical operations as a goal for the digital organisms in question. \citeauthor{evolutioncomplex} use the import of precursors and their procession to more complex molecules as the goal function. 
+	
+	In my simulations I consider the rate of ADP-ATP conversion as the goal function after \citeauthor{BartekLower}, however later I plan to experiment with different goal functions that also consider the amount of carbon products produced (that can be used for building the cell). 
+	
+	\subsection{Where is the physics?}\label{chap:whereisphysics}
+	
+	When calculating the direction of reactions I consider the free-energy change only. This does not take into account the free energy landscape of the reactions. PICTURE? we can imagine two reactions with equal free energies at the substrates and products, one transitioning smooth from substrate to product, the other having a large energy barrier between. Clearly the one with the barrier would not (or much more rarely) happen in a cell than the smooth transitioning. This is simplification is balanced by the fact that cells can use enzymes to act as catalysts to these reactions lowering such energy barriers. Should they need cells can also raise such barriers to otherwise smoothly transitioning reactions to stop them from occurring. 
+	
+	The population simulation uses the metropolis algorithm \cite{metropolisalgorithm}. EXPAND HERE OR IN METHODS
+
+
+	
+	\section{Methods}
+	
+	Having been provided by the list of compounds and reactions I wrote a C++ program that simulates the evolution of the metabolic network of first only a single organism, later a population of such organisms. 
+	
+	\subsection{What was i provided}\label{chap:whatwasprovided}
+	
+	I was provided with the list of compounds and reactions used by \citeauthor{BartekLower} The list of compounds consists of 1966 CHOPN molecules of at most 3 carbon atoms, along with 13 so called internal metabolites. Internal metabolites are considered to be present in the cell, with the concentration as mentioned in Table \ref{environmentTable}. Later I intend to test the networks using different concentrations. Of the other compounds, I assume a steady flux of the starting compound is available, and a steady flux of the end product (eg. pyruvate ) is removed (used by the cell). 
+	
+	The list of reactions consist of 11790 reactions of the previously mentioned compounds, the reactants, the products and the free energy change of the reaction at standard conditions. The free energy changes are later calculated for arbitrary conditions as discussed in Section \ref{chap:freechange}
+	
+	
+	\subsection{How to store the reaction network?}\label{chap:howtostore}
+	
+	After they are read in from a file substrates are stored in a substrate object that store the index of the molecule, the free energy of creation, the name, the chemical formula, the charge, and a list of reactions it is involved in. This list is generated when reading in the reactions from the file provided.
+	
+	Reactions are stored in reaction objects that store the index, the substrates  (starting compounds), the products  (final compounds), the free energy change at standard conditions, the free energy change at the current conditions (calculated later), and the neighbouring reactions (calculated later) of the reaction. The free energy change of reactions is recalculated at the beginning of each run as described in Section \ref{chap:freechange}
+	
+	The original idea was to store the reaction network as a Graph object provided by the Boost Graph Library \cite{boostlibraries}. This was a feature rich graph implementation that allowed searching for neighbouring reactions that can be added (EXPLAINED LATER), however as it uses sophisticated methods (TALK ABOUT TEMPLATES?) to store the  graphs and therefore for the evolution of a single organism it could only calculate approximately 2 generations per second. 
+	
+	To speed up the calculations simple vectors were used to store the compound and reaction objects, such that each compound object contained a list of the reactions it appears in. Using this at the beginning of the program a neighbour-list was generated that for every reaction contained a list of neighbouring reactions, that share at least 1 compound with it (excluding internal metabolites). (EXAMPLE?) Using this neighbour-list the program was now able to handle $\sim 100$ generations per second. 
+	
+	\subsection{The free energy change}\label{chap:freechange}
+	
+	The list of reactions provided to me by my supervisor contained the following for each reaction: 
+	\begin{enumerate}
+		\item List of compounds the reaction uses
+		\item List of product the reaction produces
+		\item The free energy change of the reaction (experimentally when known, otherwise estimated) \cite{BartekLower}
+	\end{enumerate}
+	
+	The free energy changes provided were at standard conditions $T=25  ^o C$ pH$=7.0$ $I=0.2 M$ (ionic strength) and all metabolite concentrations set to 1~M.
+	
+	Assuming a reaction of the form $n_1A + n_2B \leftrightarrows n_3C + n_4D$ where the concentration of substrate $A$ is denoted by $[A]$, and similarly for the other substrates. $n_1$ denotes the number of molecules of type $A$ that take part in the reaction and  $\Delta G^0$  the free energy change of this reaction at standard conditions. The change in free energy for arbitrary $T$ and concentrations is given by: 
+	
+	\begin{equation}\label{eq:freeechange}
+		\Delta G = \Delta G^0 + R T \ln \frac{[C]^{n_3}[D]^{n_4}}{[A]^{n_1}[B]^{n_2}}
+	\end{equation}
+	
+	At the beginning of the program the reactions are read in from a file, and the free energy changes are re-calculated for the specified conditions as in Table \ref{environmentTable}. 
+	
+	\begin{table}
+		\centering
+	\begin{tabular}{|c|c|}
+		
+		\hline Temperature & 293 K \\ 
+		\hline [ATP] & $10^{-1} M$ \\ 
+		\hline [ADP] & $10^{-2} M$ \\ 
+		\hline [AMP] & $10^{-4} M$ \\ 
+		\hline [NAD] & $10^{-2} M$ \\ 
+		\hline [NADH] & $10^{-2} M$ \\ 
+		\hline [Pi] &  $10^{-3} M$\\ 
+		\hline [PPi] & $10^{-3} M$ \\ 
+		\hline [CO$_2$] & $10^{-5} M$ \\ 
+		\hline [NH$_3$] & $10^{-5} M$ \\ 
+
+		\hline 
+	\end{tabular} 
+	\caption{The environmental variables currently}
+	\label{environmentTable}
+	\end{table}
+	
+	
+	\subsection{How to calculate throughput?}\label{chap:throughput}
+	
+	To calculate the throughput of the metabolic network of my organisms I use flux balance analysis \cite{whatisfluxbalance}. This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it I make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes. In the real world the reactions happening in a cell are usually reversible with (an example for this is is the reaction of carbonic acid and water H$_2$CO$_3$$_{(l)}$ + H$_2$O$_{(l)} \leftrightarrows$ HCO$^-_3$$_{(aq)}$+H$_3$O$^+$$_{(aq)}$). To consider this phenomenon I allow reactions with free energy change between a constant $-L$ and $L$ eV (currently $L=10$) to happen in any direction. 
+	
+	Flux balance analysis works by trying to find the fluxes through the set of reactions available to the cell that maximize a certain goal function. This is done while keeping the fluxes such that they represent a steady state solution to the reaction network, meaning that any product created is used by an other reaction, and any reactants used are produced by an other reaction, except for the source and sink substrate and some internal metabolites. This is a reasonable assumption as cells usually import a small set of molecules (the source substrates, water, O$_2$, etc.) and use them up to build their own matter while disposing of again a few substrates (eg. CO$_2$). Throughout the flux balance analysis it is assumed that a large (but finite) amount of water is available for the cell to use, along with a smaller amount of the source substrate, and the cell can dispose of a large (but fintie) amount of CO$_2$, along with a smaller amount of the sink substrate. Disposing of the sink substrate in this context means that it leaves the metabolic network, but not necessarily the cell, as it is often used to build the cell itself, or further processed by other metabolic networks (eg. pyruvate).
+	
+	The mathematical execution of flux balance analysis is essentially a linear programming problem. In my program I solve this using the Gnu Linear Programming Kit (GLPK) \cite{glpk}. GLPK needs to be provided the stoichiometric matrix (MORE ABOUT THIS MATRIX? EXAMPLE?) with $n$ columns and $m$ rows, where $n$ is the number of reactions currently in the network, and $m$ is the numer of substrates the reaction uses. Constraints are imposed on the flux of each reaction, depending on the free energy change of them (for the $n$th reaction the flux $v_n$ has to satisfy $0\leq v_n \leq 1 $ if $\Delta G \leq -10$~eV, $-1\leq v_n \leq 0 $ if $\Delta G \geq 10$~eV $-0.5\leq v_n \leq 0.5$ otherwise, $v_n$-s on an arbitrary scale). 
+	
+	To enable the addition and removal of substrates to and from the cell auxiliary reactions are added to the ones available to the cell. These reactions do not appear in the cell and are not valid chemical reactions, they are simply expressing a flux to or from the cell. (eg. there is an auxiliary reaction that creates H$_2$O out of nothing) There are auxiliary reactions creating H$_2$O, the source substrate, and there are ones removing CO$_2$ and the sink substrate. There is also one that corresponds to a real reaction, the hydrolysis of ATP to ADP cells use to free up and use the energy stored by glycolysis (ATP~+H$_2$O~$\rightarrow$~ADP~+~P$_i$). In the glycolysis simulation the goal function was the flux of this previous reaction. 
+	TALK ABOUT OTHER GOAL FUNCTIONS HERE?
+		
+	\subsection{How to mutate?}
+	
+	The real evolution of the genomes of organisms uses a variety of methods as discussed in Section \ref{chap:evolution}. Of these, my cells use point mutations, that either add or delete a reaction that is currently available to them. Simply adding a reaction to those available to the cell at random from the list of all the reactions is unlikely to result in a reaction that would be used by the cell, as with a high probability the added reaction would use reactants that are not present in the cell, and produce compounds that are not used in it. As discussed in Section \ref{chap:throughput} the flux through these reactions would be zero. Therefore when adding reactions, I only consider those that already link to the current reactions, either by using a compound that is currently produced by the network, or providing one that it consumes. EXAMPLE? This way the graph of the reactions and compounds available to the cell stays a connected graph (disregarding deletions). Choosing the list of reactions that can be added uses the neighbour-list defined in Section \ref{chap:howtostore}. When deleting a reaction every currently available reaction has equal probability of being deleted. This can in theory result in not connected graphs, however as the deletion resulting in such a graph usually results in a performance drop, and therefore such a reaction network will be outcompeted by it's connected peers. 
+	
+	\subsection{Competition}
+	
+		
+		\subsection{Random number generators}
+		\subsection{Cytoscape}
+
+	
+
+	\section{what did i do}
+	\subsection{Test runs}
+	\subsection{Single cell}
+	\subsection{Population of cells}
+	\subsubsection{Metropolis model - thermodynamics}
+	\subsection{Real glycolysis network}
+	\subsection{visualization of networks}
+
+	small change
+	\iffalse
+	
+	\section{trol}
+	The core of the energy producing metabolic pathways of organisms are very similar, for all three domains of life, however there are many pathways that are chemically viable.  The throughput of these pathways greatly influences the fitness of any given organism. 
+	
+	Cells usually convert their input material into precursor molecules, which are then converted into the biomass of the cell and energy. This method is robust in terms of input molecules, as described in \cite{latent} the ability to synthesize all biomass from a single source of carbon and energy enables the cell to use molecules similar to the original. Eg. if the cell is capable of processing glucose, using the same enzymatic pathways it is also capable of processing 40 other similar molecules.  In \cite{latent} the authors examine how an evolutionary advantage can originate from an exaptation. 
+	
+	  
+	Most modern cells use the the Embden-Meyerhof-Parnas (EMP) pathway for the upper part of the glycotic  pathway, while some prokaryotes use the Entner-Doudoroff (ED) pathway \cite{EDpathway}. The trunk of the pathway however is highly conserved and so are the enzymes used \cite{latent}. 
+	
+	The similarity can occur for a variety of reasons, it can be due to the current pathways being the most optimal one given the set of constraints posed by the environment of the cells as described in \cite{theoretical}, \cite{central}. It can also occur because of historical reasons \cite{historical}. In this article the authors examine whether chemically viable metabolic pathways are connected in the sense of being able to mutate (using one-reaction mutations) from one pathway to an other while preserving viability. They find that in all but the simplest metabolisms this is possible.
+	
+	In \cite{theoretical} it is found that the metabolic network of modern cell (the EMP pathway) is optimized to provide the highest possible ATP production flux, while maintaining a high kinetic efficiency. 
+	
+	The central carbon metabolism of the E. coli. bacteria is examined in \cite{central}. This converts sugars into metabolic precursors which are then in turn converted to the biomass of the cell, and energy. The authors try to find a simplifying principle for the structure of the metabolic network, and find that it can be considered as a minimal walk (in terms of enzymatic steps) between any pair of the 12 metabolic precursors for the biomass of the cell, and the one that is responsible for the ATP balance. In addition the enzymatic distance between the precursors and the input sugars is also minimized suggesting that the pathway used is optimal in this sense. 
+	
+	There are exceptions of this similarity, as mentioned in \cite{strategy} the glucose metabolism of procaryotic cells shows a great variety. The canonical pathway used by most organisms is the EMP pathway producing 2 ATP molecules for every glucose consumed, but the alternative Entner-Doudoroff (ED) pathway which only produces 1 ATP per glucose is still viable, as it requires much less enzymatic proteins than the EMP pathway to achieve the same glucose conversion rate. This is thought to present an evolutionary advantage that makes up for the reduced ATP production rate. 
+	
+	\subsection{Computational approach}
+	
+	Apart from the analytic work done in the field, with the increase of processing power simulations became a valuable tool in modelling metabolic networks. Simulations can be exhaustive (looking through all the chemically feasible reaction chains), or simulating evolution. 
+	
+	According to Daniel Dennett "... evolution will occure whenever and wherever three conditions are met: replication, variation (mutation), and differential fitness (competition)". REFERENCE THIS 
+	Simulating the evolution of metabolic networks is a difficult task even for today's computers. To accurately calculate efficiencies in different environments we would have to implement chemistry as a whole. To make the problems more manageable artificial chemistries are considered in some cases \cite{artificialreview} \cite{artificialshort}.
+	
+
+	Charles Darwin having discovered evolution \cite{darwin} realized that the highly  sophisticated organs such as the eye must have evolved through many steps. In \cite{latent} the authors argue that as other complex structures (such as feathers for flight) have evolved non-adaptively as exaptations, as byproducts of evolution of other functions. In \cite{complexfeatures} the authors consider simple digital organisms that can obtain energy by performing logic functions. The organisms are provided an environment where they can reproduce and mutate, and the more complex logical function they perform, the more energy they receive. They find that although to get to the most complex (and most energy yielding) operations many mutations are needed, once it is present, it provides such value that offsprings that don't have it are quickly eliminated by the competition. Supports the claims of \cite{latent}.
+	
+	These metabolic networks shows resemblance to highly error tolerant scale-free networks \cite{largescale} that have some highly connected nodes (compounds) which take part in many reactions. The networks are tolerant to random errors (removal of reactions or molecules). Similar conclusions are drawn in \cite{complexfeatures} which also examines the modularity property of metabolic networks by simulating artificial organisms living on a 2D surface, operating on artificial molecules. They find that gene-pairs that when removed individually do not influence the performance of the organism greatly, but when removed together  they are lethal, occur within strongly interconnected modules. The functions of these modules are separable, this contributes to their error-tolerance. Both of these articles mention the small world \cite{smallworld} property of the networks, meaning that they are "highly clustered, like regular lattices, yet have small characteristic path lengths, like random graphs." This property makes them similar to social networks of humans. 
+	
+	In \cite{computationalframework} the authors "employ an artificial chemistry that views chemical reactions graph rewriting operations and utilizes a toy-version of quantum chemistry to derive thermodynamic parameters." 
+	
+	\fi
+	
+	
+	\bibliography{dissertation}
+	\bibliographystyle{plainnat}
+\end{document}

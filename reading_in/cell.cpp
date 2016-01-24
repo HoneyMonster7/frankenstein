@@ -36,7 +36,7 @@ void cell::printReacs() {
 	std::cout<<" END"<<std::endl;
 }
 
-bool cell::operator<( cell other) {
+bool cell::operator<(const cell& other) const {
 
 	//orders such that the largest performance wil be [0]
 	return getPerformance()>other.getPerformance();
@@ -58,7 +58,7 @@ void cell::printXGMML(std::string filename){
 
 	//typesfile<<"Name Type"<<std::endl;
 	xgmmlFile<<"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"<<std::endl;
-	xgmmlFile<<"<graph label=\"justAGraph\" xmlns:cy=\"http://www.cytoscape.org\" xmlns=\"http://www.cs.rpi.edu/XGMML\" directed=\"1\">"<<std::endl;
+	xgmmlFile<<"<graph label=\""<<filename<<"\" xmlns:cy=\"http://www.cytoscape.org\" xmlns=\"http://www.cs.rpi.edu/XGMML\" directed=\"1\">"<<std::endl;
 
 
 	for (int j=0; j<availableReactions.size();j++){
@@ -388,19 +388,18 @@ void cell::printPopulationFittnesses(std::vector<cell>& population){
 	std::cout<<std::endl;
 }
 
-void cell::printNFittest(std::vector<cell>& population,int N){
-	std::vector<double> allFittnesses=getPopulationFittness(population);
+cell cell::printNFittest(std::vector<cell>& population,int N){
 
-	std::vector<double> bestFittnesses(allFittnesses.size());
 	
-	std::partial_sort_copy(allFittnesses.begin(),allFittnesses.end(),bestFittnesses.begin(),bestFittnesses.end());
+	std::sort(population.begin(),population.end());
 
 
 			std::cout<<"The best "<<N<<" are:";
 			for (int i=0;i<N;i++){
-			std::cout<<*(bestFittnesses.end()-i-1)<<", ";
+			std::cout<<population[i].getPerformance()<<", ";
 			}
 			std::cout<<std::endl;
+			return population[0];
 
 }
 
@@ -507,7 +506,7 @@ double cell::calcThroughput(){
 	}
 	//extra column for the imaginary reaction getting rid of the final compound (objective function)
 	int listSize=availableReactions.size();
-	glp_add_cols(lp,listSize+5);
+	glp_add_cols(lp,listSize+6);
 
 	//for(int i=1; i<=listSize+4; i++){ glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);}
 
@@ -528,9 +527,16 @@ double cell::calcThroughput(){
 		//tmpreac.printReaction();
 		if(freeChange<-10){
 		glp_set_col_bnds(lp,i,GLP_DB,0.0,1.0);
+		//std::cout<<"going normal"<<std::endl;
 		}
-		else if(freeChange>10){glp_set_col_bnds(lp,i,GLP_DB,-1.0,0.0);}
-		else {glp_set_col_bnds(lp,i,GLP_DB,-0.5,0.5);}
+		else if(freeChange>10){
+			glp_set_col_bnds(lp,i,GLP_DB,-1.0,0.0); 
+			//std::cout<<"going backwards"<<std::endl;
+		}
+		else {
+			glp_set_col_bnds(lp,i,GLP_DB,-0.5,0.5);
+			//std::cout<<"Going both ways"<<std::endl;
+		}
 
 
 		std::vector<int> tmpsubs=tmpreac.getsubstrates();
@@ -564,20 +570,32 @@ double cell::calcThroughput(){
 	glp_set_col_bnds(lp,listSize+2,GLP_DB,0.0,40.0);
 	glp_set_col_bnds(lp,listSize+3,GLP_DB,0.0,40.0);
 	glp_set_col_bnds(lp,listSize+5,GLP_DB,0.0,10.0);
+	glp_set_col_bnds(lp,listSize+6,GLP_DB,-10.0,10.0);
 
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
+	//adding source substrate
 	ia.push_back(substrateIndex[sourceSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
+	//adding water
 	ia.push_back(substrateIndex[-1+nrOfInternalMetabolites]);	ja.push_back(listSize+2); ar.push_back(1.0);
+	//adding or removing co2
 	ia.push_back(substrateIndex[-2+nrOfInternalMetabolites]);	ja.push_back(listSize+3); ar.push_back(-1.0);
-	ia.push_back(substrateIndex[-8+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(-1.0);
+	//adding ADP
+	ia.push_back(substrateIndex[-6+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(1.0);
+	//removing ATP
+	ia.push_back(substrateIndex[-7+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(-1.0);
+	//removing the sink substrate
 	ia.push_back(substrateIndex[sinkSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
 
+	//adding NadOx
+	ia.push_back(substrateIndex[-3+nrOfInternalMetabolites]);	ja.push_back(listSize+6); ar.push_back(1.0);
+	//removing Nad_red
+	ia.push_back(substrateIndex[-4+nrOfInternalMetabolites]);	ja.push_back(listSize+6); ar.push_back(-1.0);
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
 	//ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
 	//
-	//target is to maximize the imaginary reactions throughput
-	glp_set_obj_coef(lp,listSize+4,1.0);
+	//target is to maximize the imaginary reactions throughput of the ADP->ATP reaction
+	glp_set_obj_coef(lp,listSize+5,1.0);
 
 
 	//creating the arrays now
@@ -670,3 +688,158 @@ void cell::setFluxes(std::vector<double>& fluxVector){
 
 	fluxThroughReacs=fluxVector;
 }
+
+void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction>& ReactionVector, std::vector<substrate>& SubstrateVector, std::string fnameString){
+
+	int writeoutcounter=1;
+	std::vector<int> doesntHaveToBalance = {-3, -4, -1, -2, 94};
+
+	doesntHaveToBalance.emplace_back(TargetCompound);
+
+	std::set<int> canWeAdd;
+	//first figure out what can be added
+	for (int i=0; i<currentReactions.size();i++)
+	{
+		std::vector<int> neighboursOfCurrentReac=ReactionVector[currentReactions[i]].getNeighbours();
+		for (int j:neighboursOfCurrentReac){
+			canWeAdd.insert(j);
+		}
+	}
+
+	for (int j:currentReactions){
+		canWeAdd.erase(j);
+	}
+
+	std::vector<int> PossibleReactionsToAdd(canWeAdd.begin(),canWeAdd.end());
+
+	//std::cout<<"We can add:";
+	//for (auto whatever:PossibleReactionsToAdd){
+	//	std::cout<<whatever<<", ";
+	//}
+	//std::cout<<std::endl;
+
+	for (int j:canWeAdd){
+
+		std::vector<int> substrates, products;
+		if (reactionVector[j].getCurrentFreeEChange()>0){
+			//std::cout<<"For "<<j<<" freeechange is greater than zero."<<std::endl;
+			substrates=ReactionVector[j].getproducts();
+			products=ReactionVector[j].getsubstrates();
+		}
+		else{
+			substrates=ReactionVector[j].getsubstrates();
+			products=ReactionVector[j].getproducts();
+		}
+
+		bool doesItSolveANeed=false;
+		bool doesItSolveALess=false;
+
+		for (int currProduct:products){
+			doesItSolveANeed= doesItSolveANeed || (std::find(needMore.begin(), needMore.end(),currProduct)!=needMore.end());
+			if (std::find(needMore.begin(), needMore.end(), currProduct) != needMore.end()){
+				doesItSolveANeed=true;
+			//	std::cout<<j<<" solves a more."<<std::endl;
+			}	
+		}
+		for (int currSubs:substrates){
+			//doesItSolveALess=doesItSolveALess || (std::find(needLess.begin(), needLess.end(), currSubs) != needLess.end());
+		
+			if (std::find(needLess.begin(), needLess.end(), currSubs) != needLess.end()){
+				doesItSolveALess=true;
+				//std::cout<<j<<" solves a less."<<std::endl;
+			}
+		}
+
+		//now if adding the reaction solves a need or a too much problem, we add it
+
+		//std::cout<<"solveless: "<<doesItSolveALess<<" solvemore: "<<doesItSolveANeed<<std::endl;
+		if (doesItSolveALess || doesItSolveANeed){
+
+			std::vector<int> currentReactionsInLoop=currentReactions;
+			std::vector<int> needMoreInLoop=needMore;
+			std::vector<int> needLessInLoop=needLess;
+
+			//std::cout<<"Needmore: ";
+			//for (int m:needMoreInLoop){
+			//	std::cout<<m<<", ";
+			//}
+			//std::cout<<std::endl;
+			//
+			//std::cout<<"Needless: ";
+			//for (int m:needLessInLoop){
+			//	std::cout<<m<<", ";
+			//}
+			//std::cout<<std::endl;
+
+
+
+			currentReactionsInLoop.emplace_back(j);
+			// and we note the problems it creates, and solves
+	
+			for (int noBalance:doesntHaveToBalance){
+
+				substrates.erase(std::remove(substrates.begin(), substrates.end(), noBalance), substrates.end());
+				products.erase(std::remove(products.begin(), products.end(), noBalance), products.end());
+			}	
+
+			for (int k:substrates){
+
+				if (std::find(needLessInLoop.begin(), needLessInLoop.end(), k)!=needLessInLoop.end()){
+					needLessInLoop.erase(std::remove(needLessInLoop.begin(), needLessInLoop.end(), k), needLessInLoop.end());
+					//std::cout<<"We no longer need less "<<k<<" thanks to "<<j<<std::endl;
+				}
+				else{
+				needMoreInLoop.emplace_back(k);
+					//std::cout<<"We now need more "<<k<<" thanks to "<<j<<std::endl;
+				}
+			}
+			for (int k:products){
+				if (std::find(needMoreInLoop.begin(), needMoreInLoop.end(), k) != needMoreInLoop.end()){
+					needMoreInLoop.erase(std::remove(needMoreInLoop.begin(), needMoreInLoop.end(), k), needMoreInLoop.end());
+					//std::cout<<"We no longer need more "<<k<<" thanks to "<<j<<std::endl;
+				}
+				else{needLessInLoop.emplace_back(k);
+				//std::cout<<"We now need less "<<k<<" thanks to "<<j<<std::endl;
+				}
+			
+
+				}
+
+			//now writing out the current state, and calling it again
+
+			int thingsInNeed=needMoreInLoop.size()+needLessInLoop.size();
+
+			if(thingsInNeed<2){
+				std::cout<<std::endl<<"Current state of the system:"<<std::endl;
+
+				std::cout<<"Reactions: ";
+				for (int k:currentReactionsInLoop){std::cout<<k<<", ";}
+				std::cout<<std::endl<<"Needmore: ";
+				for (int k:needMoreInLoop){std::cout<<k<<", ";}
+				std::cout<<std::endl<<"Needless: ";
+				for (int k:needLessInLoop){std::cout<<k<<", ";}
+				std::cout<<std::endl;
+				if (thingsInNeed<1){
+
+					std::ostringstream forFileName;
+					forFileName<<fnameString<<"/NR"<<writeoutcounter<<"cell";
+
+
+					cell tmpcell(currentReactionsInLoop);
+					tmpcell.printXGMML(forFileName.str());
+
+					writeoutcounter++;
+				}
+			}
+
+			if (currentReactionsInLoop.size()<7){
+				cell::findThePaths(needMoreInLoop,needLessInLoop, currentReactionsInLoop, TargetCompound, ReactionVector, SubstrateVector, fnameString);
+			}
+		}
+	}
+
+
+}
+	
+
+

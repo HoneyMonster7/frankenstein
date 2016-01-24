@@ -10,18 +10,85 @@
 #include <fstream>
 #include <utility>
 #include <algorithm>
+#include <ctime>
+#include <cstdlib>
+//for the command line flags
+#include <unistd.h>
 
 #include "reaction.h"
 #include "cell.h"
 
 using namespace boost;
 
-int main(int argc, char* argv[])
+int main(int argc, char **argv)
 {
-	//defined in cell.h
-	RandomGeneratorType generator(1);
+	int seedForGenerator=1;
+	int c;
+	std::string jobName;
 
+	while ((c = getopt(argc,argv,"hs:j:")) != -1)
+		switch(c)
+		{
+			case 's':
+				//std::cout<<"Input is: "<<optarg<<std::endl;
+				seedForGenerator=std::stoi(optarg);
+				//std::cout<<"Parsed, it is: "<<seedForGenerator<<std::endl;
+				break;
+			case 'h':
+				std::cout<<"Accepted options:"<<std::endl;
+				std::cout<<"\t -s [intSeed] seed for the MersenneTwister, default is 1, max is 2147483647"<<std::endl;
+				std::cout<<"\t -j [jobName] name for the folder to output the results into. If skipped a timestamped directory will be used for this."<<std::endl;
+				exit(0);
+				break;
+			case 'j':
+				jobName=optarg;
+				break;
+			case '?':
+				if (optopt =='s')
+					std::cout<<"Option -s requires an integer argument"<<std::endl;
+				else if (optopt =='j')
+					std::cout<<"Option -j requires the desired folder name (jobName)"<<std::endl;
+				else
+					std::cout<<"Unknown option, try -h for allowed options."<<std::endl;
+				return 1;
+			default:
+				exit(1);
+		}
+
+
+
+		
+
+	//defined in cell.h
+	RandomGeneratorType generator(seedForGenerator);
+
+	//for automatically creating an output file named from current time
+	time_t now=time(0); 
+	tm *ltm = localtime(&now);
+	std::ostringstream forDateTime;
+	forDateTime<<1900+ltm->tm_year<<"."<<1+ltm->tm_mon<<"."<<ltm->tm_mday<<"_"<<1+ltm->tm_hour<<":"<<1+ltm->tm_min<<":"<<1+ltm->tm_sec;
+	std::string dateForFileName=forDateTime.str();
+
+	std::string actualFilename;
+	if (!jobName.empty()){
+		actualFilename=jobName;
+	}
+	else {
+		actualFilename=dateForFileName;
+	}
+
+	std::string dirCommand="mkdir "+actualFilename;
+	const int dir_err = system(dirCommand.c_str());
+	if (-1 == dir_err)
+	{
+		std::cout<<"Error creating directory!"<<std::endl;
+		exit(1);
+	}
+
+	std::ofstream improvementlog;
+	improvementlog.open(actualFilename+"/"+actualFilename+".fitt");
 	//set the number of internalmetabolites here:
+	
 	int nrOfInternalMetabolites=13;
 	reaction::nrOfInternalMetabolites=nrOfInternalMetabolites;
 
@@ -57,7 +124,9 @@ int main(int argc, char* argv[])
 	reacVector[13].printReaction();
 	reacVector[209].printReaction();
 
+	std::cout<<"Building the neighbour list..."<<std::endl;
 	substrate::buildNeighbourList(reacVector,substrateVector);
+	std::cout<<"Neighbour list built."<<std::endl;
 
 	
 	reacVector[129].printNeighbours();
@@ -67,8 +136,8 @@ int main(int argc, char* argv[])
 	currentEnvironment.atpCont=1e-1;
 	currentEnvironment.adpCont=1e-2;
 	currentEnvironment.ampCont=1e-4;
-	currentEnvironment.nadoxcont=1e-2;
-	currentEnvironment.nadredcont=1e-2;
+	currentEnvironment.nadoxcont=1e-1;
+	currentEnvironment.nadredcont=1e-4;
 	currentEnvironment.piCont=1e-3;
 	currentEnvironment.ppiCont=1e-3;
 	currentEnvironment.co2cont=1e-5;
@@ -83,7 +152,7 @@ int main(int argc, char* argv[])
 	}
 
 
-	std::vector<int> subset= {130,285,5107,5109,5146};
+	std::vector<int> subset= {417,884,1070,448,816,629};
 
 
 	cell::nrOfInternalMetabolites=nrOfInternalMetabolites;
@@ -92,25 +161,32 @@ int main(int argc, char* argv[])
 	//this is the k value for the fitness function
 	cell::smallKforFitness=1e-2;
 	//don't add nrofinternalmetabolites here
-	cell::sourceSubstrate=911;
-	cell::sinkSubstrate=0;
+	cell::sourceSubstrate=104;
+	cell::sinkSubstrate=54;
 
 
 	cell trialcell(subset);
 
 	std::vector<cell> cellVector(100,trialcell);
 	//int compsize=compoundVList.size();
+	double previousFittness=trialcell.getPerformance();
+	std::vector<int> previousNetwork=trialcell.getReacs();
+
 
 	std::string fileName="initial";
 		trialcell.printXGMML(fileName);
 
 		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<200; k++){
+		for (int k=0; k<2000; k++){
 			//for testing
 			//std::cout<<"Current reactions:";
 			//std::vector<int> currentreacs=trialcell.getReacs();
 			//for(auto i:currentreacs){std::cout<<i<<" ";}
 			//std::cout<<k<<", "<<std::endl;
+			if (k%1000 ==0){
+				std::cout<<k<<" iterations done..."<<std::endl;
+				std::cout<<"Performance is; "<<trialcell.getPerformance()<<std::endl;
+			}
 		trialcell.mutate(generator);
 		//trialcell.printHumanReadable(compoundVList);
 
@@ -118,29 +194,95 @@ int main(int argc, char* argv[])
 		}
 		std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
 
-		for (int k=0; k<6000; k++){
-			cell::mutatePopulation(cellVector,generator);
-			if (k%500==0){
+
+		//std::vector<int> needMore, needLess, currentReactions;
+		//int targetCompound = 54; //target is pyruvate - 54
+
+		//needLess.emplace_back((int)-6);
+		//needMore.emplace_back((int)-7);
+		//currentReactions.emplace_back(11790);
+		//reacVector[11790].printReaction();
+
+		// this is the pathfinding algorithm, not used now
+		//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, actualFilename);
+
+
+		int NRofCheckpoints=10;
+		int checkPointLength=10000;
+		//outer loop is there in order to save networks every 10% of the simulation
+		for (int outerLoop=0; outerLoop<NRofCheckpoints; outerLoop++){
+
+			for (int k=0; k<checkPointLength; k++){
+				cell::mutatePopulation(cellVector,generator);
+				if (k%2500==0){
+					
+				std::cout<<k+outerLoop*checkPointLength<<": ";
+				cell currentBest=cell::printNFittest(cellVector,10);
+
+				if (previousFittness+0.5<currentBest.getPerformance()){
+					cell previousBest=cell(previousNetwork);
+					std::ostringstream fname;
+					fname<<actualFilename<<"/"<<actualFilename<<"_before_step_"<<k;
+					previousBest.printXGMML(fname.str());
+					fname.str("");
+					fname.clear();
+					fname<<actualFilename<<"/"<<actualFilename<<"_after_step_"<<k;
+					currentBest.printXGMML(fname.str());
+				}
+				previousFittness=currentBest.getPerformance();
+				previousNetwork=currentBest.getReacs();
+				improvementlog<<k<<" "<<previousFittness<<std::endl;
 				
-			std::cout<<k<<": ";
-			//cell::printPopulationFittnesses(cellVector);
-			cell::printNFittest(cellVector,10);
+				//cell::printPopulationFittnesses(cellVector);
+
+				}
+
 			}
 
-		}
+			cell::printPopulationFittnesses(cellVector);
+			int N=10;
+			std::vector<cell> bestCells=cell::getBestNCells(cellVector,N);
 
-		cell::printPopulationFittnesses(cellVector);
-		int N=10;
-		std::vector<cell> bestCells=cell::getBestNCells(cellVector,N);
-		for (int i=0; i<N; i++){
-			std::ostringstream forFileName;
-			forFileName<<"NR"<<i+1<<"cell";
-			bestCells[i].printXGMML(forFileName.str());
+
+			if (outerLoop != NRofCheckpoints-1){
+
+				std::cout<<"Checkpointing now..."<<std::endl;
+				//the checkpoints will be saved into separate folders
+				
+				//creating a directory for saving the checkpoints into
+				std::ostringstream forCheckpointFolder;
+				forCheckpointFolder<<actualFilename<<"/CP"<<outerLoop+1;
+				std::string dirCommand="mkdir "+forCheckpointFolder.str();
+				const int dir_err = system(dirCommand.c_str());
+
+				//the script starting reaction will make sure the folder is empty
+				//
+				//const int dir_err = system(dirCommand.c_str());
+				//if (-1 == dir_err)
+				//{
+				//	std::cout<<"Error creating directory!"<<std::endl;
+				//	exit(1);
+				//}
+				for (int i=0; i<N; i++){
+					std::ostringstream forFileName;
+					forFileName<<forCheckpointFolder.str()<<"/"<<actualFilename<<"CP"<<outerLoop+1<<"NR"<<i+1<<"cell";
+					bestCells[i].printXGMML(forFileName.str());
+				}
+			}
+			else {
+				//final network doesn't need a checkpoint folder
+				for (int i=0; i<N; i++){
+					std::ostringstream forFileName;
+					forFileName<<actualFilename<<"/"<<actualFilename<<"CP"<<outerLoop+1<<"NR"<<i+1<<"cell";
+					bestCells[i].printXGMML(forFileName.str());
+				}
+			}
 		}
 		
 
 		fileName="final";
 		trialcell.printXGMML(fileName);
 
+		improvementlog.close();
   std::cout<<"Tests completed."<<std::endl;
 }
