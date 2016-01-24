@@ -10,12 +10,15 @@ do
 
 done
 
+rm columns.list
 
 for i in `ls *.jnk`
 do
 	ilength=`wc -l <$i`
 
-	echo $i> columns.list
+	
+	echo $i>> columns.list
+
 	for j in `ls *.jnk`
 	do
 
@@ -30,7 +33,12 @@ do
 		largerone=$((ilength > jlength ? ilength : jlength))
 		matdecim=`echo "scale=4; $matcoeff/$largerone" | bc`
 		
+		if [ "$matdecim" != "1.0000" ]
+		then
 		echo -n "$matdecim "
+		else 
+			echo -n "0 "
+		fi
 	done
 	echo 
 done
