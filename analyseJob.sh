@@ -2,11 +2,15 @@
 
 jobwasgiven=0
 onlybest=0
+onlyused=0
 
-while getopts ":bj:h" opt; do
+while getopts ":bj:hu" opt; do
 
 
 	case $opt in
+		u)
+			onlyused=1
+			;;
 		b)
 			echo "-b was triggered"
 			onlybest=1
@@ -21,6 +25,7 @@ while getopts ":bj:h" opt; do
 			echo "Needs a job folder with tar.gz files collected from the computing nodes. This can either be provided with the -j [jobName] switch, or if omitted the script will ask for it."
 			#echo "By default it uses the best 10 cells, if the -b flag is used only the best will be usedfrom each node"
 			echo -e "\t -b use only the best network from each node. Default is the best 10."
+			echo -e "\t -u calculate the similarity index using only the reactions with nonzero flux."
 			echo -e "\t -j [jobName] jobs are provided in jobName  Default will ask user for folder."
 			exit 0
 			;;
@@ -93,7 +98,12 @@ else
 fi	
 cd $jobtoan
 
-./similarityCalc.sh
+if [ "$onlyused" == 1 ]; then
+
+	./similarityCalc.sh -u 
+else
+	./similarityCalc.sh
+fi
 
 #./simMatrix
 
