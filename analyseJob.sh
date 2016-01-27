@@ -3,13 +3,17 @@
 jobwasgiven=0
 onlybest=0
 onlyused=0
+numberneeded=0
 
-while getopts ":bj:hu" opt; do
+while getopts ":bj:hun:" opt; do
 
 
 	case $opt in
 		u)
 			onlyused=1
+			;;
+		n)
+			numberneeded=$OPTARG
 			;;
 		b)
 			echo "-b was triggered"
@@ -60,12 +64,22 @@ if [ ! -d $jobtoan ]; then
 	exit 1
 fi
 
-if [ ! $( ls $jobtoan | grep tar.gz) ]; then
+echo "jobtoan is $jobtoan within there we have $(ls $jobtoan | grep tar.gz)"
+if [ -z  $(ls $jobtoan | grep tar.gz) ]; then
 	echo "Can't find jobs in $jobtoan. Are you sure it's the right folder?"
 	exit 1
 fi
 
 #ls $jobtoan | grep tar.gz
+#if [ "$numberneeded" > 0 ]; then
+#	loopthroughthis=$(ls $jobtoan | grep tar.gz | head -n $numberneeded)
+#else
+#	loopthroughthis=$(ls $jobtoan | grep tar.gz)
+#fi
+#
+#echo "we need to loop through $loopthroughthis"
+#
+#for fname in $loopthroughthis; do
 for fname in $( ls $jobtoan | grep tar.gz); do
 
 

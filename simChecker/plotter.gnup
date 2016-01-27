@@ -33,6 +33,7 @@ set yrange [-0.5:nrofthem-0.5]
 #set ytics 0.5,1
 
 
-splot "similarityMatrix.dat" matrix with image noti
+plot 'similarityMatrix.dat' matrix with image , \
+		'' matrix  using 1:2:(sprintf('%.2f',$3))  with labels 
 
 pause -1
