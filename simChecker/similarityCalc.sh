@@ -1,15 +1,49 @@
 #!/bin/bash
 
+onlyUsed=0
 
 rm columns.list
 rm rows.list
+
+while getopts ":uh" opt; do
+
+
+case $opt in
+	u)
+		#echo "-u was triggered"
+		onlyUsed=1
+		;;
+	h)
+		echo "Allowed options:"
+		echo -e "\t -u output only the used relations"
+		exit 0
+		;;
+	\?)
+		echo "Invalid option: -$OPTARG Try -h for help."
+		exit 1
+		;;
+	:)
+		echo "Option -$OPTARG requires an argument."
+		exit 1
+		;;
+	esac
+	
+
+done
+
 
 counter=1;
 for i in `ls *.xgmml`
 do
 
 	jnkname=${i/xgmml/jnk}
-	grep Reaction -B1 $i | grep label | cut -d\" -f2 | sort -n > $jnkname
+	if [ "$onlyUsed" == 0 ]; then
+		grep Reaction -B1 $i | grep label | cut -d\" -f2 | sort -n > $jnkname
+	else
+		grep -A 1 "source=\"\-[0-9]*" $i | grep -v "\-\-" | paste - - | grep -v "value=\"0\"" | cut -d\" -f4 | tr -d - | sort -n | uniq > $jnkname
+	fi
+
+
 
 	echo $jnkname >> columns.list
 	echo -n "$jnkname " | sed 's/CP10//g' | sed 's/cell.jnk//g' >> rows.list
