@@ -214,7 +214,7 @@ int main(int argc, char **argv)
 
 			for (int k=0; k<checkPointLength; k++){
 				cell::mutatePopulation(cellVector,generator);
-				if (k%2500==0){
+				if (k%10000==0){
 					
 				std::cout<<k+outerLoop*checkPointLength<<": ";
 				cell currentBest=cell::printNFittest(cellVector,10);
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
 				}
 				previousFittness=currentBest.getPerformance();
 				previousNetwork=currentBest.getReacs();
-				improvementlog<<k<<" "<<previousFittness<<std::endl;
+				improvementlog<<k+outerLoop*checkPointLength<<" "<<previousFittness<<std::endl;
 				
 				//cell::printPopulationFittnesses(cellVector);
 
