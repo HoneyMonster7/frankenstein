@@ -32,6 +32,7 @@ set yrange [-0.5:nrofthem-0.5]
 #set xtics 0.5,1
 #set ytics 0.5,1
 
+unset key
 if (nrofthem > 15 ){
 	plot 'similarityMatrix.dat' matrix with image , \
 } else {
