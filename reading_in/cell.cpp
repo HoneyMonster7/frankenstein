@@ -58,9 +58,10 @@ void cell::printXGMML(std::string filename){
 
 	//typesfile<<"Name Type"<<std::endl;
 	xgmmlFile<<"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"<<std::endl;
-	xgmmlFile<<"<graph label=\""<<filename<<"\" xmlns:cy=\"http://www.cytoscape.org\" xmlns=\"http://www.cs.rpi.edu/XGMML\" directed=\"1\">"<<std::endl;
+	xgmmlFile<<"<graph label=\""<<filename<<"\""<<std::endl<<" xmlns:cy=\"http://www.cytoscape.org\" "<<std::endl<<"xmlns=\"http://www.cs.rpi.edu/XGMML\" "<<std::endl<<"directed=\"1\">"<<std::endl;
 
-
+	xgmmlFile<<"\t <att name=\"Fittness\" type=\"real\" value=\""<<getPerformance()<<"\"/>"<<std::endl;
+//<<"fittnesvalue="<<getPerformance()<<std::endl
 	for (int j=0; j<availableReactions.size();j++){
 
 		int i=availableReactions[j];
