@@ -75,8 +75,9 @@ if [ -z  "$needToUntar" ]; then
 	exit 1
 fi
 
+echo "needToUntar is $needToUntar"
 #ls $jobtoan | grep tar.gz
-if [ "$numberneeded" > 0 ]; then
+if [ "$numberneeded" -gt 0 ]; then
 	#loopthroughthis=$(ls $jobtoan | grep tar.gz | head -n $numberneeded)
 	needToUntar=$(echo "$needToUntar" | head -n $numberneeded)
 #else
@@ -85,12 +86,13 @@ fi
 #
 #echo "we need to loop through $loopthroughthis"
 #
-#echo "needToUntar is $needToUntar"
+echo "needToUntar is $needToUntar"
 for fname in $needToUntar; do
 #for fname in $( ls $jobtoan | grep tar.gz); do
 
 
 	jobnr=$(echo $fname | cut -d. -f2)
+	echo $jobnr
 
 	if [ "$onlybest" == 0 ]; then
 
