@@ -13,6 +13,7 @@ while getopts ":bj:hun:" opt; do
 			onlyused=1
 			;;
 		n)
+			echo "-n was triggered, with $OPTARG"
 			numberneeded=$OPTARG
 			;;
 		b)
@@ -31,6 +32,7 @@ while getopts ":bj:hun:" opt; do
 			echo -e "\t -b use only the best network from each node. Default is the best 10."
 			echo -e "\t -u calculate the similarity index using only the reactions with nonzero flux."
 			echo -e "\t -j [jobName] jobs are provided in jobName  Default will ask user for folder."
+			echo -e "\t -n [number] number of jobs to analyse. Will use the first [number] jobs. 0 for all jobs. Defaults to 0."
 			exit 0
 			;;
 		\?)
@@ -64,23 +66,28 @@ if [ ! -d $jobtoan ]; then
 	exit 1
 fi
 
-echo "jobtoan is $jobtoan within there we have $(ls $jobtoan | grep tar.gz)"
-if [ -z  $(ls $jobtoan | grep tar.gz) ]; then
+#echo "jobtoan is $jobtoan within there we have $(ls $jobtoan | grep tar.gz)"
+needToUntar=$(ls $jobtoan | grep tar.gz)
+
+#if [ -z  $(ls $jobtoan | grep tar.gz) ]; then
+if [ -z  "$needToUntar" ]; then
 	echo "Can't find jobs in $jobtoan. Are you sure it's the right folder?"
 	exit 1
 fi
 
 #ls $jobtoan | grep tar.gz
-#if [ "$numberneeded" > 0 ]; then
-#	loopthroughthis=$(ls $jobtoan | grep tar.gz | head -n $numberneeded)
+if [ "$numberneeded" > 0 ]; then
+	#loopthroughthis=$(ls $jobtoan | grep tar.gz | head -n $numberneeded)
+	needToUntar=$(echo "$needToUntar" | head -n $numberneeded)
 #else
 #	loopthroughthis=$(ls $jobtoan | grep tar.gz)
-#fi
+fi
 #
 #echo "we need to loop through $loopthroughthis"
 #
-#for fname in $loopthroughthis; do
-for fname in $( ls $jobtoan | grep tar.gz); do
+#echo "needToUntar is $needToUntar"
+for fname in $needToUntar; do
+#for fname in $( ls $jobtoan | grep tar.gz); do
 
 
 	jobnr=$(echo $fname | cut -d. -f2)
