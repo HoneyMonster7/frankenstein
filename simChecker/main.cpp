@@ -13,20 +13,25 @@ int main(int argc, char **argv){
 
 	std::string filenames;
 	int nrReadNow=1;
+	bool versusFirst=false;
 
 	std::string listOfFiles="columns.list";
 
 	int c;
 
-	while ((c=getopt(argc,argv,"hl:")) !=-1)
+	while ((c=getopt(argc,argv,"hl:b")) !=-1)
 		switch(c)
 		{
 			case 'l':
 				listOfFiles=optarg;
 				break;
+			case 'b':
+				versusFirst=true;
+				break;
 			case 'h':
 				std::cout<<"Accepted options:"<<std::endl;
 				std::cout<<"\t -l [fileName] file containing the filenames that have the integers for the reactions in the given networks"<<std::endl;
+				std::cout<<"\t -b compares fittnesses only against the first cell read in (you might want to order inputs accordingly)"<<std::endl;
 				exit(0);
 				break;
 			case '?':
@@ -88,25 +93,45 @@ int main(int argc, char **argv){
 	//	nrReadNow++;
 	//}
 	
-	for (int i=0;i<reacMatrix.size();i++){
+	if (versusFirst){
 
-		std::set<int> firstSet=reacMatrix[i];
+			std::set<int> firstSet=reacMatrix[0];
+			for (int j=1; j<reacMatrix.size();j++)
+			{
 
-		for (int j=0; j<reacMatrix.size();j++)
-		{
+				std::set<int> secondSet=reacMatrix[j];
 
-			std::set<int> secondSet=reacMatrix[j];
+				std::vector<int> similarities;
 
-			std::vector<int> similarities;
+				std::set_intersection(firstSet.begin(),firstSet.end(),secondSet.begin(),secondSet.end(),back_inserter(similarities));
+				
+				//std::cout<<"Between "<<1<<" and "<<j+1<<" there are "<<similarities.size()<<" similarities"<<std::endl;
+				double coeff=similarities.size()/(double)std::max(firstSet.size(),secondSet.size());
+				std::cout<<coeff<<std::endl;
+				//std::cout<<coeff<<" "<<names[0]<<" "<<names[j]<<std::endl;
+			}
+	}
+	else{
+		for (int i=0;i<reacMatrix.size();i++){
 
-			std::set_intersection(firstSet.begin(),firstSet.end(),secondSet.begin(),secondSet.end(),back_inserter(similarities));
-			
-			//std::cout<<"Between "<<i+1<<" and "<<j+1<<" there are "<<similarities.size()<<" similarities"<<std::endl;
-			double coeff=similarities.size()/(double)std::max(firstSet.size(),secondSet.size());
-			std::cout<<coeff<<" ";
-			//std::cout<<coeff<<" "<<names[i]<<" "<<names[j]<<std::endl;
+			std::set<int> firstSet=reacMatrix[i];
+
+			for (int j=0; j<reacMatrix.size();j++)
+			{
+
+				std::set<int> secondSet=reacMatrix[j];
+
+				std::vector<int> similarities;
+
+				std::set_intersection(firstSet.begin(),firstSet.end(),secondSet.begin(),secondSet.end(),back_inserter(similarities));
+				
+				//std::cout<<"Between "<<i+1<<" and "<<j+1<<" there are "<<similarities.size()<<" similarities"<<std::endl;
+				double coeff=similarities.size()/(double)std::max(firstSet.size(),secondSet.size());
+				std::cout<<coeff<<" ";
+				//std::cout<<coeff<<" "<<names[i]<<" "<<names[j]<<std::endl;
+			}
+			std::cout<<std::endl;
 		}
-		std::cout<<std::endl;
 	}
 
 
