@@ -29,6 +29,8 @@ set grid front mxtics mytics lw 1.5 lt -1 lc rgb 'white'
 set xrange [-0.5:nrofthem-0.5]
 set yrange [-0.5:nrofthem-0.5]
 
+set title "Similarity index between the reaction networks"
+
 #set xtics 0.5,1
 #set ytics 0.5,1
 
@@ -40,4 +42,4 @@ if (nrofthem > 15 ){
 plot 'similarityMatrix.dat' matrix with image , \
 		'' matrix  using 1:2:(sprintf('%.2f',$3))  with labels 
 }
-pause -1
+#pause -1

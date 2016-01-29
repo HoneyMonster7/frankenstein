@@ -1,21 +1,27 @@
 #!/bin/bash
 
 onlyUsed=0
+fitplotsneeded=0
 
 rm columns.list
 rm rows.list
 
-while getopts ":uh" opt; do
+while getopts ":ufh" opt; do
 
 
 case $opt in
 	u)
-		#echo "-u was triggered"
+		echo "-u was triggered"
 		onlyUsed=1
+		;;
+	f)
+		echo "-f was triggered"
+		fitplotsneeded=1
 		;;
 	h)
 		echo "Allowed options:"
 		echo -e "\t -u output only the used relations"
+		echo -e "\t -f also produces the plot for the fittnesses"
 		exit 0
 		;;
 	\?)
@@ -93,6 +99,11 @@ else
 fi
 
 echo "Removing .jnk files now."
-rm *.jnk
+#rm *.jnk
 
-gnuplot plotter.gnup
+gnuplot -persist plotter.gnup
+
+if [ "$fitplotsneeded" == 1 ]; then
+
+	gnuplot -persist lineplotter.plot
+fi

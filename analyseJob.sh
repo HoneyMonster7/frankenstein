@@ -4,14 +4,33 @@ jobwasgiven=0
 onlybest=0
 onlyused=0
 numberneeded=0
+fittnessgraph=0
 
-while getopts ":bj:hun:" opt; do
+optionsforchecker=""
+
+while getopts ":bj:hun:f" opt; do
 
 
 	case $opt in
 		u)
 			onlyused=1
+			if [ -z "$optionsforchecker" ]; then
+				optionsforchecker="$optionsforchecker-u"
+			else
+				optionsforchecker="$optionsforchecker -u"
+			fi
 			;;
+		f)
+			fittnessgraph=1;
+			if [ -z "$optionsforchecker" ]; then
+				echo "optionsforchecker was empty"
+				optionsforchecker="$optionsforchecker-f"
+			else
+				echo "optionsforchecker was notempty"
+				optionsforchecker="$optionsforchecker -f"
+			fi
+
+		;;
 		n)
 			echo "-n was triggered, with $OPTARG"
 			numberneeded=$OPTARG
@@ -48,6 +67,9 @@ while getopts ":bj:hun:" opt; do
 
 done
 
+
+echo "$optionsforchecker"
+read valami
 
 #first asking which job 
 
@@ -101,6 +123,10 @@ for fname in $needToUntar; do
 		tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/"job*CP10NR1cell.xgmml"
 	fi
 
+	if [ "$fittnessgraph" == 1 ]; then
+
+		tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/"job*.fitt"
+	fi
 
 done
 
@@ -121,16 +147,21 @@ else
 fi	
 cd $jobtoan
 
-if [ "$onlyused" == 1 ]; then
+echo "options are: $optionsforchecker"
 
-	./similarityCalc.sh -u 
-else
-	./similarityCalc.sh
-fi
+./similarityCalc.sh "${optionsforchecker[@]}"
+
+#if [ "$onlyused" == 1 ]; then
+#
+#	./similarityCalc.sh -u 
+#else
+#	./similarityCalc.sh
+#fi
 
 #./simMatrix
 
 rm *.xgmml
+rm *.fitt
 #rm similarityCalc.sh
 #rm simMatrix
 #rm plotter.gnup
