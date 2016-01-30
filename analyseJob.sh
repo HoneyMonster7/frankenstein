@@ -5,10 +5,11 @@ onlybest=0
 onlyused=0
 numberneeded=0
 fittnessgraph=0
+onlylastcp=0
 
 optionsforchecker=""
 
-while getopts ":bj:hun:f" opt; do
+while getopts ":bj:hun:fl" opt; do
 
 
 	case $opt in
@@ -35,6 +36,10 @@ while getopts ":bj:hun:f" opt; do
 			echo "-n was triggered, with $OPTARG"
 			numberneeded=$OPTARG
 			;;
+		l)
+			echo "-l was triggered, with $OPTARG"
+			onlylastcp=1
+			;;
 		b)
 			echo "-b was triggered"
 			onlybest=1
@@ -52,6 +57,8 @@ while getopts ":bj:hun:f" opt; do
 			echo -e "\t -u calculate the similarity index using only the reactions with nonzero flux."
 			echo -e "\t -j [jobName] jobs are provided in jobName  Default will ask user for folder."
 			echo -e "\t -n [number] number of jobs to analyse. Will use the first [number] jobs. 0 for all jobs. Defaults to 0."
+			echo -e "\t -f outputs the fittness graphs too. at the moment it doesn't work together with the -u switch."
+			echo -e "\t -l extract and analyse the last checkpoint only"
 			exit 0
 			;;
 		\?)
@@ -69,7 +76,7 @@ done
 
 
 echo "$optionsforchecker"
-read valami
+#read valami
 
 #first asking which job 
 
@@ -97,7 +104,7 @@ if [ -z  "$needToUntar" ]; then
 	exit 1
 fi
 
-echo "needToUntar is $needToUntar"
+#echo "needToUntar is $needToUntar"
 #ls $jobtoan | grep tar.gz
 if [ "$numberneeded" -gt 0 ]; then
 	#loopthroughthis=$(ls $jobtoan | grep tar.gz | head -n $numberneeded)
@@ -105,10 +112,91 @@ if [ "$numberneeded" -gt 0 ]; then
 #else
 #	loopthroughthis=$(ls $jobtoan | grep tar.gz)
 fi
+
+jobnames=$(echo "$needToUntar" | cut -d. -f2)
+
+#echo "jobnames are: $jobnames"
 #
 #echo "we need to loop through $loopthroughthis"
 #
 echo "needToUntar is $needToUntar"
+
+if [ ! "$onlylastcp" == 1 ]; then
+	for checkpoint in `seq 1 9`; do
+
+		for fname in $needToUntar; do
+		#for fname in $( ls $jobtoan | grep tar.gz); do
+
+
+			jobnr=$(echo $fname | cut -d. -f2)
+			echo $jobnr
+
+			if [ "$onlybest" == 0 ]; then
+
+				tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/CP$checkpoint/"job*CP$checkpoint*xgmml"
+			else
+				tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/CP$checkpoint/"job*CP"$checkpoint"NR1cell.xgmml"
+			fi
+
+		done
+		#now that we have extracted the whole checkpoint into the folder CP$checkpoint we can parse the xgmml files
+	cp simChecker/similarityCalc.sh $jobtoan/CP$checkpoint
+
+	cp simChecker/simMatrix $jobtoan/CP$checkpoint
+
+	cp partRatio/partratio $jobtoan/CP$checkpoint
+
+	cd $jobtoan/CP$checkpoint
+
+	rm $checkpoint.IPR.all $checkpoint.IPR.used
+
+	#now we should have the jnk files, the fittness list, and the list of the jnk files, so let's generate the similarity indexes
+
+	if [ "$onlyused" == 1 ]; then
+		./similarityCalc.sh -u -b
+	else
+		./similarityCalc.sh -b
+	fi
+
+
+	for job in $jobnames; do
+
+		echo "Jobname is $job"
+		grep "job$job" fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
+		grep "job$job" fittness.list | sort -n -k 3 | awk '{print $2}' >listoffit.jnk
+		#cat listofjob.jnk
+		./simMatrix -l listofjob.jnk -b > "$job".all.array
+
+		sed -i 's/all/used/g' listofjob.jnk
+
+		./simMatrix -l listofjob.jnk -b > "$job".used.array
+
+		partall=$(./partratio -l "$job".all.array)
+		partused=$(./partratio -l "$job".used.array)
+		partfit=$(./partratio -l listoffit.jnk)
+		echo "for all: $partall for used: $partused for fittness: $partfit"
+
+		echo -n "$partall " >> $checkpoint.IPR.all
+		echo -n "$partused " >> $checkpoint.IPR.used
+		#need to look into why the fittness one doesn't work
+		#echo -n "$partfit" >> $checkpoint.IPR.fitt
+
+
+		
+	done
+		read vlaami
+	rm *.jnk
+	cd ../..
+
+	#read valami
+
+	done
+
+fi
+read valami
+mkdir -p $jobtoan/CP10/
+
+#doing the last checkpoint separately, as that is not in a folder
 for fname in $needToUntar; do
 #for fname in $( ls $jobtoan | grep tar.gz); do
 
@@ -118,9 +206,9 @@ for fname in $needToUntar; do
 
 	if [ "$onlybest" == 0 ]; then
 
-		tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/"job*CP10*xgmml"
+		tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan/CP10/ --strip=1 job$jobnr/"job*CP10*xgmml"
 	else
-		tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/"job*CP10NR1cell.xgmml"
+		tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan/CP10/ --strip=1 job$jobnr/"job*CP10NR1cell.xgmml"
 	fi
 
 	if [ "$fittnessgraph" == 1 ]; then
@@ -130,26 +218,37 @@ for fname in $needToUntar; do
 
 done
 
+
 if [ $? != 0 ]; then
 	echo "There was a problem while extracting job results. Check if the folder contains jobs. Exiting."
 	exit 1
 fi
 
-cp simChecker/similarityCalc.sh $jobtoan
+cp simChecker/similarityCalc.sh $jobtoan/CP10
 
-cp simChecker/simMatrix $jobtoan
+cp simChecker/simMatrix $jobtoan/CP10
 
-if [ "$onlybest" == 0 ]; then
-	cp simChecker/plotter.gnup $jobtoan
-else
-	cat simChecker/plotter.gnup | sed 's/i=5:words(XTICS):10/i=1:words(XTICS)/g' >$jobtoan/plotter.gnup
+cp simChecker/plotter.gnup $jobtoan/CP10
 
+if [ "$onlybest" == 1 ]; then
+	sed -i  's/i=5:words(XTICS):10/i=1:words(XTICS)/g' $jobtoan/CP10/plotter.gnup
 fi	
-cd $jobtoan
+
+if [ "$onlyused" == 1 ]; then
+	sed -i 's/WHICH/used/g' $jobtoan/CP10/plotter.gnup
+	echo "should be used"
+else
+	sed -i 's/WHICH/all/g' $jobtoan/CP10/plotter.gnup
+	echo "should be all"
+fi
+
+
+cd $jobtoan/CP10
 
 echo "options are: $optionsforchecker"
 
-./similarityCalc.sh "${optionsforchecker[@]}"
+./similarityCalc.sh -b 
+./similarityCalc.sh -p "${optionsforchecker[@]}"
 
 #if [ "$onlyused" == 1 ]; then
 #

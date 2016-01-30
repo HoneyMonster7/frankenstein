@@ -6,7 +6,7 @@
 
 XTICS="`cat rows.list`"
 
-nrofthem="`cat columns.list | wc -l`"
+nrofthem="`cat columns.WHICH.list | wc -l`"
 
 #unset xtics
 #unset ytics
