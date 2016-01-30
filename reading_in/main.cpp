@@ -244,7 +244,7 @@ int main(int argc, char **argv)
 			std::vector<cell> bestCells=cell::getBestNCells(cellVector,N);
 
 
-			if (outerLoop != NRofCheckpoints-1){
+			if (outerLoop != NRofCheckpoints){
 
 				std::cout<<"Checkpointing now..."<<std::endl;
 				//the checkpoints will be saved into separate folders
@@ -263,19 +263,19 @@ int main(int argc, char **argv)
 				//	std::cout<<"Error creating directory!"<<std::endl;
 				//	exit(1);
 				//}
-				for (int i=0; i<N; i++){
+				for (int i=0; i<bestCells.size(); i++){
 					std::ostringstream forFileName;
 					forFileName<<forCheckpointFolder.str()<<"/"<<actualFilename<<"CP"<<outerLoop+1<<"NR"<<i+1<<"cell";
 					bestCells[i].printXGMML(forFileName.str());
 				}
 			}
 			else {
-				//final network doesn't need a checkpoint folder
-				for (int i=0; i<N; i++){
-					std::ostringstream forFileName;
-					forFileName<<actualFilename<<"/"<<actualFilename<<"CP"<<outerLoop+1<<"NR"<<i+1<<"cell";
-					bestCells[i].printXGMML(forFileName.str());
-				}
+				//final network doesn't need a checkpoint folder - Yes it does.
+				//for (int i=0; i<N; i++){
+				//	std::ostringstream forFileName;
+				//	forFileName<<actualFilename<<"/"<<actualFilename<<"CP"<<outerLoop+1<<"NR"<<i+1<<"cell";
+				//	bestCells[i].printXGMML(forFileName.str());
+				//}
 			}
 		}
 		
