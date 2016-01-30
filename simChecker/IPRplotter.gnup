@@ -1,0 +1,38 @@
+
+set macros
+
+
+YLABS="unset ylabel; set label 'IPR'"
+XLABS="unset xlabel; set label 'Checkpoint'"
+
+set multiplot layout 3,3 columnsfirst
+
+@YLABS; @XLABS
+set title 'IPR of sim i., all reaction'
+plot for [col=1:5] 'completeIPR.all' using col with lines title columnheader
+
+@YLABS; @XLABS
+plot for [col=6:10] 'completeIPR.all' using col with lines title columnheader
+
+@YLABS; @XLABS
+plot for [col=11:15] 'completeIPR.all' using col with lines title columnheader
+
+set title 'IPR of sim i., used reactions'
+@YLABS; @XLABS
+plot for [col=1:5] 'completeIPR.used' using col with lines title columnheader
+
+@YLABS; @XLABS
+plot for [col=6:10] 'completeIPR.used' using col with lines title columnheader
+
+@YLABS; @XLABS
+plot for [col=11:15] 'completeIPR.used' using col with lines title columnheader
+
+set title 'IPR of fittness'
+@YLABS; @XLABS
+plot for [col=1:5] 'completeIPR.fittness' using col with lines title columnheader
+
+@YLABS; @XLABS
+plot for [col=6:10] 'completeIPR.fittness' using col with lines title columnheader
+
+@YLABS; @XLABS
+plot for [col=11:15] 'completeIPR.fittness' using col with lines title columnheader

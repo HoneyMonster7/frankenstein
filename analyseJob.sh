@@ -140,60 +140,63 @@ if [ ! "$onlylastcp" == 1 ]; then
 
 		done
 		#now that we have extracted the whole checkpoint into the folder CP$checkpoint we can parse the xgmml files
-	cp simChecker/similarityCalc.sh $jobtoan/CP$checkpoint
+		cp simChecker/similarityCalc.sh $jobtoan/CP$checkpoint
 
-	cp simChecker/simMatrix $jobtoan/CP$checkpoint
+		cp simChecker/simMatrix $jobtoan/CP$checkpoint
 
-	cp partRatio/partratio $jobtoan/CP$checkpoint
+		cp partRatio/partratio $jobtoan/CP$checkpoint
 
-	cd $jobtoan/CP$checkpoint
+		cd $jobtoan/CP$checkpoint
 
-	rm $checkpoint.IPR.all $checkpoint.IPR.used
+		rm $checkpoint.IPR.all $checkpoint.IPR.used
 
-	#now we should have the jnk files, the fittness list, and the list of the jnk files, so let's generate the similarity indexes
+		#now we should have the jnk files, the fittness list, and the list of the jnk files, so let's generate the similarity indexes
 
-	if [ "$onlyused" == 1 ]; then
-		./similarityCalc.sh -u -b
-	else
-		./similarityCalc.sh -b
-	fi
-
-
-	for job in $jobnames; do
-
-		echo "Jobname is $job"
-		grep "job$job" fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
-		grep "job$job" fittness.list | sort -n -k 3 | awk '{print $2}' >listoffit.jnk
-		#cat listofjob.jnk
-		./simMatrix -l listofjob.jnk -b > "$job".all.array
-
-		sed -i 's/all/used/g' listofjob.jnk
-
-		./simMatrix -l listofjob.jnk -b > "$job".used.array
-
-		partall=$(./partratio -l "$job".all.array)
-		partused=$(./partratio -l "$job".used.array)
-		partfit=$(./partratio -l listoffit.jnk)
-		echo "for all: $partall for used: $partused for fittness: $partfit"
-
-		echo -n "$partall " >> $checkpoint.IPR.all
-		echo -n "$partused " >> $checkpoint.IPR.used
-		#need to look into why the fittness one doesn't work
-		#echo -n "$partfit" >> $checkpoint.IPR.fitt
+		if [ "$onlyused" == 1 ]; then
+			./similarityCalc.sh -u -b
+		else
+			./similarityCalc.sh -b
+		fi
 
 
-		
-	done
-		read vlaami
-	rm *.jnk
-	cd ../..
+		for job in $jobnames; do
 
-	#read valami
+			echo "Jobname is $job"
+			grep "job$job" fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
+			grep "job$job" fittness.list | sort -n -k 3 | awk '{print $2}' >listoffit.jnk
+			#cat listofjob.jnk
+			./simMatrix -l listofjob.jnk -b > "$job".all.array
+
+			sed -i 's/all/used/g' listofjob.jnk
+
+			./simMatrix -l listofjob.jnk -b > "$job".used.array
+
+			partall=$(./partratio -l "$job".all.array)
+			partused=$(./partratio -l "$job".used.array)
+			partfit=$(./partratio -l listoffit.jnk)
+			echo "for all: $partall for used: $partused for fittness: $partfit"
+
+			echo -n "$partall " >> $checkpoint.IPR.all
+			echo -n "$partused " >> $checkpoint.IPR.used
+			#need to look into why the fittness one doesn't work
+			echo -n "$partfit " >> $checkpoint.IPR.fitt
+
+
+			
+		done
+			#read vlaami
+		rm *.jnk
+		rm *.xgmml
+		rm *.array
+
+		cd ../..
+
+		#read valami
 
 	done
 
 fi
-read valami
+#read valami
 mkdir -p $jobtoan/CP10/
 
 #doing the last checkpoint separately, as that is not in a folder
@@ -230,6 +233,8 @@ cp simChecker/simMatrix $jobtoan/CP10
 
 cp simChecker/plotter.gnup $jobtoan/CP10
 
+cp partRatio/partratio $jobtoan/CP10
+
 if [ "$onlybest" == 1 ]; then
 	sed -i  's/i=5:words(XTICS):10/i=1:words(XTICS)/g' $jobtoan/CP10/plotter.gnup
 fi	
@@ -249,6 +254,65 @@ echo "options are: $optionsforchecker"
 
 ./similarityCalc.sh -b 
 ./similarityCalc.sh -p "${optionsforchecker[@]}"
+
+#this is specifically for CP10, output of main simulation should be changed to be able to handle this without being a special case
+checkpoint=10
+
+for job in $jobnames; do
+
+	echo "Jobname is $job"
+	grep "job$job" fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
+	grep "job$job" fittness.list | sort -n -k 3 | awk '{print $2}' >listoffit.jnk
+	#cat listofjob.jnk
+	./simMatrix -l listofjob.jnk -b > "$job".all.array
+
+	sed -i 's/all/used/g' listofjob.jnk
+
+	./simMatrix -l listofjob.jnk -b > "$job".used.array
+
+	partall=$(./partratio -l "$job".all.array)
+	partused=$(./partratio -l "$job".used.array)
+	partfit=$(./partratio -l listoffit.jnk)
+	echo "for all: $partall for used: $partused for fittness: $partfit"
+
+	echo -n "$partall " >> $checkpoint.IPR.all
+	echo -n "$partused " >> $checkpoint.IPR.used
+	#need to look into why the fittness one doesn't work
+	echo -n "$partfit " >> $checkpoint.IPR.fitt
+
+
+	
+done
+	
+
+#now that every checkpoint's IPR's have been calculated, let's gather them into a common file
+
+cd ..
+
+rm completeIPR.all
+
+for job in $jobnames; do
+	#creating the header for the file
+	echo -n "$job " >> completeIPR.all
+done
+
+echo " " >> completeIPR.all
+cp completeIPR.all completeIPR.used
+cp completeIPR.all completeIPR.fittness
+
+for cp in `seq 1 10`; do
+	cat CP$cp/$cp.IPR.all >>completeIPR.all
+	echo " " >> completeIPR.all
+	cat CP$cp/$cp.IPR.used >>completeIPR.used
+	echo " " >> completeIPR.used
+
+	cat CP$cp/$cp.IPR.fitt 
+	cat CP$cp/$cp.IPR.fitt >>completeIPR.fittness
+	echo " " >> completeIPR.fittness
+
+done
+
+
 
 #if [ "$onlyused" == 1 ]; then
 #
