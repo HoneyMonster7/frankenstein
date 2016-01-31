@@ -326,10 +326,12 @@ for cp in `seq 1 10`; do
 done
 
 cp ../simChecker/lineplotter.plot .
+cp ../simChecker/IPRplotter.gnup .
 
 if [ "$fittnessgraph" == 1 ]; then
 	gnuplot -persist lineplotter.plot
 fi
+gnuplot --persist IPRplotter.gnup
 
 #if [ "$onlyused" == 1 ]; then
 #

@@ -1,9 +1,10 @@
 
 set macros
 
+set key outside
 
-YLABS="unset ylabel; set label 'IPR'"
-XLABS="unset xlabel; set label 'Checkpoint'"
+YLABS="unset ylabel; set ylabel 'IPR'"
+XLABS="unset xlabel; set xlabel 'Checkpoint'"
 
 set multiplot layout 3,3 columnsfirst
 
