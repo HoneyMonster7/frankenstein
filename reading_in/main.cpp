@@ -208,7 +208,7 @@ int main(int argc, char **argv)
 
 
 		int NRofCheckpoints=10;
-		int checkPointLength=10000;
+		int checkPointLength=10000000;
 		//outer loop is there in order to save networks every 10% of the simulation
 		for (int outerLoop=0; outerLoop<NRofCheckpoints; outerLoop++){
 
@@ -241,7 +241,7 @@ int main(int argc, char **argv)
 
 			cell::printPopulationFittnesses(cellVector);
 			int N=10;
-			std::vector<cell> bestCells=cell::getBestNCells(cellVector,N);
+			std::vector<cell> bestCells=cell::getBestNCells(cellVector,cellVector.size());
 
 
 			if (outerLoop != NRofCheckpoints){

@@ -9,9 +9,9 @@ thishostsname=`hostname | cut -d. -f1`
 thisdirectory=`pwd `
 compNRLength=3
 
-nrofmachines=10
+nrofmachines=20
 
-firstToTry=3
+firstToTry=1
 
 echo "Find a job name:"
 read jobname
@@ -43,6 +43,8 @@ mkdir $jobname
 for i in `seq 1 "$nrofmachines"`
 do
 
+	#this is to make new random numbers (not always the same)
+	modrnd=$(($i + 25))
 	#change the seed in main.cpp will need to change that file actually
 	#sed -i  "s/RandomGeneratorType\ generator(1);/RandomGeneratorType\ generator($i);/" reading_in/main.cpp
 
@@ -97,7 +99,7 @@ do
 
 	echo "hostname is $hostname, thishostsname is $thishostsname, thisfolder is $thisdirectory"
 	#echo "sed \"s/NODENR/$hostname/\" distribution/onNode.sh | sed  \"s/MOTHERHOST/$thishostsname/\"| sed  \"s#FOLDERTOCOLLECT#$thisdirectory#\" > oncurrentNode.sh"
-	sed "s/JOBNR/$i/g" distribution/onNode.sh | sed  "s/MOTHERHOST/$thishostsname/g"| sed  "s#FOLDERTOCOLLECT#$thisdirectory/$jobname#g"| sed "s/RANDOMSEED/$i/" > oncurrentNode.sh
+	sed "s/JOBNR/$i/g" distribution/onNode.sh | sed  "s/MOTHERHOST/$thishostsname/g"| sed  "s#FOLDERTOCOLLECT#$thisdirectory/$jobname#g"| sed "s/RANDOMSEED/$modrnd/" > oncurrentNode.sh
 
 
 	#sed -i "s/MOTHERHOST/$thishostsname/g/" oncurrentNode.sh
