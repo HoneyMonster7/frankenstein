@@ -198,6 +198,23 @@ if [ ! "$onlylastcp" == 1 ]; then
 
 fi
 #read valami
+
+#testing if the last checkpoint is in a folder in the tar file (format changed at the end of january)
+testthistar=$(echo "$needToUntar" | head -n 1)
+testresult=$(tar -zvtf $jobtoan/$testthistar | grep CP10\/$)
+prefix=""
+antiprefix=""
+if [ -z "$testresult" ]; then
+	echo "No CP10 folder found"
+	prefix=""
+	antiprefix="CP10/"
+else
+	echo "CP10 folder found"
+	prefix=/CP10
+	antiprefix=""
+fi
+
+#read valami
 mkdir -p $jobtoan/CP10/
 
 #doing the last checkpoint separately, as that is not in a folder
@@ -210,16 +227,12 @@ for fname in $needToUntar; do
 
 	if [ "$onlybest" == 0 ]; then
 
-		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/CP10/ --strip=1 job$jobnr/"job*CP10*xgmml"
+		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/$antiprefix --strip=1 job$jobnr/"*job*CP10*xgmml"
 	else
-		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/CP10/ --strip=1 job$jobnr/"job*CP10NR1cell.xgmml"
+		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/$antiprefix --strip=1 job$jobnr/"*job*CP10NR1cell.xgmml"
 	fi
-
-	if [ "$fittnessgraph" == 1 ]; then
 
 		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/"job*.fitt"
-
-	fi
 
 done
 
@@ -328,9 +341,8 @@ done
 cp ../simChecker/lineplotter.plot .
 cp ../simChecker/IPRplotter.gnup .
 
-if [ "$fittnessgraph" == 1 ]; then
-	gnuplot -persist lineplotter.plot
-fi
+gnuplot -persist lineplotter.plot
+
 gnuplot --persist IPRplotter.gnup
 
 #if [ "$onlyused" == 1 ]; then
