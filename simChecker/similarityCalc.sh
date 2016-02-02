@@ -5,11 +5,11 @@ fitplotsneeded=0
 plotsneeded=0
 simVsBest=0
 
-rm columns.list
-rm columns.all.list
-rm columns.used.list
-rm rows.list
-rm fittness.list
+rm columns.list 2> /dev/null
+rm columns.all.list 2> /dev/null
+rm columns.used.list 2> /dev/null
+rm rows.list 2> /dev/null
+rm fittness.list 2> /dev/null
 
 while getopts ":ufhpb" opt; do
 
@@ -142,8 +142,4 @@ echo "Removing .jnk files now."
 
 if [ "$plotsneeded" == 1 ]; then
 	gnuplot -persist plotter.gnup
-	if [ "$fitplotsneeded" == 1 ]; then
-
-		gnuplot -persist lineplotter.plot
-	fi
 fi

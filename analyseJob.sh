@@ -11,6 +11,11 @@ optionsforchecker=""
 
 while getopts ":bj:hun:fl" opt; do
 
+	#things to do: 
+
+	#get rid of -f switch, do it always
+	#do -u alongside the normal always
+
 
 	case $opt in
 		u)
@@ -98,49 +103,44 @@ fi
 #echo "jobtoan is $jobtoan within there we have $(ls $jobtoan | grep tar.gz)"
 needToUntar=$(ls $jobtoan | grep tar.gz)
 
-#if [ -z  $(ls $jobtoan | grep tar.gz) ]; then
 if [ -z  "$needToUntar" ]; then
 	echo "Can't find jobs in $jobtoan. Are you sure it's the right folder?"
 	exit 1
 fi
 
 #echo "needToUntar is $needToUntar"
-#ls $jobtoan | grep tar.gz
 if [ "$numberneeded" -gt 0 ]; then
 	#loopthroughthis=$(ls $jobtoan | grep tar.gz | head -n $numberneeded)
 	needToUntar=$(echo "$needToUntar" | head -n $numberneeded)
-#else
-#	loopthroughthis=$(ls $jobtoan | grep tar.gz)
 fi
 
 jobnames=$(echo "$needToUntar" | cut -d. -f2)
 
-#echo "jobnames are: $jobnames"
-#
-#echo "we need to loop through $loopthroughthis"
-#
 echo "needToUntar is $needToUntar"
 
+#if we need to do all the checkpoints do all of them
 if [ ! "$onlylastcp" == 1 ]; then
 	for checkpoint in `seq 1 9`; do
 
 		for fname in $needToUntar; do
-		#for fname in $( ls $jobtoan | grep tar.gz); do
-
 
 			jobnr=$(echo $fname | cut -d. -f2)
-			echo $jobnr
+			#echo $jobnr
 
+			#if we need to get all the cells get all of them, otherwise get the best ones only
 			if [ "$onlybest" == 0 ]; then
 
-				tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/CP$checkpoint/"job*CP$checkpoint*xgmml"
+				tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/CP$checkpoint/"job*CP$checkpoint*xgmml"
 			else
-				tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/CP$checkpoint/"job*CP"$checkpoint"NR1cell.xgmml"
+				tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/CP$checkpoint/"job*CP"$checkpoint"NR1cell.xgmml"
 			fi
 
 		done
 		#now that we have extracted the whole checkpoint into the folder CP$checkpoint we can parse the xgmml files
+		
+		#USE PATH FOR THESE SCRIPTS then no copying is necessary
 		cp simChecker/similarityCalc.sh $jobtoan/CP$checkpoint
+	
 
 		cp simChecker/simMatrix $jobtoan/CP$checkpoint
 
@@ -148,7 +148,8 @@ if [ ! "$onlylastcp" == 1 ]; then
 
 		cd $jobtoan/CP$checkpoint
 
-		rm $checkpoint.IPR.all $checkpoint.IPR.used
+		#remove but silence the errors
+		rm $checkpoint.IPR.all $checkpoint.IPR.used 2>/dev/null
 
 		#now we should have the jnk files, the fittness list, and the list of the jnk files, so let's generate the similarity indexes
 
@@ -161,7 +162,7 @@ if [ ! "$onlylastcp" == 1 ]; then
 
 		for job in $jobnames; do
 
-			echo "Jobname is $job"
+			#echo "Jobname is $job"
 			grep "job$job" fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
 			grep "job$job" fittness.list | sort -n -k 3 | awk '{print $2}' >listoffit.jnk
 			#cat listofjob.jnk
@@ -174,7 +175,7 @@ if [ ! "$onlylastcp" == 1 ]; then
 			partall=$(./partratio -l "$job".all.array)
 			partused=$(./partratio -l "$job".used.array)
 			partfit=$(./partratio -l listoffit.jnk)
-			echo "for all: $partall for used: $partused for fittness: $partfit"
+			#echo "for all: $partall for used: $partused for fittness: $partfit"
 
 			echo -n "$partall " >> $checkpoint.IPR.all
 			echo -n "$partused " >> $checkpoint.IPR.used
@@ -197,6 +198,23 @@ if [ ! "$onlylastcp" == 1 ]; then
 
 fi
 #read valami
+
+#testing if the last checkpoint is in a folder in the tar file (format changed at the end of january)
+testthistar=$(echo "$needToUntar" | head -n 1)
+testresult=$(tar -zvtf $jobtoan/$testthistar | grep CP10\/$)
+prefix=""
+antiprefix=""
+if [ -z "$testresult" ]; then
+	echo "No CP10 folder found"
+	prefix=""
+	antiprefix="CP10/"
+else
+	echo "CP10 folder found"
+	prefix=/CP10
+	antiprefix=""
+fi
+
+#read valami
 mkdir -p $jobtoan/CP10/
 
 #doing the last checkpoint separately, as that is not in a folder
@@ -205,19 +223,16 @@ for fname in $needToUntar; do
 
 
 	jobnr=$(echo $fname | cut -d. -f2)
-	echo $jobnr
+	#echo $jobnr
 
 	if [ "$onlybest" == 0 ]; then
 
-		tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan/CP10/ --strip=1 job$jobnr/"job*CP10*xgmml"
+		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/$antiprefix --strip=1 job$jobnr/"*job*CP10*xgmml"
 	else
-		tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan/CP10/ --strip=1 job$jobnr/"job*CP10NR1cell.xgmml"
+		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/$antiprefix --strip=1 job$jobnr/"*job*CP10NR1cell.xgmml"
 	fi
 
-	if [ "$fittnessgraph" == 1 ]; then
-
-		tar -zxvf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/"job*.fitt"
-	fi
+		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/"job*.fitt"
 
 done
 
@@ -258,9 +273,11 @@ echo "options are: $optionsforchecker"
 #this is specifically for CP10, output of main simulation should be changed to be able to handle this without being a special case
 checkpoint=10
 
+rm *.jnk
+rm *.xgmml
 for job in $jobnames; do
 
-	echo "Jobname is $job"
+	#echo "Jobname is $job"
 	grep "job$job" fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
 	grep "job$job" fittness.list | sort -n -k 3 | awk '{print $2}' >listoffit.jnk
 	#cat listofjob.jnk
@@ -273,17 +290,26 @@ for job in $jobnames; do
 	partall=$(./partratio -l "$job".all.array)
 	partused=$(./partratio -l "$job".used.array)
 	partfit=$(./partratio -l listoffit.jnk)
-	echo "for all: $partall for used: $partused for fittness: $partfit"
+	#echo "for all: $partall for used: $partused for fittness: $partfit"
 
 	echo -n "$partall " >> $checkpoint.IPR.all
 	echo -n "$partused " >> $checkpoint.IPR.used
 	#need to look into why the fittness one doesn't work
 	echo -n "$partfit " >> $checkpoint.IPR.fitt
 
+	#now calculating the running average of the best fittnesses
 
+	awk '{print $2}' "../job$job.fitt" > "../$job.fittonly"
+
+	echo "job$job" > "../$job.fittavg"
+	#echo "job$job" 
+	../../movAvg/movAvg 100 "../$job.fittonly" >> "../$job.fittavg"
+
+	rm ../$job.fittonly
 	
 done
 	
+paste ../*.fittavg > ../fittavgs.fitt
 
 #now that every checkpoint's IPR's have been calculated, let's gather them into a common file
 
@@ -306,13 +332,18 @@ for cp in `seq 1 10`; do
 	cat CP$cp/$cp.IPR.used >>completeIPR.used
 	echo " " >> completeIPR.used
 
-	cat CP$cp/$cp.IPR.fitt 
+	#cat CP$cp/$cp.IPR.fitt 
 	cat CP$cp/$cp.IPR.fitt >>completeIPR.fittness
 	echo " " >> completeIPR.fittness
 
 done
 
+cp ../simChecker/lineplotter.plot .
+cp ../simChecker/IPRplotter.gnup .
 
+gnuplot -persist lineplotter.plot
+
+gnuplot --persist IPRplotter.gnup
 
 #if [ "$onlyused" == 1 ]; then
 #
@@ -323,8 +354,8 @@ done
 
 #./simMatrix
 
-rm *.xgmml
-rm *.fitt
+rm *.xgmml 2> /dev/null
+#rm *.fitt
 #rm similarityCalc.sh
 #rm simMatrix
 #rm plotter.gnup
