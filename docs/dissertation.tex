@@ -24,10 +24,28 @@
 	
 	\section{Introduction}
 
-	A metabolic network is a set of chemical reactions and compounds that organisms use to process their input chemicals into energy and building blocks of themselves. Examples of metabolic networks include glycolysis, gluconeogenesis, and photosynthesis. The natural representation for these networks are bipartite graphs, where the two types of nodes are reactions and the chemical compounds used. 
+	All life on Earth is based on carbon, and it is hypothesized that if we ever find life on other planets, it will also be based on carbon. CITATION. Carbon can bond with other carbon atoms and different atoms (especially Hydrogen, Oxygen and Nitrogen) to build complex molecules. Cells use such complex organic molecules for a variety of functions eg. their membranes, enzymes and their whole BODY is built using these molecules as building blocks. In addition to this they also need a source of energy, either as photons for plants, or highly energetic organic or non-organic compounds. 
+
+	The reaction networks executing the procession of their nutrients into energy and building blocks of themselves are called the metabolic networks (MN-s) of cells.  MN-s consist of multiple metabolic pathways, that perform a certain function(s) that the orgnaism requires. Examples of metabolic pathways include glycolysis that is the pathway processing sugars (as highly energetic compounds) into energy,  and photosynthesis that uses photons as a source for energy and simple molecules (CO$_2$ and water) to produce more complex compounds eg. glucose, with many intermediate steps. The natural representation for these pathways are bipartite graphs, where the two types of nodes are reactions and the chemical compounds used. 
 	
-	Chemically speaking it is easy to see that the number of possible reactions in a cell are nearly infinite, if we only impose the constraint that the individual atoms have to be conserved on both sides of a reaction.  Despite this cells mostly use a well defined set of reactions, that can be controlled through the use of enzymes and the careful control of the concentration of the reactants. This way, depending on the specific needs of the cell the speed and even the direction of reactions can be manipulated. (example glycolysis and glyconeogenesis?)
+	Chemically speaking it is easy to see that cells have  a nearly infinite possible ways of metabolising their nutrients to the product they need, if we only impose the constraint that the individual atoms have to be conserved on both sides of reactions.  Despite this cells mostly use a well defined set of reactions, whose speed and direction can be controlled through the careful manipulation using enzymes. This way, depending on the specific needs of the cell the direction of reactions can be reversed, eg. in the case of glycosis - glyconeogenesis. 
 	
+	Despite the multitude of possible MN-s, their core pathways are very similar among many different organisms. Certain pathways are conserved partially  eg. in the glycolytic pathway the Embden-Meyerhof-Parnas (EMP) pathway \cite{EMPpathway} is used by most modern cells for the upper part,  some prokaryotes  use the Entner-Doudoroff (ED) pathway \cite{EDpathway}, while the trunk of the glycolytic pathway is highly conserved. OTHER EXAMPLES NEEDED? 
+
+	The reason for these similarities is not yet known, however most authors agree that it is a result of the evolution of the MN-s. 
+	 Biological evolution is a powerful optimization method, that uses the cells competition for resources, and random mutations when reproducing to evolve organisms to better suit their environments. 
+
+
+	LOWER The reason for these similarities is yet to be discovered, but two potential reasons are the most common: 
+	\begin{enumerate}[label=(\alph*)]
+	\item the best possible metabolic network has been found, evolution finished the optimization and there is no possible further improvement (Global maximum found) \cite{theoretical} \cite{latent} \cite{strategy}, or 
+	\item there is a better solution but to get there cells have to evolve through such suboptimal states, that are outcompeted by the current metabolic networks. (Local maximum found) FIND SOURCE HERE
+	\end{enumerate} 
+	
+	 \cite{historical} reasons that (b) is unlikely, as they find that  "most viable metabolisms can be transformed into one another by single viability-preserving reaction changes."  
+
+
+
 	The enzymes a cell can manufacture are coded in it's genome, the genetic program of the organism, therefore knowing the genome of the cell we can infer the metabolic network it uses, and in theory even reconstruct the cell itself. The genes are also very important in the evolution of metabolic networks (and the cells themselves) as when cells divide sometimes errors are made when copying the genome, thus resulting in a cell not identical to it's predecessor.  Thanks to large-scale gene sequencing research \cite{20yearsof} we now have a number of organisms whose genome is fully known along many others that are partially known, providing an insight in how different properties of the metabolic networks are encoded into the genome of the organism in question \cite{sequencing}. 
 	
 	\subsection{Graph theory part}
@@ -48,13 +66,7 @@
 	
 	The anatomy of my cells is as follows: the cells are stationary with certain compounds present within them with concentrations as shown in Table \ref{environmentTable}. The cells can import and export $H_2$O and CO$_2$ to and from their environments to keep the concentrations steady. They can also import one (planning to include more) predefined source molecule to process, and dispose (build into their mass or use in further metabolism) one (planning to allow more) target molecule. The goal of cells is in the test runs to create as much of the target compound as possible. Later the goal function changed to the amount of ATP the cell can create using ADP. The implementation of more complex goal functions along with multiple inpout and output molecules is planned. 
 	
-	Among the known metabolic networks of organisms remarkable similarities can be found, among all three domains of life. Certain pathways are conserved partially  eg. in the glycolytic pathway the Embden-Meyerhof-Parnas (EMP) pathway \cite{EMPpathway} is used by most modern cells for the upper part,  some prokaryotes  use the Entner-Doudoroff (ED) pathway \cite{EDpathway}, while the trunk of the glycolytic pathway is highly conserved. OTHER EXAMPLES NEEDED? The reason for these similarities is yet to be discovered, but two potential reasons are the most common: 
-	\begin{enumerate}[label=(\alph*)]
-	\item the best possible metabolic network has been found, evolution finished the optimization and there is no possible further improvement \cite{theoretical} \cite{latent} \cite{strategy}, or 
-	\item there is a better solution but to get there cells have to evolve through such suboptimal states, that are outcompeted by the current metabolic networks. FIND SOURCE HERE
-	\end{enumerate} 
-	
-	 \citeauthor{historical} reasons that (b) is unlikely, as they find that  "most viable metabolisms can be transformed into one another by single viability-preserving reaction changes."  
+	Among the known metabolic networks of organisms remarkable similarities can be found, among all three domains of life. 
 	
 	\subsection{Evolution}\label{chap:evolution}
 	
