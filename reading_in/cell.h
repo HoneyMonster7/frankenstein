@@ -65,7 +65,7 @@ class cell{
 	double calcThroughput();
 	//static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 
-	static void mutatePopulation(std::vector<cell>& population, RandomGeneratorType& generator);
+	static void mutatePopulation(std::vector<int>& population,std::vector<int>& howManyOfEach, std::vector<cell>& cellVector, RandomGeneratorType& generator);
 	static std::vector<double> getPopulationFittness(std::vector<cell>& population);
 	static void printPopulationFittnesses(std::vector<cell>& population);
 	static cell printNFittest(std::vector<cell>& population, int N);

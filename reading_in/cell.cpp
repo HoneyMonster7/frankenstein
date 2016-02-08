@@ -340,18 +340,20 @@ double cell::randomRealInRange(RandomGeneratorType& generator, double maxNumber)
 		}
 
 
-void cell::mutatePopulation(std::vector<cell>& population, RandomGeneratorType& generator){
+void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howManyOfEach, std::vector<cell>& cellVector,  RandomGeneratorType& generator){
 
 	bool gotOneToMutate=false;
 	double maxPossibleFittness=10;
 	int whichOneToMutate;
+	double probabilityOfMutation=0.01;
+	bool areWeMutating=false;
 
 	while(!gotOneToMutate){
 
 		//implementing the moran process selection
 		whichOneToMutate=cell::randomIntInRange(generator,population.size()-1);
 		double compareFittnesWithThis=cell::randomRealInRange(generator,maxPossibleFittness);
-		double fittnessOfCurrentCell=population[whichOneToMutate].getPerformance();
+		double fittnessOfCurrentCell=cellVector[population[whichOneToMutate]].getPerformance();
 		//std::cout<<"Trying if the lucky one is nr "<<whichOneToMutate<<std::endl;
 		if(fittnessOfCurrentCell>compareFittnesWithThis){gotOneToMutate=true;}
 
@@ -360,8 +362,38 @@ void cell::mutatePopulation(std::vector<cell>& population, RandomGeneratorType& 
 	int whichCellDies=cell::randomIntInRange(generator,population.size()-1);
 	//now mutate the selected cell, and put it in the place of the dying cell
 	
-	cell offspringOfChosenCell=population[whichOneToMutate].mutateAndReturn(generator);
-	population[whichCellDies]=offspringOfChosenCell;
+	if (areWeMutating) {
+		//creating the mutatnt cell
+		cell offspringOfChosenCell=cellVector[population[whichOneToMutate]].mutateAndReturn(generator);
+
+		//now we need to find a place to store this mutatnt cell in cellVector
+		//if the for loop doesn't find any unused places in cellVector, the statement after will exit with an error (this should never happen in normal circumstances)
+		int whichIsUnused=population.size();
+		for (int i=0; i<howManyOfEach.size();i++){
+
+			if (howManyOfEach[i]==0) {
+			whichIsUnused=i;
+			break;
+			}
+		}
+		//we have an unused element in cellVector now
+		cellVector[whichIsUnused]=offspringOfChosenCell;
+
+		//decrease the number of those cells that die
+		--howManyOfEach[population[whichCellDies]];
+		//create the population element that points to the newborn cell
+		population[whichCellDies]=whichIsUnused;
+		//increase the number corresponding to this newborn cell
+		++howManyOfEach[whichIsUnused];
+
+	}
+	else{
+		//if there's only reproduction without mutation just change the pointer of the dying cell to the reproducing one and adjust the numbers in howManyOfEach
+		--howManyOfEach[population[whichCellDies]];
+		population[whichCellDies]=population[whichOneToMutate];
+		++howManyOfEach[population[whichOneToMutate]];
+
+	}
 	//std::cout<<"The unlucky one is: "<<whichCellDies<<std::endl;
 	
 }

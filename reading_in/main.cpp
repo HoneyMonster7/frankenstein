@@ -167,7 +167,16 @@ int main(int argc, char **argv)
 
 	cell trialcell(subset);
 
-	std::vector<cell> cellVector(100,trialcell);
+	//std::vector<cell> cellVector(100,trialcell);
+
+	//Restructuring the population mutations 
+	int numberOfCells=100;
+	std::vector<int> populationIndex(numberOfCells,0);
+	std::vector<int> howManyOfEach(numberOfCells,0);
+
+	std::vector<cell> cellVector(numberOfCells);
+	cellVector[0]=trialcell;
+	howManyOfEach[0]=100;
 	//int compsize=compoundVList.size();
 	double previousFittness=trialcell.getPerformance();
 	std::vector<int> previousNetwork=trialcell.getReacs();
@@ -213,7 +222,7 @@ int main(int argc, char **argv)
 		for (int outerLoop=0; outerLoop<NRofCheckpoints; outerLoop++){
 
 			for (int k=0; k<checkPointLength; k++){
-				cell::mutatePopulation(cellVector,generator);
+				cell::mutatePopulation(populationIndex,howManyOfEach,cellVector,generator);
 				if (k%10000==0){
 					
 				std::cout<<k+outerLoop*checkPointLength<<": ";
