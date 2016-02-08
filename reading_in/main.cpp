@@ -217,13 +217,13 @@ int main(int argc, char **argv)
 
 
 		int NRofCheckpoints=10;
-		int checkPointLength=10000000;
+		int checkPointLength=600000000;
 		//outer loop is there in order to save networks every 10% of the simulation
 		for (int outerLoop=0; outerLoop<NRofCheckpoints; outerLoop++){
 
 			for (int k=0; k<checkPointLength; k++){
 				cell::mutatePopulation(populationIndex,howManyOfEach,cellVector,generator);
-				if (k%10000==0){
+				if (k%1000000==0){
 					
 				std::cout<<k+outerLoop*checkPointLength<<": ";
 				cell currentBest=cell::printNFittest(populationIndex,cellVector,10);
@@ -240,7 +240,18 @@ int main(int argc, char **argv)
 				}
 				previousFittness=currentBest.getPerformance();
 				previousNetwork=currentBest.getReacs();
-				improvementlog<<k+outerLoop*checkPointLength<<" "<<previousFittness<<std::endl;
+
+
+				double enthropy=0;
+
+				for(auto element:howManyOfEach){
+
+					if(element!=0){
+						enthropy+=element*std::log(element);
+					}
+				}
+
+				improvementlog<<k+outerLoop*checkPointLength<<" "<<previousFittness<<" "<<-1*enthropy<<std::endl;
 				
 				//cell::printPopulationFittnesses(cellVector);
 
@@ -248,7 +259,9 @@ int main(int argc, char **argv)
 
 			}
 
-			cell::printPopulationFittnesses(populationIndex,cellVector);
+			//cell::printPopulationFittnesses(populationIndex,cellVector);
+
+			cell currentBest=cell::printNFittest(populationIndex,cellVector,numberOfCells);
 			//int N=10;
 			std::vector<cell> bestCells=cell::getBestNCells(populationIndex,cellVector,cellVector.size());
 
