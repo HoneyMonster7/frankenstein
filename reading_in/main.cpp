@@ -226,7 +226,7 @@ int main(int argc, char **argv)
 				if (k%10000==0){
 					
 				std::cout<<k+outerLoop*checkPointLength<<": ";
-				cell currentBest=cell::printNFittest(cellVector,10);
+				cell currentBest=cell::printNFittest(populationIndex,cellVector,10);
 
 				if (previousFittness+0.5<currentBest.getPerformance()){
 					cell previousBest=cell(previousNetwork);
