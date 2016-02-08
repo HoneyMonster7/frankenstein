@@ -249,7 +249,7 @@ int main(int argc, char **argv)
 			}
 
 			cell::printPopulationFittnesses(populationIndex,cellVector);
-			int N=10;
+			//int N=10;
 			std::vector<cell> bestCells=cell::getBestNCells(populationIndex,cellVector,cellVector.size());
 
 
@@ -290,7 +290,7 @@ int main(int argc, char **argv)
 		
 
 		fileName="final";
-		trialcell.printXGMML(fileName);
+		//trialcell.printXGMML(fileName);
 
 		improvementlog.close();
   std::cout<<"Tests completed."<<std::endl;

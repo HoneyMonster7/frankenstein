@@ -360,6 +360,14 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 	}
 
 	int whichCellDies=cell::randomIntInRange(generator,population.size()-1);
+	//now figure out if we are mutating
+	
+	double luckyToMutate=randomRealInRange(generator,1);
+	if (luckyToMutate<probabilityOfMutation) {
+		areWeMutating=true;	
+	}
+
+
 	//now mutate the selected cell, and put it in the place of the dying cell
 	
 	if (areWeMutating) {
