@@ -421,18 +421,19 @@ void cell::printPopulationFittnesses(std::vector<cell>& population){
 	std::cout<<std::endl;
 }
 
-cell cell::printNFittest(std::vector<cell>& population,int N){
+cell cell::printNFittest(std::vector<int>& population, std::vector<cell>& cellVector,int N){
+
 
 	
-	std::sort(population.begin(),population.end());
+	std::sort(population.begin(),population.end(),[&](int first, int second) {return cellVector[population[first]].getPerformance() > cellVector[population[second]].getPerformance();});
 
 
 			std::cout<<"The best "<<N<<" are:";
 			for (int i=0;i<N;i++){
-			std::cout<<population[i].getPerformance()<<", ";
+			std::cout<<cellVector[population[i]].getPerformance()<<", ";
 			}
 			std::cout<<std::endl;
-			return population[0];
+			return cellVector[population[0]];
 
 }
 
