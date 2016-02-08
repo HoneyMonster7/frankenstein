@@ -433,7 +433,7 @@ cell cell::printNFittest(std::vector<int>& population, std::vector<cell>& cellVe
 
 
 	
-	std::sort(population.begin(),population.end(),[&](int first, int second) {return cellVector[population[first]].getPerformance() > cellVector[population[second]].getPerformance();});
+	std::sort(population.begin(),population.end(),[&cellVector,&population](int first, int second) {return cellVector[population[first]].getPerformance() > cellVector[population[second]].getPerformance();});
 
 
 			std::cout<<"The best "<<N<<" are:";
@@ -466,7 +466,7 @@ std::vector<cell> cell::getBestNCells(std::vector<int>& population, std::vector<
 	//0}
 	//doesn't matter if population is sorted even when the Moran process is running, random selection 
 	//doesn't care for ordered vector
-	std::sort(population.begin(),population.end(),[&](int first, int second) {return cellVector[population[first]].getPerformance() > cellVector[population[second]].getPerformance();});
+	std::sort(population.begin(),population.end(),[&cellVector,&population](int first, int second) {return cellVector[population[first]].getPerformance() > cellVector[population[second]].getPerformance();});
 
 	for (int i=0; i<N; i++){
 
