@@ -188,7 +188,7 @@ if [ ! "$onlylastcp" == 1 ]; then
 			#read vlaami
 		rm *.jnk
 		rm *.xgmml
-		rm *.array
+		#rm *.array
 
 		cd ../..
 
@@ -273,7 +273,7 @@ echo "options are: $optionsforchecker"
 #this is specifically for CP10, output of main simulation should be changed to be able to handle this without being a special case
 checkpoint=10
 
-rm *.jnk
+#rm *.jnk
 rm *.xgmml
 for job in $jobnames; do
 
@@ -309,6 +309,7 @@ for job in $jobnames; do
 	
 done
 	
+rm *.jnk
 paste ../*.fittavg > ../fittavgs.fitt
 
 #now that every checkpoint's IPR's have been calculated, let's gather them into a common file
