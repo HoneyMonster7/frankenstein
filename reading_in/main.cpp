@@ -248,9 +248,9 @@ int main(int argc, char **argv)
 
 			}
 
-			cell::printPopulationFittnesses(cellVector);
+			cell::printPopulationFittnesses(populationIndex,cellVector);
 			int N=10;
-			std::vector<cell> bestCells=cell::getBestNCells(cellVector,cellVector.size());
+			std::vector<cell> bestCells=cell::getBestNCells(populationIndex,cellVector,cellVector.size());
 
 
 			if (outerLoop != NRofCheckpoints){

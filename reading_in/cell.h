@@ -66,10 +66,10 @@ class cell{
 	//static std::vector<Vertex> subsetVertices( std::vector<int> vertexIDs, std::vector<Vertex> reacList);
 
 	static void mutatePopulation(std::vector<int>& population,std::vector<int>& howManyOfEach, std::vector<cell>& cellVector, RandomGeneratorType& generator);
-	static std::vector<double> getPopulationFittness(std::vector<cell>& population);
-	static void printPopulationFittnesses(std::vector<cell>& population);
+	static std::vector<double> getPopulationFittness(std::vector<int>& population, std::vector<cell>& cellVector);
+	static void printPopulationFittnesses(std::vector<int>& population, std::vector<cell>& cellVector);
 	static cell printNFittest(std::vector<int>& population, std::vector<cell>& cellVector, int N);
-	static std::vector<cell> getBestNCells(std::vector<cell>& population, int N);
+	static std::vector<cell> getBestNCells(std::vector<int>& population, std::vector<cell>& cellVector, int N);
 
 	static void findThePaths(std::vector<int> needMore, std::vector<int> needLess, std::vector<int> currentReactions, int TargetCompound, std::vector<reaction>& ReactionVector, std::vector<substrate>& SubstrateVector, std::string fnameString);
 	void printHumanReadable();

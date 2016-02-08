@@ -399,22 +399,22 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 }
 
 
-std::vector<double> cell::getPopulationFittness(std::vector<cell>& population){
+std::vector<double> cell::getPopulationFittness(std::vector<int>& population, std::vector<cell>& cellVector){
 
 	std::vector<double> toReturn(population.size());
 
 	for (int k=0; k<population.size();k++){
 
-		toReturn[k]=population[k].getPerformance();
+		toReturn[k]=cellVector[population[k]].getPerformance();
 	}
 
 
 	return toReturn;
 }
 
-void cell::printPopulationFittnesses(std::vector<cell>& population){
+void cell::printPopulationFittnesses(std::vector<int>& population, std::vector<cell>& cellVector){
 
-	std::vector<double> fittnesses=getPopulationFittness(population);
+	std::vector<double> fittnesses=getPopulationFittness(population, cellVector);
 	for (auto i:fittnesses){
 		std::cout<<i<<", ";
 	}
@@ -437,7 +437,7 @@ cell cell::printNFittest(std::vector<int>& population, std::vector<cell>& cellVe
 
 }
 
-std::vector<cell> cell::getBestNCells(std::vector<cell>& population, int N){
+std::vector<cell> cell::getBestNCells(std::vector<int>& population, std::vector<cell>& cellVector, int N){
 
 	std::vector<cell> toReturn(N);
 	//std::vector<double> allFittnesses=getPopulationFittness(population);
@@ -458,10 +458,11 @@ std::vector<cell> cell::getBestNCells(std::vector<cell>& population, int N){
 	//0}
 	//doesn't matter if population is sorted even when the Moran process is running, random selection 
 	//doesn't care for ordered vector
-	std::sort(population.begin(),population.end());
+	std::sort(population.begin(),population.end(),[&](int first, int second) {return cellVector[population[first]].getPerformance() > cellVector[population[second]].getPerformance();});
+
 	for (int i=0; i<N; i++){
 
-		toReturn[i]=population[i];
+		toReturn[i]=cellVector[population[i]];
 		//std::cout<<"Added a cell with fittness: "<<population[i].getPerformance()<<std::endl;
 	}
 	return toReturn;
