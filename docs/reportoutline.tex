@@ -1,0 +1,119 @@
+
+\documentclass[]{article}
+
+%opening
+
+
+\title{Project Report Outline}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+\label{sec:introduction}
+
+\subsection{Basics}
+\label{sub:basics}
+
+Carbon based life - $\rightarrow$ nutrients and products of cells $\rightarrow$ definition of metabolic networks. 
+
+Metabolic networks very similar use only a small set of reactions and compounds $\rightarrow$ possible explanations, evolution.
+
+What my project is about: explain why this set of reactions was chosen, why the uniformity? Test if reason is evolution.
+
+\subsection{About evolution}
+\label{sub:About evolution}
+Reproduction, mutation selection, why is it important for physics, maths computer science?
+
+\subsection{About Graph Theory}
+\label{sub:About Graph THeory}
+
+Topological similarities to human social networks, internet, small worldliness, error tolerance, modularity. 
+
+\subsection{What I will do}
+\label{sub:What I will do}
+
+Subset of molecules, simulation of population of artificial organisms with selection process like evolution. 
+
+\subsection{Where is the physics}
+\label{sub:Where is the physics}
+
+Free energy changes, moran process, Metropolis algorithm? Enthropy?
+
+
+\section{Methods}
+\label{sec:methods}
+
+\subsection{What was I provided with?}
+\label{sub:What was I provided with?}
+\subsubsection{Restrictions on chemistry}
+\label{ssub:Restrictions on chemistry}
+What compounds are used, why? Previous author's restrictions on artificial chemistries. Should this go to Intro?
+\subsection{Storing the reaction network}
+\label{sub:Storing the reaction network}
+Structure of the input files -$\rightarrow$ algorithm to read them in $\rightarrow$ store them. Talk about failed method of storing and using Boost in personal statement.
+
+The neighbour list and it's use in adding reactions.
+\subsection{The free energy change}
+\label{sub:The free energy change}
+Formula $\rightarrow$ valid ranges can be changed at the beginning of the program.
+
+\subsection{Random number generation}
+\label{sub:Random number generation}
+
+Good quality random numbers $\rightarrow$ mt19937 Mersenne Twister. Reproducibility $\rightarrow$ seeds always known. 
+
+
+
+\subsection{Flux Balance analysis}
+\label{sub:Flux Balance analysis}
+
+Detailed description $\rightarrow$ equations, example matrix? Which fluxes are free? Which fluxes are limited? GLPK 
+
+
+\subsection{Implementing evolution}
+\label{sub:Implementing evolution}
+\subsubsection{Mutations}
+\label{ssub:Mutations}
+\subsubsection{Reproduction}
+\label{ssub:Reproduction}
+Moran process - Metropolis algorithm?
+
+\subsubsection{Competition}
+\label{ssub:Competition}
+Goal functions? $\rightarrow$ changing goal functions? Talk about trial networks (ethanol producing)?
+
+\subsection{Visualization}
+\label{sub:visualization}
+
+Cytoscape $\rightarrow$ xgmml format program part to output that
+
+\subsection{Population simulation}
+\label{sub:population_simulation}
+
+\subsubsection{Parallel simulations}
+\label{ssub:Paralell simulations}
+Multiple populations with same initial network $\rightarrow$ different random seed. Cplab machines 
+
+
+\subsection{Comparing populations}
+\label{sub:comparing_populations}
+
+\subsubsection{Similarity Index}
+\label{ssub:Similarity Index}
+
+
+\subsubsection{Inverse participation ratio}
+\label{ssub:Inverse participation ratio}
+
+\section{Results}
+\label{sec:results}
+
+\section{Discussion}
+\label{sec:discussion}
+
+
+
+
+\end{document}
