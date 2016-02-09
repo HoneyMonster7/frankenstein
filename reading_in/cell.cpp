@@ -345,7 +345,8 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 	bool gotOneToMutate=false;
 	double maxPossibleFittness=10;
 	int whichOneToMutate;
-	double probabilityOfMutation=0.01;
+	//double probabilityOfMutation=0.01;
+	double probabilityOfMutation=1;
 	bool areWeMutating=false;
 
 	while(!gotOneToMutate){
@@ -375,6 +376,9 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 		cell offspringOfChosenCell=cellVector[population[whichOneToMutate]].mutateAndReturn(generator);
 
 		//now we need to find a place to store this mutatnt cell in cellVector
+		//
+		//decrease the number of those cells that die
+		--howManyOfEach[population[whichCellDies]];
 		//if the for loop doesn't find any unused places in cellVector, the statement after will exit with an error (this should never happen in normal circumstances)
 		int whichIsUnused=population.size();
 		for (int i=0; i<howManyOfEach.size();i++){
@@ -387,8 +391,6 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 		//we have an unused element in cellVector now
 		cellVector[whichIsUnused]=offspringOfChosenCell;
 
-		//decrease the number of those cells that die
-		--howManyOfEach[population[whichCellDies]];
 		//create the population element that points to the newborn cell
 		population[whichCellDies]=whichIsUnused;
 		//increase the number corresponding to this newborn cell
