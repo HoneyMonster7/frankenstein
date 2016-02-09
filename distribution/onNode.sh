@@ -11,6 +11,10 @@ longname="jobJOBNR"
 
 tar xvf backup.tar.gz
 
+if [[ -d "$longname" ]]; then
+	rm -rf $longname
+fi
+
 nohup reading_in/build/reaction -s $seedtostartwith -j $longname
 
 latestfolder=$(ls -dt */| head -1)
