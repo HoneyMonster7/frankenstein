@@ -300,10 +300,13 @@ for job in $jobnames; do
 	#now calculating the running average of the best fittnesses
 
 	awk '{print $2}' "../job$job.fitt" > "../$job.fittonly"
+	awk '{print $3}' "../job$job.fitt" > "../$job.enthonly"
 
 	echo "job$job" > "../$job.fittavg"
+	echo "job$job" > "../$job.enthavg"
 	#echo "job$job" 
 	../../movAvg/movAvg 100 "../$job.fittonly" >> "../$job.fittavg"
+	../../movAvg/movAvg 100 "../$job.enthonly" >> "../$job.enthavg"
 
 	rm ../$job.fittonly
 	
@@ -311,6 +314,7 @@ done
 	
 rm *.jnk
 paste ../*.fittavg > ../fittavgs.fitt
+paste ../*.enthavg > ../enthavgs.enth
 
 #now that every checkpoint's IPR's have been calculated, let's gather them into a common file
 
@@ -339,10 +343,10 @@ for cp in `seq 1 10`; do
 
 done
 
-cp ../simChecker/lineplotter.plot .
+cp ../simChecker/lineplotter.gnup .
 cp ../simChecker/IPRplotter.gnup .
 
-gnuplot -persist lineplotter.plot
+gnuplot -persist lineplotter.gnup
 
 gnuplot --persist IPRplotter.gnup
 

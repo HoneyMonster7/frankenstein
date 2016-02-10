@@ -10,6 +10,7 @@ rm columns.all.list 2> /dev/null
 rm columns.used.list 2> /dev/null
 rm rows.list 2> /dev/null
 rm fittness.list 2> /dev/null
+rm fittnessbulk.list 2>/dev/null
 
 while getopts ":ufhpb" opt; do
 
