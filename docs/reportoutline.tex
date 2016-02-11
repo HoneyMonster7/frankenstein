@@ -16,7 +16,7 @@
 \subsection{Basics}
 \label{sub:basics}
 
-Carbon based life - $\rightarrow$ nutrients and products of cells $\rightarrow$ definition of metabolic networks. 
+Discussion of basics of carbon based life, and definition of metabolic networks.
 
 Metabolic networks very similar use only a small set of reactions and compounds $\rightarrow$ possible explanations, evolution.
 
@@ -24,7 +24,7 @@ What my project is about: explain why this set of reactions was chosen, why the 
 
 \subsection{About evolution}
 \label{sub:About evolution}
-Reproduction, mutation selection, why is it important for physics, maths computer science?
+Three main ingredients: reproduction, mutation selection, why is it important for physics, maths and computer science?
 
 \subsection{About Graph Theory}
 \label{sub:About Graph THeory}
@@ -34,12 +34,12 @@ Topological similarities to human social networks, internet, small worldliness, 
 \subsection{What I will do}
 \label{sub:What I will do}
 
-Subset of molecules, simulation of population of artificial organisms with selection process like evolution. 
+Subset of molecules used, simulating population of artificial organisms with selection process like evolution. Looking at patterns of improvements.
 
 \subsection{Where is the physics}
 \label{sub:Where is the physics}
 
-Free energy changes, moran process, Metropolis algorithm? Enthropy?
+Free energy change calculations, survival of the fittest using the moran process, Metropolis algorithm? Enthropy and Inverse participation ratio as a measure of disorder. 
 
 
 \section{Methods}
@@ -47,22 +47,24 @@ Free energy changes, moran process, Metropolis algorithm? Enthropy?
 
 \subsection{What was I provided with?}
 \label{sub:What was I provided with?}
+List of reactants and reactions, with standard free E changes. 
 \subsubsection{Restrictions on chemistry}
 \label{ssub:Restrictions on chemistry}
-What compounds are used, why? Previous author's restrictions on artificial chemistries. Should this go to Intro?
+What compounds are used, why?
+Previous author's restrictions on artificial chemistries. Should this go to Intro?
 \subsection{Storing the reaction network}
 \label{sub:Storing the reaction network}
-Structure of the input files -$\rightarrow$ algorithm to read them in $\rightarrow$ store them. Talk about failed method of storing and using Boost in personal statement.
+Structure of the input files -$\rightarrow$ algorithm to read them in $\rightarrow$ store them. 
 
 The neighbour list and it's use in adding reactions.
 \subsection{The free energy change}
 \label{sub:The free energy change}
-Formula $\rightarrow$ valid ranges can be changed at the beginning of the program.
+The physics of the formula to calculate it. The role of deciding the direction of reactions.  $\rightarrow$ valid ranges can be changed at the beginning of the program.
 
 \subsection{Random number generation}
 \label{sub:Random number generation}
 
-Good quality random numbers $\rightarrow$ mt19937 Mersenne Twister. Reproducibility $\rightarrow$ seeds always known. 
+Good quality random numbers $\rightarrow$ mt19937 Mersenne Twister. Reproducibility is important $\rightarrow$ seeds always known. 
 
 
 
@@ -76,9 +78,10 @@ Detailed description $\rightarrow$ equations, example matrix? Which fluxes are f
 \label{sub:Implementing evolution}
 \subsubsection{Mutations}
 \label{ssub:Mutations}
+The possible mutations, why it makes sense to use only these, and possible other mutations that could have been used. The rate of mutations. 
 \subsubsection{Reproduction}
 \label{ssub:Reproduction}
-Moran process - Metropolis algorithm?
+survival of the fittest using the Moran process - Metropolis algorithm?
 
 \subsubsection{Competition}
 \label{ssub:Competition}
@@ -87,28 +90,39 @@ Goal functions? $\rightarrow$ changing goal functions? Talk about trial networks
 \subsection{Visualization}
 \label{sub:visualization}
 
-Cytoscape $\rightarrow$ xgmml format program part to output that
+the use of Cytoscape $\rightarrow$ xgmml format and the  program part to output that
 
 \subsection{Population simulation}
 \label{sub:population_simulation}
+How to store the population, how to choose which one to mutate (as in \ref{ssub:Reproduction}. 
+
+New method of storing indexes only. Include the previous method too?
 
 \subsubsection{Parallel simulations}
 \label{ssub:Paralell simulations}
-Multiple populations with same initial network $\rightarrow$ different random seed. Cplab machines 
+Multiple populations with same initial network  run paralell$\rightarrow$ different random seed. Cplab machines 
 
 
 \subsection{Comparing populations}
 \label{sub:comparing_populations}
 
+
 \subsubsection{Similarity Index}
 \label{ssub:Similarity Index}
 
+How to calculate, why is it useful? Can be calculated for nonzero flux reactions or all available ones too. 
 
 \subsubsection{Inverse participation ratio}
 \label{ssub:Inverse participation ratio}
+IPR vs Enthropy
 
 \section{Results}
 \label{sec:results}
+
+If mutations happen with 100$\%$ then rather fast improvement to best network. Very diverse populations in terms of available reactions, but somewhat similar within a single run. Different runs very different available reactions. For the nonzero flux reactions within a run is almost completely homogeneous, and lots of similarity between runs too. 
+
+If the mutation probabilities decrease improvements become more difficult.
+
 
 \section{Discussion}
 \label{sec:discussion}
