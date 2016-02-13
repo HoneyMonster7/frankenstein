@@ -247,16 +247,17 @@ int main(int argc, char **argv)
 				previousNetwork=currentBest.getReacs();
 
 
-				double enthropy=0;
+				//double enthropy=0;
 
-				for(auto element:howManyOfEach){
+				//for(auto element:howManyOfEach){
 
-					if(element!=0){
-						enthropy+=element*std::log(element);
-					}
-				}
+				//	if(element!=0){
+				//		enthropy+=element*std::log(element);
+				//	}
+				//}
 
-				improvementlog<<k+outerLoop*checkPointLength<<" "<<previousFittness<<" "<<-1*enthropy<<std::endl;
+				//improvementlog<<k+outerLoop*checkPointLength<<" "<<previousFittness<<" "<<-1*enthropy<<std::endl;
+				cell::printProgressFile(populationIndex,cellVector,howManyOfEach,k+outerLoop*checkPointLength,improvementlog);
 				
 				//cell::printPopulationFittnesses(cellVector);
 

@@ -346,7 +346,7 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 	double maxPossibleFittness=10;
 	int whichOneToMutate;
 	//double probabilityOfMutation=0.01;
-	double probabilityOfMutation=1;
+	double probabilityOfMutation=0.01;
 	bool areWeMutating=false;
 
 	while(!gotOneToMutate){
@@ -884,6 +884,43 @@ void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, st
 	}
 
 
+}
+
+
+
+void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach, int generationNr, std::ofstream& fileToWrite){
+
+	double maxFittness=0;
+	double totFittness=0;
+	int bestNetworkSize;
+	int totalNetworkSize=0;
+	double enthropy=0;
+
+	//now runnign through the population to find the desired quantities
+	//only running through the vector containing how many of each cells there are in the population
+	//in a population containing many similar cells this can be much faster than running through each of the cells (in the population vector)
+	for (int i = 0; i < population.size(); ++i) {
+		int element=howManyOfEach[i];	
+		if(element!=0){
+			enthropy+=element*std::log(element);
+
+			double currFittness=cellVector[i].getPerformance();
+			int currReactionSize=cellVector[i].getReacs().size();
+
+			totFittness+=currFittness*element;
+			totalNetworkSize+=currReactionSize*element;
+
+			if (maxFittness<currFittness) {
+				
+				maxFittness=currFittness;
+				bestNetworkSize=currReactionSize;
+			}
+
+		}
+	}
+	//now writing the required stuff in the file
+	
+	fileToWrite<<generationNr<<" "<<maxFittness<<" "<<-1*enthropy<<" "<<totFittness/cellVector.size()<<" "<<bestNetworkSize<<" "<<totalNetworkSize/(double)cellVector.size()<<std::endl;
 }
 	
 
