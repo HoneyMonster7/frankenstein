@@ -217,13 +217,18 @@ int main(int argc, char **argv)
 
 
 		int NRofCheckpoints=10;
-		int checkPointLength=600000000;
+		int checkPointLength=6000000;
 		//outer loop is there in order to save networks every 10% of the simulation
 		for (int outerLoop=0; outerLoop<NRofCheckpoints; outerLoop++){
 
 			for (int k=0; k<checkPointLength; k++){
-				cell::mutatePopulation(populationIndex,howManyOfEach,cellVector,generator);
-				if (k%1000000==0){
+
+				for (int iter=0; iter<numberOfCells; ++iter){
+
+					//running a generation here - as many mutations as many cells there are in the population
+					cell::mutatePopulation(populationIndex,howManyOfEach,cellVector,generator);
+				}
+				if (k%10000==0){
 					
 				std::cout<<k+outerLoop*checkPointLength<<": ";
 				cell currentBest=cell::printNFittest(populationIndex,cellVector,10);
