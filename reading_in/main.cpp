@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
+#include <queue>
 //for the command line flags
 #include <unistd.h>
 
@@ -218,6 +219,17 @@ int main(int argc, char **argv)
 
 		int NRofCheckpoints=10;
 		int checkPointLength=6000000;
+		const int generationsPerWriteout=10000;
+
+		//defining the queues here
+		double maxFittQueue [generationsPerWriteout];
+		double avgFittQueue [generationsPerWriteout];
+		double entropyQueue [generationsPerWriteout];
+		int bestNetSizeQueue [generationsPerWriteout];
+		int avgNetSizeQueue [generationsPerWriteout];
+		int arrayPos=0;
+
+
 		//outer loop is there in order to save networks every 10% of the simulation
 		for (int outerLoop=0; outerLoop<NRofCheckpoints; outerLoop++){
 
@@ -228,23 +240,23 @@ int main(int argc, char **argv)
 					//running a generation here - as many mutations as many cells there are in the population
 					cell::mutatePopulation(populationIndex,howManyOfEach,cellVector,generator);
 				}
-				if (k%10000==0){
-					
-				std::cout<<k+outerLoop*checkPointLength<<": ";
-				cell currentBest=cell::printNFittest(populationIndex,cellVector,10);
+				//if (k%generationsPerWriteout==0){
+				//	
+				//std::cout<<k+outerLoop*checkPointLength<<": ";
+				//cell currentBest=cell::printNFittest(populationIndex,cellVector,10);
 
-				if (previousFittness+0.5<currentBest.getPerformance()){
-					cell previousBest=cell(previousNetwork);
-					std::ostringstream fname;
-					fname<<actualFilename<<"/"<<actualFilename<<"_before_step_"<<k;
-					previousBest.printXGMML(fname.str());
-					fname.str("");
-					fname.clear();
-					fname<<actualFilename<<"/"<<actualFilename<<"_after_step_"<<k;
-					currentBest.printXGMML(fname.str());
-				}
-				previousFittness=currentBest.getPerformance();
-				previousNetwork=currentBest.getReacs();
+				//if (previousFittness+0.5<currentBest.getPerformance()){
+				//	cell previousBest=cell(previousNetwork);
+				//	std::ostringstream fname;
+				//	fname<<actualFilename<<"/"<<actualFilename<<"_before_step_"<<k;
+				//	previousBest.printXGMML(fname.str());
+				//	fname.str("");
+				//	fname.clear();
+				//	fname<<actualFilename<<"/"<<actualFilename<<"_after_step_"<<k;
+				//	currentBest.printXGMML(fname.str());
+				//}
+				//previousFittness=currentBest.getPerformance();
+				//previousNetwork=currentBest.getReacs();
 
 
 				//double enthropy=0;
@@ -257,11 +269,11 @@ int main(int argc, char **argv)
 				//}
 
 				//improvementlog<<k+outerLoop*checkPointLength<<" "<<previousFittness<<" "<<-1*enthropy<<std::endl;
-				cell::printProgressFile(populationIndex,cellVector,howManyOfEach,k+outerLoop*checkPointLength,improvementlog);
+				cell::printProgressFile(populationIndex,cellVector,howManyOfEach,k,outerLoop,generationsPerWriteout,checkPointLength,improvementlog,maxFittQueue,avgFittQueue,entropyQueue,bestNetSizeQueue,avgNetSizeQueue);
 				
 				//cell::printPopulationFittnesses(cellVector);
 
-				}
+				//}
 
 			}
 

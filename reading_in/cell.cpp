@@ -888,7 +888,7 @@ void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, st
 
 
 
-void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach, int generationNr, std::ofstream& fileToWrite){
+void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach,int k, int outerloop,const int generationsPerWriteout, int checkPointLength, std::ofstream& fileToWrite,double maxFittQueue [], double avgFittQueue [], double entropyQueue [], int bestNetSizeQueue [], int avgNetSizeQueue []){
 
 	double maxFittness=0;
 	double totFittness=0;
@@ -918,9 +918,20 @@ void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& ce
 
 		}
 	}
+	int remainderOfK=k%generationsPerWriteout;
 	//now writing the required stuff in the file
+	if (remainderOfK==0){
 	
-	fileToWrite<<generationNr<<" "<<maxFittness<<" "<<-1*enthropy<<" "<<totFittness/cellVector.size()<<" "<<bestNetworkSize<<" "<<totalNetworkSize/(double)cellVector.size()<<std::endl;
+		long long int generationNr=k+outerloop*checkPointLength;
+		fileToWrite<<generationNr<<" "<<maxFittness<<" "<<-1*enthropy<<" "<<totFittness/cellVector.size()<<" "<<bestNetworkSize<<" "<<totalNetworkSize/(double)cellVector.size()<<std::endl;
+	}
+
+	//Popoulating the next positions of the queue
+	maxFittQueue[remainderOfK]=maxFittness;
+	avgFittQueue[remainderOfK]=totFittness/cellVector.size();
+	entropyQueue[remainderOfK]=-1*enthropy;
+	bestNetSizeQueue[remainderOfK]=bestNetworkSize;
+	avgNetSizeQueue[remainderOfK]=totalNetworkSize/(double)cellVector.size();
 }
 	
 

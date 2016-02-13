@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <array>
 #include <math.h>
+#include <queue>
 
 #include "reaction.h"
 
@@ -75,7 +76,8 @@ class cell{
 	void printHumanReadable();
 	void printXGMML(std::string fileName);
 
-	static void printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach, int generationNr, std::ofstream& fileToWrite);
+	static void printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach, int k, int outerloop,const int generationsPerWriteout, int checkPointLength, std::ofstream& fileToWrite, double maxFittQueue [], double avgFittQueue [], double entropyQueue [], int bestNetSizeQueue [], int avgNetSizeQueue []);
+
 
 	private: static int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
 			 static double randomRealInRange(RandomGeneratorType& generator, double maxNumber);
