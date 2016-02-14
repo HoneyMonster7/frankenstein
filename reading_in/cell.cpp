@@ -888,7 +888,7 @@ void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, st
 
 
 
-void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach,int k, int outerloop,const int generationsPerWriteout, int checkPointLength, std::ofstream& fileToWrite,double maxFittQueue [], double avgFittQueue [], double entropyQueue [], int bestNetSizeQueue [], int avgNetSizeQueue []){
+void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach,int k, int outerloop,const int generationsPerWriteout, int checkPointLength, std::ofstream& fileToWrite,double& previousAvgFittness, double maxFittQueue [], double avgFittQueue [], double entropyQueue [], int bestNetSizeQueue [], double avgNetSizeQueue []){
 
 	double maxFittness=0;
 	double totFittness=0;
@@ -921,9 +921,25 @@ void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& ce
 	int remainderOfK=k%generationsPerWriteout;
 	//now writing the required stuff in the file
 	if (remainderOfK==0){
+
+		double avgFittness=totFittness/(double)cellVector.size();
+		fileToWrite<<"Current avgfittness is "<<avgFittness<<" previousAvgFittness is "<<previousAvgFittness<<" difference is "<<avgFittness-previousAvgFittness<<std::endl;
+		//if there was a large enough improvement since the last writeout, write out the steps inbetween
+		if (avgFittness>0.3+previousAvgFittness){
+
+			for (int i=1; i<generationsPerWriteout; ++i){
+
+				long long int number=k-generationsPerWriteout+i+outerloop*checkPointLength;
+				fileToWrite<<number<<" "<<maxFittQueue[i]<<" "<<entropyQueue[i]<<" "<<avgFittQueue[i]<<" "<<bestNetSizeQueue[i]<<" "<<avgNetSizeQueue[i]<<std::endl;
+
+			}
+		}
 	
 		long long int generationNr=k+outerloop*checkPointLength;
-		fileToWrite<<generationNr<<" "<<maxFittness<<" "<<-1*enthropy<<" "<<totFittness/cellVector.size()<<" "<<bestNetworkSize<<" "<<totalNetworkSize/(double)cellVector.size()<<std::endl;
+		fileToWrite<<generationNr<<" "<<maxFittness<<" "<<-1*enthropy<<" "<<avgFittness<<" "<<bestNetworkSize<<" "<<totalNetworkSize/(double)cellVector.size()<<std::endl;
+		
+		//setting the previous avg network fittness to the current value
+		previousAvgFittness=avgFittness;
 	}
 
 	//Popoulating the next positions of the queue
@@ -932,6 +948,7 @@ void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& ce
 	entropyQueue[remainderOfK]=-1*enthropy;
 	bestNetSizeQueue[remainderOfK]=bestNetworkSize;
 	avgNetSizeQueue[remainderOfK]=totalNetworkSize/(double)cellVector.size();
+
 }
 	
 

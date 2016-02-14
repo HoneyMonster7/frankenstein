@@ -76,7 +76,7 @@ class cell{
 	void printHumanReadable();
 	void printXGMML(std::string fileName);
 
-	static void printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach, int k, int outerloop,const int generationsPerWriteout, int checkPointLength, std::ofstream& fileToWrite, double maxFittQueue [], double avgFittQueue [], double entropyQueue [], int bestNetSizeQueue [], int avgNetSizeQueue []);
+	static void printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach, int k, int outerloop,const int generationsPerWriteout, int checkPointLength, std::ofstream& fileToWrite,double& previousFittness, double maxFittQueue [], double avgFittQueue [], double entropyQueue [], int bestNetSizeQueue [], double avgNetSizeQueue []);
 
 
 	private: static int randomIntInRange(RandomGeneratorType& generator, int maxNumber);

@@ -220,13 +220,14 @@ int main(int argc, char **argv)
 		int NRofCheckpoints=10;
 		int checkPointLength=6000000;
 		const int generationsPerWriteout=10000;
+		double previousAvgFittness=cellVector[0].getPerformance();
 
 		//defining the queues here
 		double maxFittQueue [generationsPerWriteout];
 		double avgFittQueue [generationsPerWriteout];
 		double entropyQueue [generationsPerWriteout];
 		int bestNetSizeQueue [generationsPerWriteout];
-		int avgNetSizeQueue [generationsPerWriteout];
+		double avgNetSizeQueue [generationsPerWriteout];
 		int arrayPos=0;
 
 
@@ -269,7 +270,7 @@ int main(int argc, char **argv)
 				//}
 
 				//improvementlog<<k+outerLoop*checkPointLength<<" "<<previousFittness<<" "<<-1*enthropy<<std::endl;
-				cell::printProgressFile(populationIndex,cellVector,howManyOfEach,k,outerLoop,generationsPerWriteout,checkPointLength,improvementlog,maxFittQueue,avgFittQueue,entropyQueue,bestNetSizeQueue,avgNetSizeQueue);
+				cell::printProgressFile(populationIndex,cellVector,howManyOfEach,k,outerLoop,generationsPerWriteout,checkPointLength,improvementlog,previousAvgFittness,maxFittQueue,avgFittQueue,entropyQueue,bestNetSizeQueue,avgNetSizeQueue);
 				
 				//cell::printPopulationFittnesses(cellVector);
 
