@@ -923,7 +923,8 @@ void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& ce
 	if (remainderOfK==0){
 
 		double avgFittness=totFittness/(double)cellVector.size();
-		fileToWrite<<"Current avgfittness is "<<avgFittness<<" previousAvgFittness is "<<previousAvgFittness<<" difference is "<<avgFittness-previousAvgFittness<<std::endl;
+		//was used for testing
+		//fileToWrite<<"Current avgfittness is "<<avgFittness<<" previousAvgFittness is "<<previousAvgFittness<<" difference is "<<avgFittness-previousAvgFittness<<std::endl;
 		//if there was a large enough improvement since the last writeout, write out the steps inbetween
 		if (avgFittness>0.3+previousAvgFittness){
 
