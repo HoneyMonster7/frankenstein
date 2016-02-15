@@ -15,13 +15,15 @@ if [[ -d "$longname" ]]; then
 	rm -rf $longname
 fi
 
+
 nohup reading_in/build/reaction -s $seedtostartwith -j $longname
+
+echo "The random seed used to initiate the prng was $seedtostartwith" > $longname/originalseed.txt
 
 latestfolder=$(ls -dt */| head -1)
 
 tar acf response.JOBNR.tar.gz --exclude reaction  $longname
 
-klist -f
 
 #scp response.from.NODENR.tar.gz MOTHERHOST:FOLDERTOCOLLECT
 

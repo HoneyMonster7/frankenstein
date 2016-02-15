@@ -11,7 +11,7 @@ compNRLength=3
 
 nrofmachines=20
 
-firstToTry=1
+firstToTry=22
 
 echo "Find a job name:"
 read jobname
@@ -44,7 +44,7 @@ for i in `seq 1 "$nrofmachines"`
 do
 
 	#this is to make new random numbers (not always the same)
-	modrnd=$(($i + 25))
+	modrnd=$(($i + 50))
 	#change the seed in main.cpp will need to change that file actually
 	#sed -i  "s/RandomGeneratorType\ generator(1);/RandomGeneratorType\ generator($i);/" reading_in/main.cpp
 
