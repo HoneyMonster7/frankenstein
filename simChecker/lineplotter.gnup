@@ -2,7 +2,10 @@ set macros
 set terminal svg size 1920, 1080 enhanced background rgb 'white'
 set output 'fittavgs.svg'
 
-linefiles=system('ls *.fitt | tail -n +7|  head -n 1 ')
+linefiles=system('ls *.progress | sort -n  | head -n 5')
+linefiles2=system('ls *.progress | sort -n  | tail -n +6 |head -n 5')
+linefiles3=system('ls *.progress | sort -n  | tail -n +11 |head -n 5')
+linefiles4=system('ls *.progress | sort -n  | tail -n +16 |head -n 5')
 
 #set terminal size 1000,1000
 #set terminal x11 geometry 1000x1000
@@ -13,25 +16,18 @@ set key outside
 set title "Fittness of the best organism in each jobs"
 
 YLABS="unset ylabel; set ylabel 'Fittness'"
-XLABS="unset xlabel; set xlabel 'Iteration (*e7'"
+XLABS="unset xlabel; set xlabel 'Generations'"
 
 set multiplot layout 4,1 columnsfirst
 
 #plot for [file in linefiles] file w l smooth sbezier title file
 @YLABS; @XLABS
-plot for [col=1:5] 'fittavgs.fitt' using col with lines title columnheader
+plot for [file in linefiles] file u 1:2 with lines title file
+plot for [file in linefiles2] file u 1:2 with lines title file
+plot for [file in linefiles3] file u 1:2 with lines title file
+plot for [file in linefiles4] file u 1:2 with lines title file
+#
 
-YLABS="unset ylabel; set label 'Fittness'"
-XLABS="unset xlabel; set label 'Checkpoint'"
-plot for [col=6:10] 'fittavgs.fitt' using col with lines title columnheader
-
-YLABS="unset ylabel; set label 'Fittness'"
-XLABS="unset xlabel; set label 'Checkpoint'"
-plot for [col=11:15] 'fittavgs.fitt' using col with lines title columnheader
-#pause -1
-YLABS="unset ylabel; set label 'Fittness'"
-XLABS="unset xlabel; set label 'Checkpoint'"
-plot for [col=16:20] 'fittavgs.fitt' using col with lines title columnheader
 
 unset multiplot
 
@@ -42,15 +38,79 @@ set key outside
 set title "Enthropy of population"
 
 YLABS="unset ylabel; set ylabel 'Enthropy'"
-XLABS="unset xlabel; set xlabel 'Iteration (*e7'"
+XLABS="unset xlabel; set xlabel 'Generation'"
 
 set multiplot layout 4,1 columnsfirst
 
 @YLABS; @XLABS
-plot for [col=1:5] 'enthavgs.enth' using col with lines title columnheader
 
-plot for [col=6:10] 'enthavgs.enth' using col with lines title columnheader
 
-plot for [col=11:15] 'enthavgs.enth' using col with lines title columnheader
+plot for [file in linefiles] file u 1:3 with lines title file
+plot for [file in linefiles2] file u 1:3 with lines title file
+plot for [file in linefiles3] file u 1:3 with lines title file
+plot for [file in linefiles4] file u 1:3 with lines title file
 
-plot for [col=16:20] 'enthavgs.enth' using col with lines title columnheader
+
+unset multiplot
+
+set output 'avgfittness.svg'
+
+set key outside
+
+set title "Average fittness of the population"
+
+YLABS="unset ylabel; set ylabel 'Fittness'"
+XLABS="unset xlabel; set xlabel 'Generations'"
+
+set multiplot layout 4,1 columnsfirst
+
+@YLABS; @XLABS
+
+
+plot for [file in linefiles] file u 1:4 with lines title file
+plot for [file in linefiles2] file u 1:4 with lines title file
+plot for [file in linefiles3] file u 1:4 with lines title file
+plot for [file in linefiles4] file u 1:4 with lines title file
+
+unset multiplot
+
+set output 'bestnetworksize.svg'
+
+set key outside
+
+set title "Number of reactions in the best network"
+
+YLABS="unset ylabel; set ylabel 'Number of reactions'"
+XLABS="unset xlabel; set xlabel 'Generations'"
+
+set multiplot layout 4,1 columnsfirst
+
+@YLABS; @XLABS
+
+
+plot for [file in linefiles] file u 1:5 with lines title file
+plot for [file in linefiles2] file u 1:5 with lines title file
+plot for [file in linefiles3] file u 1:5 with lines title file
+plot for [file in linefiles4] file u 1:5 with lines title file
+
+
+unset multiplot
+
+set output 'avgnetworksize.svg'
+
+set key outside
+
+set title "Average number of reactions in the reaction networks"
+
+YLABS="unset ylabel; set ylabel 'Number of reactions'"
+XLABS="unset xlabel; set xlabel 'Generations'"
+
+set multiplot layout 4,1 columnsfirst
+
+@YLABS; @XLABS
+
+
+plot for [file in linefiles] file u 1:6 with lines title file
+plot for [file in linefiles2] file u 1:6 with lines title file
+plot for [file in linefiles3] file u 1:6 with lines title file
+plot for [file in linefiles4] file u 1:6 with lines title file

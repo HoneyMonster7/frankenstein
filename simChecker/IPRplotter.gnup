@@ -3,6 +3,9 @@ set macros
 
 set key outside
 
+set terminal svg size 1920, 1080 enhanced background rgb 'white'
+set output 'IPRplots.svg'
+
 YLABS="unset ylabel; set ylabel 'IPR'"
 XLABS="unset xlabel; set xlabel 'Checkpoint'"
 

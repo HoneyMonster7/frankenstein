@@ -216,6 +216,7 @@ fi
 
 #read valami
 mkdir -p $jobtoan/CP10/
+mkdir -p $jobtoan/progress/
 
 #doing the last checkpoint separately, as that is not in a folder
 for fname in $needToUntar; do
@@ -299,22 +300,50 @@ for job in $jobnames; do
 
 	#now calculating the running average of the best fittnesses
 
-	awk '{print $2}' "../job$job.fitt" > "../$job.fittonly"
-	awk '{print $3}' "../job$job.fitt" > "../$job.enthonly"
+	sed -ni '/Current/!p' ../job$job.fitt
 
-	echo "job$job" > "../$job.fittavg"
-	echo "job$job" > "../$job.enthavg"
+	awk '{print $1}' "../job$job.fitt" > "../progress/$job.numbersonly"
+	awk '{print $2}' "../job$job.fitt" > "../progress/$job.fittonly"
+	awk '{print $3}' "../job$job.fitt" > "../progress/$job.enthonly"
+	awk '{print $4}' "../job$job.fitt" > "../progress/$job.avgfitonly"
+	awk '{print $5}' "../job$job.fitt" > "../progress/$job.netsizeonly"
+	awk '{print $6}' "../job$job.fitt" > "../progress/$job.avgnetsizeonly"
+
+	#echo "job$job" > "../$job.fittavg"
+	#echo "job$job" > "../$job.enthavg"
 	#echo "job$job" 
-	../../movAvg/movAvg 100 "../$job.fittonly" >> "../$job.fittavg"
-	../../movAvg/movAvg 100 "../$job.enthonly" >> "../$job.enthavg"
 
-	rm ../$job.fittonly
+		../../movAvg/movAvg 100 "../progress/$job.fittonly" >> "../progress/$job.fittavg"
+		../../movAvg/movAvg 100 "../progress/$job.enthonly" >> "../progress/$job.enthavg"
+		../../movAvg/movAvg 100 "../progress/$job.avgfitonly" >> "../progress/$job.avgfitavg"
+		../../movAvg/movAvg 100 "../progress/$job.netsizeonly" >> "../progress/$job.netsizeavg"
+		../../movAvg/movAvg 100 "../progress/$job.avgnetsizeonly" >> "../progress/$job.avgnetsizeavg"
+
+	rm ../progress/$job.fittonly
+	rm ../progress/$job.enthonly
+	rm ../progress/$job.avgfitonly
+	rm ../progress/$job.netsizeonly
+	rm ../progress/$job.avgnetsizeonly
+	
+	paste ../progress/$job.numbersonly ../progress/$job.fittavg ../progress/$job.enthavg ../progress/$job.avgfitavg ../progress/$job.netsizeavg ../progress/$job.avgnetsizeavg > ../progress/$job.progress
+
+
+	rm ../progress/$job.numbersonly
+	rm ../progress/$job.fittavg
+	rm ../progress/$job.enthavg
+	rm ../progress/$job.avgfitavg
+	rm ../progress/$job.netsizeavg
+	rm ../progress/$job.avgnetsizeavg
+
+
+
+
 	
 done
 	
 rm *.jnk
-paste ../*.fittavg > ../fittavgs.fitt
-paste ../*.enthavg > ../enthavgs.enth
+#paste ../*.fittavg > ../fittavgs.fitt
+#paste ../*.enthavg > ../enthavgs.enth
 
 #now that every checkpoint's IPR's have been calculated, let's gather them into a common file
 
@@ -343,11 +372,14 @@ for cp in `seq 1 10`; do
 
 done
 
-cp ../simChecker/lineplotter.gnup .
+cp ../simChecker/lineplotter.gnup progress
 cp ../simChecker/IPRplotter.gnup .
+
+cd progress
 
 gnuplot -persist lineplotter.gnup
 
+cd ..
 gnuplot --persist IPRplotter.gnup
 
 #if [ "$onlyused" == 1 ]; then
