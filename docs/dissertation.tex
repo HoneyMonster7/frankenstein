@@ -195,7 +195,31 @@ Detailed description $\rightarrow$ equations, example matrix? Which fluxes are f
 
 
 
-	To calculate the throughput of the metabolic network of my organisms I use flux balance analysis \cite{whatisfluxbalance}. This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it I make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes. In the real world the reactions happening in a cell are usually reversible with (an example for this is is the reaction of carbonic acid and water H$_2$CO$_3$$_{(l)}$ + H$_2$O$_{(l)} \leftrightarrows$ HCO$^-_3$$_{(aq)}$+H$_3$O$^+$$_{(aq)}$). To consider this phenomenon I allow reactions with free energy change between a constant $-L$ and $L$ eV (currently $L=10$) to happen in any direction. 
+	To calculate the throughput of the metabolic network of my organisms I use flux balance analysis \cite{whatisfluxbalance}. This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it I make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
+	
+	The goal of flux balance analysis is to calculate the steady state fluxes ($\mathbf{v}$) through all the reactions subject to some constraints, (described later in this section), while maximizing a function $f \left( \mathbf{v} \right)$ of the fluxes. 
+
+	When using flux balance analysis we represent the MB as a stochiometrix matrix $S$ ($m\times n$), with each row corresponding to a compound in the network ($n$ compounds), and each column correspoinding to a reaction ($m$ reactions). In each column we have the stochiometric coefficients of the given reaction that correspod to the compound of the given row. Negative stochiometric coefficients are used for the metabolites consumed, positive for those produced, and zeros for the metabolites that do not participate in the given reaction.
+ 
+	The steady state assumption of the method means that the amount of any given compound produced in the reactions should equal the amount consumed by other reactions, except for some special compounds. These compounds are considered the nutrients and the end-products of a metabolic network. For example the nutrients of our network is FIRST COMPOUND, water and $O_2$, while it's end producs are pyruvate and $CO_2$. To incorporate compounds that can have a non-zero change in CONCENTRATION could be introduced to flux balance analysis could be done through relaxing the constraint that the EQUATION-s of these compounds have to equal zero. This introduces complications, as often the amount of certain compounds produced appear in the goal function $f \left( \mathbf{v} \right) $. To overcome this we introduce auxiliarry reactions to the stochiometric matrix $S$, for the compounds the cell consumes and produces. Such an auxiliary reaction is for example $ \leftarrow H_2O$. 
+
+
+	$$\begin{bmatrix}
+			%\hline Fluxes: & 1 & 1 & 1 & 1 & 1 & 3 & -3 & \color{red} $\mathbf{1}$ \\
+			%\hline	Reaction: & 5151& 5143 & 131 & \multicolumn{4}{c|}{Auxiliary }& Target \\
+			  \texttt{A} & 1 &  0 &  0 & +1 &  0 &  0 & 0 &  \\ 
+			  \texttt{B} & +1 & -1 &  0 &  0 &  0 &  0 & 0 &  \\ 
+			  \texttt{D} & 0 & +1 & -1 &  0 &  0 &  0 & 0 &  \\ 
+			  \texttt{lactate} & 0  &  0 & +1 &  0 & -1 &  0 & 0 &  \\ 
+			  \texttt{water} & -1 & -1 &  0 &  0 &  0 &+1  & 0 &  \\ 
+			  \texttt{CO$_2$} & +1 & +1 &  0 &  0 &  0 &  0 & +1&  \\ 
+			  \texttt{ATP} & 0 & +1 &  0 &  0 &  0 & 0 & -1 &\\ 
+			  \texttt{ADP} &  0 & -1 &  0 &  0 &  0 & 0 & +1 & \\ 
+			  
+		\end{bmatrix} $$
+	
+	
+	In the real world the reactions happening in a cell are usually reversible with (an example for this is is the reaction of carbonic acid and water H$_2$CO$_3$$_{(l)}$ + H$_2$O$_{(l)} \leftrightarrows$ HCO$^-_3$$_{(aq)}$+H$_3$O$^+$$_{(aq)}$). To consider this phenomenon I allow reactions with free energy change between a constant $-L$ and $L$ eV (currently $L=10$) to happen in any direction. 
 	
 	Flux balance analysis works by trying to find the fluxes through the set of reactions available to the cell that maximize a certain goal function. This is done while keeping the fluxes such that they represent a steady state solution to the reaction network, meaning that any product created is used by an other reaction, and any reactants used are produced by an other reaction, except for the source and sink substrate and some internal metabolites. This is a reasonable assumption as cells usually import a small set of molecules (the source substrates, water, O$_2$, etc.) and use them up to build their own matter while disposing of again a few substrates (eg. CO$_2$). Throughout the flux balance analysis it is assumed that a large (but finite) amount of water is available for the cell to use, along with a smaller amount of the source substrate, and the cell can dispose of a large (but finite) amount of CO$_2$, along with a smaller amount of the sink substrate. Disposing of the sink substrate in this context means that it leaves the metabolic network, but not necessarily the cell, as it is often used to build the cell itself, or further processed by other metabolic networks (eg. pyruvate).
 	
