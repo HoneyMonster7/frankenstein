@@ -34,20 +34,19 @@
 	Although different organisms utilize different chemical reactions in their MN-s, their core pathways are very similar among many different organisms. Certain pathways are conserved partially  eg. in the glycolytic pathway the Embden-Meyerhof-Parnas (EMP) pathway \cite{EMPpathway} is used by most modern cells for the upper part (also known as the pay-off phase explained in LATER SECTION),  some prokaryotes  use the Entner-Doudoroff (ED) pathway \cite{EDpathway}, while the trunk of the glycolytic pathway is highly conserved. Other pathways such as the citric acid cycle (also known as the Krebs cycle) is used by all aerobic organisms (organisms that live in the presence of oxygen). MAYBE 1 MORE EX
 
 	The reason for these similarities is not yet known, however most authors agree that it is a result of the evolution of the MN-s. 
-	 Biological evolution is a powerful optimization method, that uses the cells competition for resources, and random mutations when reproducing to evolve organisms to better suit their environments. The main principles of evolution are simple enough to implement in computer code, opening up ways to in silico evolution. 
+	Biological evolution is an optimization method, that uses random mutations and the survival of the fittest individuals to evolve organisms to better suit their environments. 
 
 
 
-	In this project I will evolve populations of metabolic networks using an algorithm resembling biological evolution with restricting the networks to simplified yet realistic subset of organic molecules and a toy model of chemistry. Using different initial networks and chemical environments I will examine whether originally uniform populations diverge or not, whether they arrive to the common fitness maxima, or get caught in local maxima. I will also consider how realistic the results of my simulations are.  MORE DETAILED GOALS
+	In this project we will examine whether the high degree of conservedness (CONSERVATIVITY?) of MN-s is an inherent feature of their evolution. To do so we will evolve populations of metabolic networks using an algorithm resembling biological evolution with restricting the networks to simplified yet realistic subset of organic molecules and a toy model of chemistry. We will EXAMINE the reproducibility of evolution, i.e. whether the same MN-s emerge if the "TAPE OF LIFE" is played again. 
+
+	In the following sections we will explain how MN-s can be modelled mathematically as graphs, and how biologial evolution can be simulated on a computer, and why this project is of interest to a physicist.
+
+	In the Methods chapter we  will show the methods used in the simulation with emphasis on the subset of molecules used, the calculation of the free energy change, the implementation of evolution in the code, the fittness-comparison of our organisms, and the data analysis. 
+
+	In the Results chapter we summarize the results of the project, giving an example for the fittness calculation, show the results of the population simulations ETC
 
 
-
-	LOWER The reason for these similarities is yet to be discovered, but the two most common hypothesis  are : 
-	\begin{enumerate}[label=(\alph*)]
-	\item the best possible metabolic network has been found, evolution finished the optimization and there is no possible further improvement (Global maximum found) \cite{theoretical} \cite{latent} \cite{strategy}, or 
-	\item there is a better solution but to get there cells have to evolve through such suboptimal states, that are outcompeted by the current metabolic networks. (Local maximum found) FIND SOURCE HERE
-	\end{enumerate} 
-	 \cite{historical} reasons that (b) is unlikely, as they find that  "most viable metabolisms can be transformed into one another by single viability-preserving reaction changes."  
 
 	
 	\subsection{Metabolic networks as graphs}
@@ -391,7 +390,18 @@ Too simple goal function
 This way, depending on the specific needs of the cell the direction of reactions can be reversed, eg. in the case of glycosis (processing sugars to energy and simpler molecules)- glyconeogenesis (producing sugars by using energy and simpler molecules).
 
 
+	LOWER The reason for these similarities is yet to be discovered, but the two most common hypothesis  are : 
+	\begin{enumerate}[label=(\alph*)]
+	\item the best possible metabolic network has been found, evolution finished the optimization and there is no possible further improvement (Global maximum found) \cite{theoretical} \cite{latent} \cite{strategy}, or 
+	\item there is a better solution but to get there cells have to evolve through such suboptimal states, that are outcompeted by the current metabolic networks. (Local maximum found) FIND SOURCE HERE
+	\end{enumerate} 
+	 \cite{historical} reasons that (b) is unlikely, as they find that  "most viable metabolisms can be transformed into one another by single viability-preserving reaction changes."  
 	
+
+
+
+
+
 	\bibliography{dissertation}
 	\bibliographystyle{plainnat}
 \end{document}
