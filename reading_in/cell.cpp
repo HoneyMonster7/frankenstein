@@ -345,8 +345,8 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 	bool gotOneToMutate=false;
 	double maxPossibleFittness=10;
 	int whichOneToMutate;
-	//double probabilityOfMutation=0.01;
 	double probabilityOfMutation=0.01;
+	//double probabilityOfMutation=0.1;
 	bool areWeMutating=false;
 
 	while(!gotOneToMutate){
@@ -640,8 +640,11 @@ double cell::calcThroughput(){
 	//ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
 	//
 	//target is to maximize the imaginary reactions throughput of the ADP->ATP reaction
-	glp_set_obj_coef(lp,listSize+5,1.0);
+	//glp_set_obj_coef(lp,listSize+5,1.0);
 
+	//target is to maximize the imaginary reactions throughput of the ADP->ATP reaction
+	glp_set_obj_coef(lp,listSize+5,0.5);
+	glp_set_obj_coef(lp,listSize+4,0.5);
 
 	//creating the arrays now
 	int length=ia.size();
