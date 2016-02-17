@@ -160,7 +160,7 @@ int main(int argc, char **argv)
 	cell::reactionVector=reacVector;
 	cell::substrateVector=substrateVector;
 	//this is the k value for the fitness function
-	cell::smallKforFitness=1e-2;
+	cell::smallKforFitness=1e-3;
 	//don't add nrofinternalmetabolites here
 	cell::sourceSubstrate=104;
 	cell::sinkSubstrate=54;
