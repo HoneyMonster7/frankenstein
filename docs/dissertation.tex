@@ -79,10 +79,20 @@
 	In my simulations I consider the rate of ADP-ATP conversion as the goal function after \citeauthor{BartekLower}, however later I plan to experiment with different goal functions that also consider the amount of carbon products produced (that can be used for building the cell). 
 	
 	\subsection{Where is the physics?}\label{chap:whereisphysics}
+
+	In the future - quantum mechanical calculation of the free energy changes of reactions is feasible - better answers then to the same questions
+
+	Stochastic processes when modelling the evolution - Moran process  (it is a reversible Markov chain) - which distribution it draws from - partition functions, random walks on the fittness landscape - stochastic optimization. 
 	
-	When calculating the direction of reactions I consider the free-energy change only. This does not take into account the free energy landscape of the reactions. PICTURE? we can imagine two reactions with equal free energies at the substrates and products, one transitioning smooth from substrate to product, the other having a large energy barrier between. Clearly the one with the barrier would not (or much more rarely) happen in a cell than the smooth transitioning. This is simplification is balanced by the fact that cells can use enzymes to act as catalysts to these reactions lowering such energy barriers. Should they need cells can also raise such barriers to otherwise smoothly transitioning reactions to stop them from occurring. 
+	The thermodynamic constraints on evolution - could change temeperature and concentrations. 
+
 	
-	The population simulation uses the metropolis algorithm \cite{metropolisalgorithm}. EXPAND HERE OR IN METHODS
+	
+	When calculating the direction of reactions we consider the free-energy change of the substrates and the proucts only. This does not take into account the free energy landscape of the reactions. It would be possible to use quantum mechanics to exactly calculate the free energy change of the reactions used, but it would be a job worthy of it's own project, and therefore we restrict our discussion to estimates of the free energy.
+	
+	The selection process used when chosing cells to reproduce is the Moran process, a well known Markov chain \cite[]{absorptionofmoran} 
+	
+	EXPAND HERE OR IN METHODS
 
 
 	
@@ -397,8 +407,7 @@ This way, depending on the specific needs of the cell the direction of reactions
 	\end{enumerate} 
 	 \cite{historical} reasons that (b) is unlikely, as they find that  "most viable metabolisms can be transformed into one another by single viability-preserving reaction changes."  
 	
-
-
+	PICTURE? we can imagine two reactions with equal free energies at the substrates and products, one transitioning smooth from substrate to product, the other having a large energy barrier between. Clearly the one with the barrier would not (or much more rarely) happen in a cell than the smooth transitioning. This is simplification is balanced by the fact that cells can use enzymes to act as catalysts to these reactions lowering such energy barriers. Should they need cells can also raise such barriers to otherwise smoothly transitioning reactions to stop them from occurring. 
 
 
 
