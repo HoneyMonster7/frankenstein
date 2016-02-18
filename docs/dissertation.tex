@@ -90,7 +90,7 @@
 	
 	When calculating the direction of reactions we consider the free-energy change of the substrates and the proucts only. This does not take into account the free energy landscape of the reactions. It would be possible to use quantum mechanics to exactly calculate the free energy change of the reactions used, but it would be a job worthy of it's own project, and therefore we restrict our discussion to estimates of the free energy.
 	
-	The selection process used when chosing cells to reproduce is the Moran process, a well known Markov chain \cite[]{absorptionofmoran} 
+	The selection process used when chosing cells to reproduce is the Moran process, a well known Markov chain \cite[]{absorptionofmoran} STOCHASTIC LEARNING PROCESS
 	
 	EXPAND HERE OR IN METHODS
 
@@ -125,21 +125,6 @@ Previous author's restrictions on artificial chemistries. Should this go to Intr
 	
 	The anatomy of my cells is as follows: the cells are stationary with certain compounds present within them with concentrations as shown in Table \ref{environmentTable}. The cells can import and export $H_2$O and CO$_2$ to and from their environments to keep the concentrations steady. They can also import one (planning to include more) predefined source molecule to process, and dispose (build into their mass or use in further metabolism) one (planning to allow more) target molecule. The goal of cells is in the test runs to create as much of the target compound as possible. Later the goal function changed to the amount of ATP the cell can create using ADP. The implementation of more complex goal functions along with multiple input and output molecules is planned. 
 	
-\subsection{Storing the reaction network}
-\label{sub:Storing the reaction network}
-Structure of the input files -$\rightarrow$ algorithm to read them in $\rightarrow$ store them. 
-
-The neighbour list and it's use in adding reactions.
-
-
-
-	After they are read in from a file substrates are stored in a substrate object that store the index of the molecule, the free energy of creation, the name, the chemical formula, the charge, and a list of reactions it is involved in. This list is generated when reading in the reactions from the file provided.
-	
-	Reactions are stored in reaction objects that store the index, the substrates  (starting compounds), the products  (final compounds), the free energy change at standard conditions, the free energy change at the current conditions (calculated later), and the neighbouring reactions (calculated later) of the reaction. The free energy change of reactions is recalculated at the beginning of each run as described in Section \ref{sub:The free energy change}
-	
-	The original idea was to store the reaction network as a Graph object provided by the Boost Graph Library \cite{boostlibraries}. This was a feature rich graph implementation that allowed searching for neighbouring reactions that can be added (EXPLAINED LATER), however as it uses sophisticated methods (TALK ABOUT TEMPLATES?) to store the  graphs and therefore for the evolution of a single organism it could only calculate approximately 2 generations per second. 
-	
-	To speed up the calculations simple vectors were used to store the compound and reaction objects, such that each compound object contained a list of the reactions it appears in. Using this at the beginning of the program a neighbour-list was generated that for every reaction contained a list of neighbouring reactions, that share at least 1 compound with it (excluding internal metabolites). (EXAMPLE?) Using this neighbour-list the program was now able to handle $\sim 100$ generations per second. 
 \subsection{Calculating the free energy change}
 \label{sub:The free energy change}
 The physics of the formula to calculate it. The role of deciding the direction of reactions.  $\rightarrow$ valid ranges  that can be changed at the beginning of the program.
@@ -184,17 +169,6 @@ The physics of the formula to calculate it. The role of deciding the direction o
 	\label{environmentTable}
 	\end{table}
 
-\subsection{Random number generation}
-\label{sub:Random number generation}
-
-Good quality random numbers $\rightarrow$ mt19937 Mersenne Twister. Reproducibility is important $\rightarrow$ seeds always known. 
-
-As one of the main components of the process of evolution is the random mutations when cells divide, we will need to use random numbers in the program. Generating true random numbers is a cumbersome process, that uses an inherently random physical process (eg. thermal or atmospheric noise, radioactive decay counts, or quantum phenomena \cite{truerandom}) to produce random numbers. For most applications however it suffices to use Pseudo Random Number Generators (PRNG-s) to generate numbers that appear random, in a sense that they pass certain tests of randomness \cite[]{randomtests}. These PRNG-s use an initial value called seed (or multiple initial values), the knowledge of which allows anyone to calculate any element of the series of pseudorandom numbers. In applications where there is need for the unpredictability of the series (eg. cryptography) the seed(s) is chosen using a process that is considered to be random (eg. the time held by the computer's clock in nanoseconds, or the movement of the mouse under a sufficiently long time).
-
-In our case there is no need for such unpredictability, on the contrary, we would like the evolutions of populations to be reproducible (either by ourselves, for error checking, or by other researchers), however we would like to simulate multiple populations of cells with different underlying random numbers (to be independent from each other). This is easy to achieve, by using consecutive integers as seeds for the different parallel runs, and noting these numbers in the files produced by the program. This way if we start two populations using the same seed (and the same initial conditions) the results of the two simulations will be identical. 
-
-PRNG-s generate use the seeds to initialize their internal state, which is a set of bits the generator uses and changes whenever it produces a new pseudorandom number. As the internal state consists of a finite number of bits, given enough pseudorandom numbers are requested from the generator, the outputs will start to repeat themselves. The number of pseudorandom numbers we can get from a PRNG without repetition is called it's period. The default PRNG in C++ (\texttt{rand()}) has a period of $2^{32}$. As we would like to simulate the populations of cells for more than $2^{32}$ reproductions, we use the Mersenne Twister \cite{mersennetwister} generator, provided by the Boost C++ Libraries \cite{boostlibraries}. This generator is fast, provides high-quality pseudorandom numbers and has a period of $2^{19937}-1$, and will therefore provide more than enough random numbers for our simulations. In addition the Boost implementation is capable of producing both integers, and reals on given intervals. 
-
 
 
 
@@ -218,7 +192,7 @@ Detailed description $\rightarrow$ equations, example matrix? Which fluxes are f
 
 	When using flux balance analysis we represent the MB as a stoichiometric matrix $S$ ($m\times n$), with each row corresponding to a compound in the network ($n$ compounds), and each column corresponding to a reaction ($m$ reactions). In each column we have the stoichiometric coefficients of the given reaction that correspod to the compound of the given row. Negative stochiometric coefficients are used for the metabolites consumed, positive for those produced, and zeros for the metabolites that do not participate in the given reaction.
  
-	The steady state assumption of the method means that the amount of any given compound produced in the reactions should equal the amount consumed by other reactions, except for some special compounds. These compounds are considered the nutrients and the end-products of a metabolic network. For example the nutrients of our network is FIRST COMPOUND, water and $O_2$, while it's end producs are pyruvate and $CO_2$. To incorporate compounds that can have a non-zero change in CONCENTRATION could be introduced to flux balance analysis could be done through relaxing the constraint that the EQUATION-s of these compounds have to equal zero. This introduces complications, as often the amount of certain compounds produced appear in the goal function  $Z=\mathbf{c}^T \mathbf{v}$. To overcome this we introduce auxiliarry reactions to the stochiometric matrix $S$, for the compounds the cell consumes and produces. Such an auxiliary reaction is for example $ \rightarrow H_2O$, that "creates water out of nothing", or in other words corresponds to the potential water intake of the cell.
+	The steady state assumption of the method means that the amount of any given compound produced in the reactions should equal the amount consumed by other reactions, except for some special compounds. These compounds are considered the nutrients and the end-products of a metabolic network. For example the nutrients of our network is FIRST COMPOUND, water and $O_2$, while it's end producs are pyruvate and $CO_2$. To incorporate compounds that can have a non-zero change in CONCENTRATION could be introduced to flux balance analysis could be done through relaxing the constraint that the EQUATION-s of these compounds have to equal zero. This introduces complications, as often the amount of certain compounds produced appear in the goal function  $Z=\mathbf{c}^T \mathbf{v}$. To overcome this we introduce auxiliarry reactions to the stochiometric matrix $S$, for the compounds the cell consumes and produces. Such an auxiliary reaction is for example $ \rightarrow H_2O$, that "creates water out of nothing", or in other words corresponds to the potential water intake of the cell ENABLING THE CELL TO TAKE UP WATER?
 
 	As the fluxes are calculated on an arbitrary scale, we can impose an arbitrary bound on the fluxes of real (non-auxillary) reactions. Constraints are imposed on the flux of each reaction, depending on the free energy change of them (for the $m$th reaction the flux $v_m$ has to satisfy $0\leq v_m \leq 1 $ if $\Delta G \leq -L$~eV, $-1\leq v_m \leq 0 $ if $\Delta G \geq L$~eV. As in the real world the reactions happening in a cell are usually reversible with (an example for this is is the reaction of carbonic acid and water H$_2$CO$_3$$_{(l)}$ + H$_2$O$_{(l)} \leftrightarrows$ HCO$^-_3$$_{(aq)}$+H$_3$O$^+$$_{(aq)}$), I allow reactions with free energy change between a constant $-L$ and $L$ eV to happen in any direction. Currently the value of $L=10$~eV but it is a parameter easily changed in the program. 
 
@@ -256,7 +230,7 @@ Detailed balance equation
 \label{ssub:Competition}
 Goal functions? $\rightarrow$ changing goal functions? Talk about trial networks (ethanol producing)?
 
-\subsection{Visualization of metabolic pathways}
+\subsection{Data analysis}
 \label{sub:visualization}
 
 the use of Cytoscape $\rightarrow$ xgmml format and the  program part to output that
@@ -267,9 +241,6 @@ How to store the population, how to choose which one to mutate (as in \ref{ssub:
 
 New method of storing indexes only. Include the previous method too?
 
-\subsubsection{Parallel simulations}
-\label{ssub:Paralell simulations}
-Multiple populations with same initial network  run parallel$\rightarrow$ different random seed. Cplab machines, talk about the distributing/collecting scripts?
 
 
 \subsection{Comparing populations}
@@ -284,6 +255,42 @@ How to calculate, why is it useful? Can be calculated for nonzero flux reactions
 \subsubsection{Inverse participation ratio}
 \label{ssub:Inverse participation ratio}
 IPR vs Entropy
+
+\subsection{Technical bits RENAME}
+\label{sub:technical_bits_rename}
+
+\subsection{Random number generation}
+\label{sub:Random number generation}
+
+Good quality random numbers $\rightarrow$ mt19937 Mersenne Twister. Reproducibility is important $\rightarrow$ seeds always known. 
+
+As one of the main components of the process of evolution is the random mutations when cells divide, we will need to use random numbers in the program. Generating true random numbers is a cumbersome process, that uses an inherently random physical process (eg. thermal or atmospheric noise, radioactive decay counts, or quantum phenomena \cite{truerandom}) to produce random numbers. For most applications however it suffices to use Pseudo Random Number Generators (PRNG-s) to generate numbers that appear random, in a sense that they pass certain tests of randomness \cite[]{randomtests}. These PRNG-s use an initial value called seed (or multiple initial values), the knowledge of which allows anyone to calculate any element of the series of pseudorandom numbers. In applications where there is need for the unpredictability of the series (eg. cryptography) the seed(s) is chosen using a process that is considered to be random (eg. the time held by the computer's clock in nanoseconds, or the movement of the mouse under a sufficiently long time).
+
+In our case there is no need for such unpredictability, on the contrary, we would like the evolutions of populations to be reproducible (either by ourselves, for error checking, or by other researchers), however we would like to simulate multiple populations of cells with different underlying random numbers (to be independent from each other). This is easy to achieve, by using consecutive integers as seeds for the different parallel runs, and noting these numbers in the files produced by the program. This way if we start two populations using the same seed (and the same initial conditions) the results of the two simulations will be identical. 
+
+PRNG-s generate use the seeds to initialize their internal state, which is a set of bits the generator uses and changes whenever it produces a new pseudorandom number. As the internal state consists of a finite number of bits, given enough pseudorandom numbers are requested from the generator, the outputs will start to repeat themselves. The number of pseudorandom numbers we can get from a PRNG without repetition is called it's period. The default PRNG in C++ (\texttt{rand()}) has a period of $2^{32}$. As we would like to simulate the populations of cells for more than $2^{32}$ reproductions, we use the Mersenne Twister \cite{mersennetwister} generator, provided by the Boost C++ Libraries \cite{boostlibraries}. This generator is fast, provides high-quality pseudorandom numbers and has a period of $2^{19937}-1$, and will therefore provide more than enough random numbers for our simulations. In addition the Boost implementation is capable of producing both integers, and reals on given intervals. 
+
+
+\subsection{Storing the reaction network}
+\label{sub:Storing the reaction network}
+Structure of the input files -$\rightarrow$ algorithm to read them in $\rightarrow$ store them. 
+
+The neighbour list and it's use in adding reactions.
+
+
+
+	After they are read in from a file substrates are stored in a substrate object that store the index of the molecule, the free energy of creation, the name, the chemical formula, the charge, and a list of reactions it is involved in. This list is generated when reading in the reactions from the file provided.
+	
+	Reactions are stored in reaction objects that store the index, the substrates  (starting compounds), the products  (final compounds), the free energy change at standard conditions, the free energy change at the current conditions (calculated later), and the neighbouring reactions (calculated later) of the reaction. The free energy change of reactions is recalculated at the beginning of each run as described in Section \ref{sub:The free energy change}
+	
+	The original idea was to store the reaction network as a Graph object provided by the Boost Graph Library \cite{boostlibraries}. This was a feature rich graph implementation that allowed searching for neighbouring reactions that can be added (EXPLAINED LATER), however as it uses sophisticated methods (TALK ABOUT TEMPLATES?) to store the  graphs and therefore for the evolution of a single organism it could only calculate approximately 2 generations per second. 
+	
+	To speed up the calculations simple vectors were used to store the compound and reaction objects, such that each compound object contained a list of the reactions it appears in. Using this at the beginning of the program a neighbour-list was generated that for every reaction contained a list of neighbouring reactions, that share at least 1 compound with it (excluding internal metabolites). (EXAMPLE?) Using this neighbour-list the program was now able to handle $\sim 100$ generations per second. 
+
+\subsubsection{Parallel simulations}
+\label{ssub:Paralell simulations}
+Multiple populations with same initial network  run parallel$\rightarrow$ different random seed. Cplab machines, talk about the distributing/collecting scripts?
+
 
 
 \section{Results}
