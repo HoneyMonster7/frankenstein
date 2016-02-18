@@ -207,65 +207,18 @@ Detailed description $\rightarrow$ equations, example matrix? Which fluxes are f
 
 	To calculate the throughput of the metabolic network of my organisms I use flux balance analysis \cite{whatisfluxbalance}. This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it I make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
 	
-	The goal of flux balance analysis is to calculate the steady state fluxes ($\mathbf{v}$) through all the reactions subject to some constraints, (described later in this section), while maximizing a function $Z=\mathbf{c}^T \mathbf{v}$ of the fluxes. 
+	The goal of flux balance analysis is to calculate the steady state fluxes ($\mathbf{v}$) through all the reactions subject to some constraints, (described later in this section), while maximizing a function $Z=\mathbf{c}^T \mathbf{v}$ of the fluxes in the solution space allowed by the constraints. 
+
+	\begin{figure}[t]
+		\centering
+		\includegraphics[width=0.8\linewidth]{fba_frompaper.png}
+		\caption{The process of flux balance analysis. First we apply the steady state constraints along with FURTHER CONSTRAINTS on the fluxes, then we maximize the goal function in the allowable solution space found. Figure from \cite[]{whatisfluxbalance} }
+		\label{fig:fluxbalance}
+	\end{figure}
 
 	When using flux balance analysis we represent the MB as a stoichiometric matrix $S$ ($m\times n$), with each row corresponding to a compound in the network ($n$ compounds), and each column corresponding to a reaction ($m$ reactions). In each column we have the stoichiometric coefficients of the given reaction that correspod to the compound of the given row. Negative stochiometric coefficients are used for the metabolites consumed, positive for those produced, and zeros for the metabolites that do not participate in the given reaction.
  
 	The steady state assumption of the method means that the amount of any given compound produced in the reactions should equal the amount consumed by other reactions, except for some special compounds. These compounds are considered the nutrients and the end-products of a metabolic network. For example the nutrients of our network is FIRST COMPOUND, water and $O_2$, while it's end producs are pyruvate and $CO_2$. To incorporate compounds that can have a non-zero change in CONCENTRATION could be introduced to flux balance analysis could be done through relaxing the constraint that the EQUATION-s of these compounds have to equal zero. This introduces complications, as often the amount of certain compounds produced appear in the goal function  $Z=\mathbf{c}^T \mathbf{v}$. To overcome this we introduce auxiliarry reactions to the stochiometric matrix $S$, for the compounds the cell consumes and produces. Such an auxiliary reaction is for example $ \rightarrow H_2O$, that "creates water out of nothing", or in other words corresponds to the potential water intake of the cell.
-
-	As an example for such a stochiometric matrix we show that of a simple network that was used for testing the part of the algorithm that executes flux balance analysis. Let us consider the metabolic network shown on Figure \ref{fig:examplenetwork}. The metabolites (in green) have been denoted by letters A, B and D. MAKE CO2 RED!!! The stochiometric matrix of this metabolic network is shown at Equation~\ref{eq:examplematrix} (below). The metabolites each row corresponds to are shown on the LHS of the matrix. The first three columns of the matrix correspond to reactions $5151$, $5133$ and $131$ respectively. The other columns correspond to auxilliary reactions, providing the nutrient of the network (A), removing the end-product (lactate), providing water, providing CO$_2$, and converting ATP to ADP. 
-
-\begin{figure}[t]
-	\centering
-	\includegraphics[width=0.5\linewidth]{initial_network_ABC.png}
-	\caption{Example of a simple network. Reactions: light blue, metabolites: green, nutrient: light green, end-product: yellow, internal metabolites:red}
-	\label{fig:examplenetwork}
-\end{figure}
-
-	\begin{equation}
-	\begin{matrix}
-		\texttt{A}   \\
-		\texttt{B}\\
-		\texttt{D}\\
-		\texttt{lactate}\\
-		\texttt{water}\\
-		\texttt{CO}_2\\
-		\texttt{ATP}\\
-		\texttt{ADP}
-	\end{matrix}
-	,S=
-	\begin{pmatrix}
-			%\hline Fluxes: & 1 & 1 & 1 & 1 & 1 & 3 & -3 & \color{red} $\mathbf{1}$ \\
-			%\hline	Reaction: & 5151& 5143 & 131 & \multicolumn{4}{c|}{Auxiliary }& Target \\
-			  -1 &  0 &  0 & +1 &  0 &  0 & 0 & 0 & \\ 
-			  +1 & -1 &  0 &  0 &  0 &  0 & 0 &0 &  \\ 
-			  0 & +1 & -1 &  0 &  0 &  0 & 0 & 0 & \\ 
-			  0  &  0 & +1 &  0 & -1 &  0 & 0 & 0 & \\ 
-			  -1 & -1 &  0 &  0 &  0 &+1  & 0 & 0 & \\ 
-			  +1 & +1 &  0 &  0 &  0 &  0 & +1&0 &  \\ 
-			  0 & +1 &  0 &  0 &  0 & 0 &0 & -1 &\\ 
-			  0 & -1 &  0 &  0 &  0 & 0 &0 & +1 & \\ 
-			  
-		\end{pmatrix} 
-		\label{eq:examplematrix}
-	\end{equation}
-
-
-	Flux balance analysis finds the set of fluxes $\mathbf{v}=\left( v_1,v_2,...,v_m \right)$, that satisfy $S\mathbf{v}=\mathbf{0}$ and maximize the goal function $f \left( \mathbf{v} \right)$. The linear equations that are implied by $S\mathbf{v}=\mathbf{0}$ for the example network of Figrue \ref{fig:examplenetwork} are shown below, at Equation \ref{eq:lineqs}. Constraints on the system are imposed in two ways. Firstly by $S\mathbf{v}=0$ we require that the fluxes represent the steady state solution, and secondly by restricting the values of $v_i$ by inequalities ($v_{lower,i}\leq v_i \leq v_{higher,i}$) we can restrict the flux of individual reactions, their directions, and the amount of COMPOUNDS the cell can take up and dispose of. 
-	
-
-	\begin{equation}\label{eq:lineqs}
-		\begin{matrix}
-			- v_1+v_4=0 \\
-			v_1-v_2=0 \\
-			v_2-v_3=0 \\
-			v_3-v_5=0 \\
-			-v_1-v_2+v_6=0 \\
-			v_1+v_2+v_7=0 \\
-			v_2-v_8=0 \\
-			-v_2+v_8=0
-		\end{matrix}
-	\end{equation}
 
 	As the fluxes are calculated on an arbitrary scale, we can impose an arbitrary bound on the fluxes of real (non-auxillary) reactions. Constraints are imposed on the flux of each reaction, depending on the free energy change of them (for the $m$th reaction the flux $v_m$ has to satisfy $0\leq v_m \leq 1 $ if $\Delta G \leq -L$~eV, $-1\leq v_m \leq 0 $ if $\Delta G \geq L$~eV. As in the real world the reactions happening in a cell are usually reversible with (an example for this is is the reaction of carbonic acid and water H$_2$CO$_3$$_{(l)}$ + H$_2$O$_{(l)} \leftrightarrows$ HCO$^-_3$$_{(aq)}$+H$_3$O$^+$$_{(aq)}$), I allow reactions with free energy change between a constant $-L$ and $L$ eV to happen in any direction. Currently the value of $L=10$~eV but it is a parameter easily changed in the program. 
 
@@ -335,6 +288,67 @@ IPR vs Entropy
 
 \section{Results}
 \label{sec:results}
+
+
+\subsection{Example of flux balance analysis}
+\label{sub:example_of_flux_balance_analysis}
+
+
+	As an example for such a stochiometric matrix we show that of a simple network that was used for testing the part of the algorithm that executes flux balance analysis. Let us consider the metabolic network shown on Figure \ref{fig:examplenetwork}. The metabolites (in green) have been denoted by letters A, B and D. MAKE CO2 RED!!! The stochiometric matrix of this metabolic network is shown at Equation~\ref{eq:examplematrix} (below). The metabolites each row corresponds to are shown on the LHS of the matrix. The first three columns of the matrix correspond to reactions $5151$, $5133$ and $131$ respectively. The other columns correspond to auxilliary reactions, providing the nutrient of the network (A), removing the end-product (lactate), providing water, providing CO$_2$, and converting ATP to ADP. 
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.5\linewidth]{initial_network_ABC.png}
+	\caption{Example of a simple network. Reactions: light blue, metabolites: green, nutrient: light green, end-product: yellow, internal metabolites:red}
+	\label{fig:examplenetwork}
+\end{figure}
+
+	\begin{equation}
+	\begin{matrix}
+		\texttt{A}   \\
+		\texttt{B}\\
+		\texttt{D}\\
+		\texttt{lactate}\\
+		\texttt{water}\\
+		\texttt{CO}_2\\
+		\texttt{ATP}\\
+		\texttt{ADP}
+	\end{matrix}
+	,S=
+	\begin{pmatrix}
+			%\hline Fluxes: & 1 & 1 & 1 & 1 & 1 & 3 & -3 & \color{red} $\mathbf{1}$ \\
+			%\hline	Reaction: & 5151& 5143 & 131 & \multicolumn{4}{c|}{Auxiliary }& Target \\
+			  -1 &  0 &  0 & +1 &  0 &  0 & 0 & 0 & \\ 
+			  +1 & -1 &  0 &  0 &  0 &  0 & 0 &0 &  \\ 
+			  0 & +1 & -1 &  0 &  0 &  0 & 0 & 0 & \\ 
+			  0  &  0 & +1 &  0 & -1 &  0 & 0 & 0 & \\ 
+			  -1 & -1 &  0 &  0 &  0 &+1  & 0 & 0 & \\ 
+			  +1 & +1 &  0 &  0 &  0 &  0 & +1&0 &  \\ 
+			  0 & +1 &  0 &  0 &  0 & 0 &0 & -1 &\\ 
+			  0 & -1 &  0 &  0 &  0 & 0 &0 & +1 & \\ 
+			  
+		\end{pmatrix} 
+		\label{eq:examplematrix}
+	\end{equation}
+
+
+	Flux balance analysis finds the set of fluxes $\mathbf{v}=\left( v_1,v_2,...,v_m \right)$, that satisfy $S\mathbf{v}=\mathbf{0}$ and maximize the goal function $f \left( \mathbf{v} \right)$. The linear equations that are implied by $S\mathbf{v}=\mathbf{0}$ for the example network of Figrue \ref{fig:examplenetwork} are shown below, at Equation \ref{eq:lineqs}. Constraints on the system are imposed in two ways. Firstly by $S\mathbf{v}=0$ we require that the fluxes represent the steady state solution, and secondly by restricting the values of $v_i$ by inequalities ($v_{lower,i}\leq v_i \leq v_{higher,i}$) we can restrict the flux of individual reactions, their directions, and the amount of COMPOUNDS the cell can take up and dispose of. 
+	
+
+	\begin{equation}\label{eq:lineqs}
+		\begin{matrix}
+			- v_1+v_4=0 \\
+			v_1-v_2=0 \\
+			v_2-v_3=0 \\
+			v_3-v_5=0 \\
+			-v_1-v_2+v_6=0 \\
+			v_1+v_2+v_7=0 \\
+			v_2-v_8=0 \\
+			-v_2+v_8=0
+		\end{matrix}
+	\end{equation}
+
+
 
 \subsection{Similar networks reached in parallel runs}
 \label{sub:similar_networks_reached_in_paralell_runs}
