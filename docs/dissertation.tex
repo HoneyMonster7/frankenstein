@@ -52,9 +52,9 @@
 	\subsection{Metabolic networks as graphs}
 	Thorough mathematical investigation of these networks reveal interesting topological properties, that make them similar to eg. the social network of humans or the internet. These are small world character, scale-freeness, error-tolerance \cite{largescale} and modularity .
 	
-	A small-world network \cite{smallworld} is one in which the number of steps to connect any given pair of nodes (in our case chemical compounds) is small, and this number stays constant even as the network grows. In case of the human social networks this is known as the six degrees of separation \cite{sixdegrees}.
+	A small-world network \cite{smallworld} is one in which the number of steps to connect any given pair of nodes (in our case chemical compounds) is small, and this number stays constant even as the network grows. In case of the human social networks this is colloquially known as the six degrees of separation \cite{sixdegrees}.
 	 
-	In a scale-free network the connectivity (the probability that a uniformly chosen node is connected to $n$ other nodes) is $P(n)=n^{-V}$ for some constant $V$, resulting in a few highly connected nodes (Hubs) and many scarcely connected nodes. This provides error-tolerance against random errors to the network, as unless a hub is removed, the performance doesn't decrease significantly. It also makes the network different from a random graph \cite{randomgraphs}, where every node is connected with a constant probability $p$, resulting in a Poisson distribution for the connectivity ($P(n) \approx e^{-n}$), as well as from a regular lattice, where every node is connected to a constant number of other nodes.
+	In a scale-free network the connectivity (the probability that a uniformly chosen node is connected to $n$ other nodes) is $P(n)=n^{-\gamma}$ for some constant $\gamma$, resulting in a few highly connected nodes (Hubs) and many scarcely connected nodes. This provides error-tolerance against random errors to the network, as unless a hub is removed, the performance doesn't decrease significantly. It also makes the network different from a random graph \cite{randomgraphs}, where every node is connected with a constant probability $p$, resulting in a Poisson distribution for the connectivity ($P(k) \approx \frac{\lambda^k e^{-\lambda}}{k!} $), as well as from a regular lattice, where every node is connected to a constant number of other nodes.
 	  
 	Modules are "by definition, a discrete entity whose function is separable from those of other modules" \cite{modulardef}. Within a module, generally there are multiple possible pathways to achieve the same goal using so called precursor molecules. The module first converts it's input to precursors, and then these are converted to the final product of the module. Usually the module also has the capability to transform precursors to other precursors, providing redundancy to the pathways. Precursors are useful, as if the module lacks one of it's inputs, it is possible that through the conversion of other precursors it can still be functional (even if it functions at a reduced efficiency). Precursors also help evolution, and adaptation, as if the module can use one type of input and process it to precursors, a similar molecule can also be easily converted to the same precursor using perhaps a few additional reactions. Eg. if the cell is capable of processing glucose, using the same enzymatic pathways it is also capable of processing 40 other similar molecules \cite{latent}.
 	
@@ -76,12 +76,6 @@
 	Horizontal gene transfer is a method allowing Bacteria and Archaea to exchange genetic material between cells. This is thought to be the main reason why bacteria can "learn" from each other eg. resistance to antibiotics \cite{horizontalAntibiotics}\cite{horizontalgenetransfer}.
 	
 	
-	
-	\subsection{Simulation}
-	
-	To simulate evolution on a computer we need three things: replication, mutation and competition. Algorithms empowered by the evolutionary principles \cite{evolutionaryalgorithms} are used every day now to find optimal solutions to problems in all fields of science. These algorithms need a function for which to optimize the given system, called the goal function. The goal function of real-world cells is rather complex, with goals reaching from growth to reproduction. Translating these goals to the language of mathematics and computers is not an easy task. \cite{complexfeatures} sets the execution of more complex logical operations as a goal for the digital organisms in question. \cite{evolutioncomplex} use the import of precursors and their procession to more complex molecules as the goal function. 
-	
-	In my simulations I consider the rate of ADP-ATP conversion as the goal function after \cite{BartekLower}, however later I plan to experiment with different goal functions that also consider the amount of carbon products produced (that can be used for building the cell). 
 	
 	\subsection{Artificial chemistries}
 	\label{sub:artificial_chemistries}
@@ -413,6 +407,12 @@ Too simple goal function
 
 
 %	\iffalse
+%	
+%	\subsection{Simulation not needed}
+%	
+%	To simulate evolution on a computer we need three things: replication, mutation and competition. Algorithms empowered by the evolutionary principles \cite{evolutionaryalgorithms} are used every day now to find optimal solutions to problems in all fields of science. These algorithms need a function for which to optimize the given system, called the goal function. The goal function of real-world cells is rather complex, with goals reaching from growth to reproduction. Translating these goals to the language of mathematics and computers is not an easy task. \cite{complexfeatures} sets the execution of more complex logical operations as a goal for the digital organisms in question. \cite{evolutioncomplex} use the import of precursors and their procession to more complex molecules as the goal function. 
+%	
+%	In my simulations I consider the rate of ADP-ATP conversion as the goal function after \cite{BartekLower}, however later I plan to experiment with different goal functions that also consider the amount of carbon products produced (that can be used for building the cell). 
 %	
 %	\section{trol}
 %	The core of the energy producing metabolic pathways of organisms are very similar, for all three domains of life, however there are many pathways that are chemically viable.  The throughput of these pathways greatly influences the fitness of any given organism. 
