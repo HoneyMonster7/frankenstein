@@ -164,7 +164,7 @@ The physics of the formula to calculate it. The role of deciding the direction o
 		\Delta G = \Delta G^0 + R T \ln \frac{[C]^{n_3}[D]^{n_4}}{[A]^{n_1}[B]^{n_2}}
 	\end{equation}
 	
-	At the beginning of the program the reactions are read in from a file, and the free energy changes are re-calculated for the specified conditions as in Table \ref{environmentTable}. 
+	At the beginning of the program the reactions are read in from a file, and the free energy changes are re-calculated for the specified conditions as in Table \ref{environmentTable}. UPDATE
 	
 	\begin{table}
 		\centering
@@ -200,9 +200,9 @@ The possible mutations, why it makes sense to use only these, and possible other
 
 INTRO SENTENCE
 
-	The real evolution of the genomes of organisms uses a variety of methods as discussed in Section \ref{chap:evolution}. Of these, my cells use point mutations, that either add or delete a reaction that is currently available to them. Simply adding a reaction to those available to the cell at random from the list of all the reactions is unlikely to result in a reaction that would be used by the cell, as with a high probability the added reaction would use reactants that are not present in the cell, and produce compounds that are not used in it. As discussed in Section \ref{sub:Flux Balance analysis} the flux through these reactions would be zero. Therefore when adding reactions, I only consider those that already link to the current reactions, either by using a compound that is currently produced by the network, or providing one that it consumes. EXAMPLE? This way the graph of the reactions and compounds available to the cell stays a connected graph (disregarding deletions). Choosing the list of reactions that can be added uses the neighbour-list defined in Section \ref{sub:Storing the reaction network}. When deleting a reaction every currently available reaction has equal probability of being deleted. This can in theory result in DISCONNECTED graphs, but as the deletion causing such a graph usually results in a performance drop, and therefore such a reaction network will be outcompeted by it's connected peers, at a rate MORAN PROCESS?
-
-\subsubsection{Reproduction TO BE DELETED}
+	The real evolution of the genomes of organisms uses a variety of methods as discussed in Section \ref{chap:evolution}. Of these, my cells use point mutations, that either add or delete a reaction that is currently available to them. Simply adding a reaction to those available to the cell at random from the list of all the reactions is unlikely to result in a reaction that would be used by the cell, as with a high probability the added reaction would use reactants that are not present in the cell (the added reaction would be disconnected from the current MN), and produce compounds that are not used in it. As discussed in Section \ref{sub:Flux Balance analysis} the flux through these reactions would be zero. Therefore when adding reactions, I only consider those that are linked  to one of the current reactions, either by using a compound that  the network is capable of producing, or providing one that it can consume. EXAMPLE FOR TRIAL NETWORK USED IN FBA SECTION? This way the graph of the reactions and compounds available to the cell stays a connected graph (disregarding deletions). Choosing the list of reactions that can be added uses the neighbour-list defined in Section \ref{sub:Storing the reaction network}. When deleting a reaction every currently available reaction has equal probability of being deleted. This can and does result in DISCONNECTED graphs, but such disconnected parts are usually small, otherwise they bear too high a cost to maintain (COSt OF REACTIONS).  
+	
+	\subsubsection{Reproduction TO BE DELETED}
 \label{ssub:Reproduction}
 survival of the fittest using the Moran process - Metropolis algorithm?
 Moran process - reversible markov chain
