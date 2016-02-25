@@ -162,8 +162,8 @@ int main(int argc, char **argv)
 	//this is the k value for the fitness function
 	cell::smallKforFitness=1e-3;
 	//don't add nrofinternalmetabolites here
-	cell::sourceSubstrate=104;
-	cell::sinkSubstrate=54;
+	cell::sourceSubstrate.push_back(104);
+	cell::sinkSubstrate.push_back(54);
 
 
 	cell trialcell(subset);
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
 
 
 		int NRofCheckpoints=10;
-		int checkPointLength=6000000;
+		int checkPointLength=10000;
 		const int generationsPerWriteout=10000;
 		double previousAvgFittness=cellVector[0].getPerformance();
 

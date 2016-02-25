@@ -7,8 +7,8 @@
 std::vector<reaction> cell::reactionVector;
 std::vector<substrate> cell::substrateVector;
 int cell::nrOfInternalMetabolites;
-int cell::sourceSubstrate;
-int cell::sinkSubstrate;
+std::vector<int> cell::sourceSubstrate;
+std::vector<int> cell::sinkSubstrate;
 double cell::smallKforFitness;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
@@ -99,18 +99,23 @@ void cell::printXGMML(std::string filename){
 	}
 
 
-	std::string sourceName=substrateVector[sourceSubstrate+nrOfInternalMetabolites].niceSubstrateName();
-	std::string sinkName=substrateVector[sinkSubstrate+nrOfInternalMetabolites].niceSubstrateName();
+	for (auto sourceSubstrate_one:sourceSubstrate){
+		std::string sourceName=substrateVector[sourceSubstrate_one+nrOfInternalMetabolites].niceSubstrateName();
 
-	compoundIDs.erase(sourceSubstrate);
-	compoundIDs.erase(sinkSubstrate);
-	xgmmlFile<<"<node label=\""<<sourceName<<"\" id=\""<<sourceSubstrate+nrOfInternalMetabolites<<"\">"<<std::endl;
-	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Source\"/>"<<std::endl;
-	xgmmlFile<<"</node>"<<std::endl;
-	xgmmlFile<<"<node label=\""<<sinkName<<"\" id=\""<<sinkSubstrate+nrOfInternalMetabolites<<"\">"<<std::endl;
-	xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Sink\"/>"<<std::endl;
-	xgmmlFile<<"</node>"<<std::endl;
+		compoundIDs.erase(sourceSubstrate_one);
+		xgmmlFile<<"<node label=\""<<sourceName<<"\" id=\""<<sourceSubstrate_one+nrOfInternalMetabolites<<"\">"<<std::endl;
+		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Source\"/>"<<std::endl;
+		xgmmlFile<<"</node>"<<std::endl;
+	}
 
+	for (auto sinkSubstrate_one:sinkSubstrate){
+		std::string sinkName=substrateVector[sinkSubstrate_one+nrOfInternalMetabolites].niceSubstrateName();
+
+		compoundIDs.erase(sinkSubstrate_one);
+		xgmmlFile<<"<node label=\""<<sinkName<<"\" id=\""<<sinkSubstrate_one+nrOfInternalMetabolites<<"\">"<<std::endl;
+		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Sink\"/>"<<std::endl;
+		xgmmlFile<<"</node>"<<std::endl;
+	}
 
 	//looping through all the internalMet names writing them into the type file, removing them from the substrate list
 	while(!internalMetIDs.empty()){
@@ -523,8 +528,12 @@ double cell::calcThroughput(){
 	for(int metab=0; metab<nrOfInternalMetabolites; metab++){substrateSet.erase(metab);}
 
 	//in order to always have the source and sink nodes
-	substrateSet.insert(sinkSubstrate+nrOfInternalMetabolites);
-	substrateSet.insert(sourceSubstrate+nrOfInternalMetabolites);
+	for(int sinkSubstrate_one:sinkSubstrate){
+		substrateSet.insert(sinkSubstrate_one+nrOfInternalMetabolites);
+	}
+	for(int sourceSubstrate_one:sourceSubstrate){
+		substrateSet.insert(sourceSubstrate_one+nrOfInternalMetabolites);
+	}
 		
 	while(!substrateSet.empty()){
 
@@ -551,7 +560,7 @@ double cell::calcThroughput(){
 	}
 	//extra column for the imaginary reaction getting rid of the final compound (objective function)
 	int listSize=availableReactions.size();
-	glp_add_cols(lp,listSize+6);
+	glp_add_cols(lp,listSize+4+sinkSubstrate.size()+sourceSubstrate.size());
 
 	//for(int i=1; i<=listSize+4; i++){ glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);}
 
@@ -619,32 +628,36 @@ double cell::calcThroughput(){
 
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
-	//adding source substrate
-	ia.push_back(substrateIndex[sourceSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
 	//adding water
-	ia.push_back(substrateIndex[-1+nrOfInternalMetabolites]);	ja.push_back(listSize+2); ar.push_back(1.0);
+	ia.push_back(substrateIndex[-1+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
 	//adding or removing co2
-	ia.push_back(substrateIndex[-2+nrOfInternalMetabolites]);	ja.push_back(listSize+3); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[-2+nrOfInternalMetabolites]);	ja.push_back(listSize+2); ar.push_back(-1.0);
 	//adding ADP
-	ia.push_back(substrateIndex[-6+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(1.0);
+	ia.push_back(substrateIndex[-6+nrOfInternalMetabolites]);	ja.push_back(listSize+3); ar.push_back(1.0);
 	//removing ATP
-	ia.push_back(substrateIndex[-7+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(-1.0);
-	//removing the sink substrate
-	ia.push_back(substrateIndex[sinkSubstrate+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
-
+	ia.push_back(substrateIndex[-7+nrOfInternalMetabolites]);	ja.push_back(listSize+3); ar.push_back(-1.0);
 	//adding NadOx
-	ia.push_back(substrateIndex[-3+nrOfInternalMetabolites]);	ja.push_back(listSize+6); ar.push_back(1.0);
+	ia.push_back(substrateIndex[-3+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(1.0);
 	//removing Nad_red
-	ia.push_back(substrateIndex[-4+nrOfInternalMetabolites]);	ja.push_back(listSize+6); ar.push_back(-1.0);
+	ia.push_back(substrateIndex[-4+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
+	//removing the sink substrate
+	for (int sinkIndex=0; sinkIndex<sinkSubstrate.size(); ++sinkIndex){
+		ia.push_back(substrateIndex[sinkSubstrate[sinkIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+sinkIndex+1); ar.push_back(-1.0);
+	}
+	//adding source substrates
+	for (int sourceIndex=0; sourceIndex<sourceSubstrate.size(); ++sourceIndex){
+		ia.push_back(substrateIndex[sourceSubstrate[sourceIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+sinkSubstrate.size()+sourceIndex+1); ar.push_back(1.0);
+	}
+
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
 	//ia.push_back(88+14);	ja.push_back(listSize+3); ar.push_back(1.0);
 	//
 	//target is to maximize the imaginary reactions throughput of the ADP->ATP reaction
-	//glp_set_obj_coef(lp,listSize+5,1.0);
+	glp_set_obj_coef(lp,listSize+3,1.0);
 
 	//target is to maximize the imaginary reactions throughput of the ADP->ATP reaction
-	glp_set_obj_coef(lp,listSize+5,0.5);
-	glp_set_obj_coef(lp,listSize+4,0.5);
+	//glp_set_obj_coef(lp,listSize+3,0.5);
+	//glp_set_obj_coef(lp,listSize+4,0.5);
 
 	//creating the arrays now
 	int length=ia.size();

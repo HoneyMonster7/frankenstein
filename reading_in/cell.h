@@ -39,7 +39,7 @@ class cell{
 			 std::vector<double> fluxThroughReacs;
 	public: 
 
-			static int sourceSubstrate,sinkSubstrate;
+			static std::vector<int> sourceSubstrate,sinkSubstrate;
 			static std::vector<reaction> reactionVector;
 			static std::vector<substrate> substrateVector;
 			static int nrOfInternalMetabolites;
