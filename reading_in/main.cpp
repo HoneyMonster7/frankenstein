@@ -161,6 +161,9 @@ int main(int argc, char **argv)
 	cell::substrateVector=substrateVector;
 	//this is the k value for the fitness function
 	cell::smallKforFitness=1e-3;
+	//setting the probabilities for mutations
+	cell::probabilityOfMutation=0.01;
+	cell::probabilityOfHorizontalGenetransfer=0.1;
 	//don't add nrofinternalmetabolites here
 	cell::sourceSubstrate.push_back(104);
 	cell::sinkSubstrate.push_back(54);

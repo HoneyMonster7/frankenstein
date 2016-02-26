@@ -22,6 +22,7 @@
 #include <array>
 #include <math.h>
 #include <queue>
+#include <unordered_set>
 
 #include "reaction.h"
 
@@ -44,6 +45,8 @@ class cell{
 			static std::vector<substrate> substrateVector;
 			static int nrOfInternalMetabolites;
 			static double smallKforFitness;
+			static double probabilityOfMutation;
+			static double probabilityOfHorizontalGenetransfer;
 
 	//public: 
 	cell(std::vector<int>& availableReactons);

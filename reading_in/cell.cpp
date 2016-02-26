@@ -10,6 +10,8 @@ int cell::nrOfInternalMetabolites;
 std::vector<int> cell::sourceSubstrate;
 std::vector<int> cell::sinkSubstrate;
 double cell::smallKforFitness;
+double cell::probabilityOfMutation;
+double cell::probabilityOfHorizontalGenetransfer;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
 
@@ -350,9 +352,8 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 	bool gotOneToMutate=false;
 	double maxPossibleFittness=10;
 	int whichOneToMutate;
-	double probabilityOfMutation=0.01;
-	//double probabilityOfMutation=0.1;
 	bool areWeMutating=false;
+	bool areWeHorizontalTransferring=false;
 
 	while(!gotOneToMutate){
 
@@ -369,13 +370,64 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 	//now figure out if we are mutating
 	
 	double luckyToMutate=randomRealInRange(generator,1);
-	if (luckyToMutate<probabilityOfMutation) {
+	double luckyToHorizontalGene=randomRealInRange(generator,1);
+	if (luckyToMutate<cell::probabilityOfMutation) {
 		areWeMutating=true;	
 	}
 
+	if (luckyToHorizontalGene<cell::probabilityOfHorizontalGenetransfer) {
+		areWeHorizontalTransferring=true;
+	}
 
 	//now mutate the selected cell, and put it in the place of the dying cell
 	
+
+
+	if (areWeHorizontalTransferring){
+
+		//chosing the cell that transfers a reaction to our current cell
+		int whichCellDonatesGenes=randomIntInRange(generator,population.size()-1);
+
+		std::vector<int> GenesOfDonor=cellVector[population[whichCellDonatesGenes]].getReacs();
+
+		int whichReacToDonate=randomIntInRange(generator,GenesOfDonor.size()-1);
+
+		std::vector<int> GenesOfCurrent=cellVector[population[whichOneToMutate]].getReacs();
+
+		//converting to unordered set to avoid double reactions
+		std::unordered_set<int> setOfGenesOfCurrent(GenesOfCurrent.begin(), GenesOfCurrent.end());
+
+		setOfGenesOfCurrent.insert(GenesOfDonor[whichReacToDonate]);
+
+		//if the donated reaction was already present in the current cell don't bother with creating a new cell
+		if (setOfGenesOfCurrent.size() != GenesOfCurrent.size()){
+			//converting back to vector for initialization of the new cell
+			std::vector<int> GenesWithTransferred(setOfGenesOfCurrent.begin(), setOfGenesOfCurrent.end());
+
+			cell currentWithTransferredGenes(GenesWithTransferred);
+
+			--howManyOfEach[population[whichOneToMutate]];
+			int whichIsUnused=population.size();
+			for (int i=0; i<howManyOfEach.size();i++){
+
+				if (howManyOfEach[i]==0) {
+				whichIsUnused=i;
+				break;
+				}
+			}
+			//creating a new cell for the changed one
+			cellVector[whichIsUnused]=currentWithTransferredGenes;
+			++howManyOfEach[whichIsUnused];
+
+			//as the chosen cell has received some genes it should not point to the same cell as before
+			population[whichOneToMutate]=whichIsUnused;
+
+
+		}
+
+		//std::vector<int> genesOfDonor=cellVector[population[
+	}
+
 	if (areWeMutating) {
 		//creating the mutatnt cell
 		cell offspringOfChosenCell=cellVector[population[whichOneToMutate]].mutateAndReturn(generator);
