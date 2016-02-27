@@ -165,12 +165,12 @@
 \label{sec:methods}
 
 \subsection{The data provided}
-\label{sub:What was I provided with?}
+\label{sub:What was we provided with?}
 \textbf{List of reactants and reactions, with standard free E changes. }
 
 
 
-A set of compounds and reactions (as used by \cite[]{BartekLower}) was provided for the project. The list of compounds consised of 1966 CHOPN molecules of at most 3 carbon atoms, along with 13 so called internal metabolites (compounds that are not necessariliy CHOPN molecules fitting the previous criteria, but they are essential to the reactions in the MN-s, listed in Table \ref{environmentTable}). Internal metabolites are considered to be present in the cell, with the concentration as mentioned in Table \ref{environmentTable}. Later I intend to test the networks using different concentrations.(DO I?). We assume a steady INFLUX of the starting compound is available, and a steady flux of the end product (eg. pyruvate ) is removed (used by the cell), and every other metabolite has to be created and used by the MN.. 
+A set of compounds and reactions (as used by \cite[]{BartekLower}) was provided for the project. The list of compounds consised of 1966 CHOPN molecules of at most 3 carbon atoms, along with 13 so called internal metabolites (compounds that are not necessariliy CHOPN molecules fitting the previous criteria, but they are essential to the reactions in the MN-s, listed in Table \ref{environmentTable}). Internal metabolites are considered to be present in the cell, with the concentration as mentioned in Table \ref{environmentTable}. Later we intend to test the networks using different concentrations.(DO I?). We assume a steady INFLUX of the starting compound is available, and a steady flux of the end product (eg. pyruvate ) is removed (used by the cell), and every other metabolite has to be created and used by the MN.. 
 	
 	There are 11790 reactions of the at most 3 carbon compounds in the database used along with the reactants, the products and the free energy change of the reaction at standard conditions. The free energy changes are later calculated for arbitrary conditions as discussed in Section \ref{sub:The free energy change}
 	
@@ -180,7 +180,7 @@ A set of compounds and reactions (as used by \cite[]{BartekLower}) was provided 
 What compounds are used, why?
 Previous author's restrictions on artificial chemistries. Should this go to Intro? yes they should }
 
-	We will restrict the reactions available to the organisms we simulate to those using CHOPN molecules (containing only carbon, hydrogen, oxygen, phosphor and nitrogen) of at most 3 carbon atoms initially, with later increasing the maximal number of carbon atoms to $6$ . This is a realistic constraint as the TRUNK PICTURE? of the glycolytic pathway consists of such molecules considered initialy. The initial list of the molecules and reactions used are the same used by \cite{BartekLower}, and were provided by the project supervisor as described in Section \ref{sub:What was I provided with?}. The extended set of molecules and reactions were also generated and supplied by the project supervisor, with the methods of generation described in \cite[]{BartekLower}.
+	We will restrict the reactions available to the organisms we simulate to those using CHOPN molecules (containing only carbon, hydrogen, oxygen, phosphor and nitrogen) of at most 3 carbon atoms initially, with later increasing the maximal number of carbon atoms to $6$ . This is a realistic constraint as the TRUNK PICTURE? of the glycolytic pathway consists of such molecules considered initialy. The initial list of the molecules and reactions used are the same used by \cite{BartekLower}, and were provided by the project supervisor as described in Section \ref{sub:What was we provided with?}. The extended set of molecules and reactions were also generated and supplied by the project supervisor, with the methods of generation described in \cite[]{BartekLower}.
 
 	an other assumption made in our model is that the direction of a reaction is determined only by it's free energy change as defined under the circumstances of the simulation. it is also assumed that given two reactions, both with free energy change larger (or smaller) than some pre-defined limit $l$ the maximal flux through both reactions is the same. this is not necessarily the case in real cells, and in addition to the free energy difference, the speed and direction of the reaction can be influenced by the free energy landscape between the initial and final states and by the cell via the use of enzymes. 
 
@@ -197,7 +197,7 @@ Previous author's restrictions on artificial chemistries. Should this go to Intr
 
 	DO WE NEED STATIONARITY?
 
-	Each of our cells has chance to reproduce, and this chance is proportional to their current fitness value, ensuring that cells with negative fittness (considered UNVIABLE?). At each reproductive step in the algorithm the cell to reproduce is drawn from a probability density function that is proportional to the fitness of each cell (proportional up to normalization), using theMoran process described in Section \ref{sub:Implementing evolution}.
+	Each of our cells has chance to reproduce, and this chance is proportional to their current fitness value, ensuring that cells with negative fittness (considered UNVIABLE?). At each reproductive step in the algorithm the cell to reproduce is drawn from a probability density function that is proportional to the fitness of each cell (proportional up to normalization), using theMoran process described in Section \ref{sub:implementing evolution}.
 
 
 	We consider a constant sized population (which is reasonable in a space/FOOD DEPRIVED environment), meaning that every time a cell reproduces, a cell must die to accomodate the newborn one. The decasing cell is chosen uniformly from the population, therefore giving the expected lifetime of a cell to be 1 generation.
@@ -255,7 +255,7 @@ The physics of the formula to calculate it. The role of deciding the direction o
 
 
 \subsection{In silico Evolution}
-\label{sub:Implementing evolution}
+\label{sub:implementing evolution}
 \textbf{
 Do not break up into subsections
 The possible mutations, why it makes sense to use only these, and possible other mutations that could have been used. The rate of mutations. 
@@ -266,10 +266,8 @@ To simulate evolution on a computer we need three things: replication, mutation 
 
 	The real evolution of the genomes of organisms uses a variety of methods as discussed in Section \ref{chap:evolution}. Of these, our cells use point mutations and horizontal gene transfer.
 	
-	Point mutations either add or delete a reaction that is currently available to the cell. Simply adding a reaction to those available to the cell at random from the list of all the reactions is unlikely to result in a reaction that could be used by the cell, as with a high probability the added reaction would use reactants that are not present in the cell (the added reaction would be disconnected from the current MN), and produce compounds that are not used in it. As discussed in Section \ref{sub:Flux Balance analysis} the flux through these reactions would be zero. Therefore when adding reactions, I only consider those that are linked  to one of the current reactions, either by using a compound that  the network is capable of producing, or providing one that it can consume. EXAMPLE FOR TRIAL NETWORK USED IN FBA SECTION? This way the graph of the reactions and compounds available to the cell stays a connected graph (disregarding deletions). Choosing the list of reactions that can be added uses the neighbour-list defined in Section \ref{sub:Storing the reaction network}. When deleting a reaction every currently available reaction has equal probability of being deleted. This can and does result in DISCONNECTED graphs, but such disconnected parts are usually small, otherwise they bear too high a cost to maintain and are therefore an evolutionary disadvantage. (COSt OF REACTIONS).  
+	Point mutations either add or delete a reaction that is currently available to the cell. Simply adding a reaction to those available to the cell at random from the list of all the reactions is unlikely to result in a reaction that could be used by the cell, as with a high probability the added reaction would use reactants that are not present in the cell (the added reaction would be disconnected from the current MN), and produce compounds that are not used in it. As discussed in Section \ref{sub:Flux Balance analysis} the flux through these reactions would be zero. Therefore when adding reactions, we only consider those that are linked  to one of the current reactions, either by using a compound that  the network is capable of producing, or providing one that it can consume. EXAMPLE FOR TRIAL NETWORK USED IN FBA SECTION? This way the graph of the reactions and compounds available to the cell stays a connected graph (disregarding deletions). Choosing the list of reactions that can be added uses the neighbour-list defined in Section \ref{sub:technical_bits}. When deleting a reaction every currently available reaction has equal probability of being deleted. This can and does result in DISCONNECTED graphs, but such disconnected parts are usually small, otherwise they bear too high a cost to maintain and are therefore an evolutionary disadvantage. (COSt OF REACTIONS).  
 	
-	\subsubsection{Reproduction TO BE DELETED}
-\label{ssub:Reproduction}
 \textbf{survival of the fittest using the Moran process - Metropolis algorithm?
 Moran process - reversible markov chain
 Detailed balance equation}
@@ -289,13 +287,13 @@ This process CAN BE SHOWN to result in a sampling of cells equivalent to that of
 \subsection{Flux Balance analysis}
 \label{sub:Flux Balance analysis}
 
-Detailed description $\rightarrow$ equations, example matrix? Which fluxes are free? Which fluxes are limited? GLPK 
+\textbf{Detailed description $\rightarrow$ equations, example matrix? Which fluxes are free? Which fluxes are limited? GLPK }
 
 
 
-	To calculate the throughput of the metabolic network of our organisms I use flux balance analysis \cite{whatisfluxbalance}. This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it I make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
-	
-	The goal of flux balance analysis is to calculate the steady state fluxes ($\mathbf{v}$) through all the reactions subject to some constraints, (described later in this section), while maximizing a function $Z=\mathbf{c}^T \mathbf{v}$ of the fluxes in the solution space allowed by the constraints. 
+	To calculate the throughput of the metabolic network of our organisms we use flux balance analysis \cite{whatisfluxbalance}. 	
+
+	The goal of flux balance analysis is to calculate the steady state fluxes ($\mathbf{v}$) through all the reactions subject to some constraints, (described later in this section), while maximizing a function $Z=\mathbf{c}^T \mathbf{v}$ of the fluxes (called goal function) in the solution space allowed by the constraints. 
 
 	\begin{figure}[t]
 		\centering
@@ -306,97 +304,25 @@ Detailed description $\rightarrow$ equations, example matrix? Which fluxes are f
 
 	When using flux balance analysis we represent the MB as a stoichiometric matrix $S$ ($m\times n$), with each row corresponding to a compound in the network ($n$ compounds), and each column corresponding to a reaction ($m$ reactions). In each column we have the stoichiometric coefficients of the given reaction that correspond to the compound of the given row. Negative stoichiometric coefficients are used for the metabolites consumed, positive for those produced, and zeros for the metabolites that do not participate in the given reaction.
  
-	The steady state assumption of the method means that the amount of any given compound produced in the reactions should equal the amount consumed by other reactions, except for some special compounds. These compounds are considered the nutrients and the end-products of a metabolic network. For example the nutrients of our network is FIRST COMPOUND, water and $O_2$, while it's end products are pyruvate and $CO_2$. To incorporate compounds that can have a non-zero change in CONCENTRATION could be introduced to flux balance analysis could be done through relaxing the constraint that the EQUATION-s of these compounds have to equal zero. This introduces complications, as often the amount of certain compounds produced appear in the goal function  $Z=\mathbf{c}^T \mathbf{v}$. To overcome this we introduce auxiliary reactions to the stoichiometric matrix $S$, for the compounds the cell consumes and produces. Such an auxiliary reaction is for example $ \rightarrow H_2O$, that "creates water out of nothing", or in other words corresponds to the potential water intake of the cell ENABLING THE CELL TO TAKE UP WATER?
+	We want to find a set of fluxes $\mathbf{v}$ that are steady state fluxes, satisfying $S\mathbf{v}=\mathbf{0}$. The steady state assumption of the method means that the amount of any given compound produced in the reactions should equal the amount consumed by other reactions, except for some special compounds. These special compounds are considered the nutrients and the end-products of a metabolic network. For example the nutrients of our network on Figure \ref {fig:examplenetwork} is FIRST COMPOUND, water and $O_2$, while it's end products are pyruvate and $CO_2$. To incorporate compounds that can have a non-zero change in CONCENTRATION could be introduced to flux balance analysis could be done through relaxing the constraint that the EQUATION-s of these compounds (among Equations \ref{eq:lineqs}) have to equal zero. This introduces complications, as often the amount of certain compounds produced appear in the goal function  $Z=\mathbf{c}^T \mathbf{v}$. To overcome this we introduce auxiliary reactions to the stoichiometric matrix $S$, for the compounds the cell consumes and produces. Such an auxiliary reaction is for example $ \rightarrow H_2O$, that "creates water out of nothing", or in other words corresponds to the potential water intake of the cell ENABLING THE CELL TO TAKE UP WATER?
 
 	As the fluxes are calculated on an arbitrary scale, we can impose an arbitrary bound on the fluxes of real (non-auxiliary) reactions.
 
 
-	The form of the goal function is $Z=\mathbf{c}^T \mathbf{v}$ with the elements of $\mathbf{c}$ being the weights of the fluxes through each reaction in the goal function. In the simplest cases $c_i=0$ for all but a single value of $i$, in this case the goal is to maximize the flux through a single reaction, which is often chosen to be the biomass removing auxiliary equation. In our case the goal function used is the one converting ATP to ADP. This reaction occurs in cells, (ATP~+H$_2$O~$\rightarrow$~ADP~+~P$_i$), and it is a highly exothermic reaction. Cells store energy in ATP molecules, and release this energy by converting them into ADP, therefore by maximizing the flux through this reaction, we are maximizing the energy output of the cell. In many cases this is synonymous with maximizing the growth rate of the cell. (CITATION). OTHER GOAL FUNCTIONS?
+	The form of the goal function is $Z=\mathbf{c}^T \mathbf{v}$ with the elements of $\mathbf{c}$ being the weights of the fluxes through each reaction in the goal function. In the simplest cases $c_i=0$ for all but a single value of $i$, in which case the goal is to maximize the flux through a single reaction, which is often chosen to be the biomass removing auxiliary equation. In our case the original goal function used is the one converting ATP to ADP. This reaction occurs in cells, (ATP~+H$_2$O~$\rightarrow$~ADP~+~P$_i$), and it releases energy. As cells store energy in ATP molecules,  by maximizing the flux through the ATP producing reaction, we are maximizing the energy output of the cell. In many cases this is synonymous with maximizing the growth rate of the cell. (CITATION). OTHER GOAL FUNCTIONS?
 	
-	There are many software packages capable of solving linear programming problems, we use the Gnu Linear Programming Kit (GLPK) \cite{glpk}. GLPK is implemented in C, and has all the functionality we need to calculate the fitness of our metabolic network. For the code calculating the fitnesses see calcThroughput in APPENDIX.
+	There are many software packages capable of solving linear programming problems, we use the Gnu Linear Programming Kit (GLPK) \cite{glpk}. GLPK is implemented in C, and has all the functionality we need to calculate the fitness of our metabolic network. For the code calculating the fitnesses see the function calcThroughput in APPENDIX.
 
-
-	OLD FROM HERE TILL NEXT CHAPTER
-
-	
-	Flux balance analysis works by trying to find the fluxes through the set of reactions available to the cell that maximize a certain goal function. This is done while keeping the fluxes such that they represent a steady state solution to the reaction network, meaning that any product created is used by an other reaction, and any reactants used are produced by an other reaction, except for the source and sink substrate and some internal metabolites. This is a reasonable assumption as cells usually import a small set of molecules (the source substrates, water, O$_2$, etc.) and use them up to build their own matter while disposing of again a few substrates (eg. CO$_2$). Throughout the flux balance analysis it is assumed that a large (but finite) amount of water is available for the cell to use, along with a smaller amount of the source substrate, and the cell can dispose of a large (but finite) amount of CO$_2$, along with a smaller amount of the sink substrate. Disposing of the sink substrate in this context means that it leaves the metabolic network, but not necessarily the cell, as it is often used to build the cell itself, or further processed by other metabolic networks (eg. pyruvate).
-	
-	The mathematical execution of flux balance analysis is essentially a linear programming problem. In our program I solve this using the Gnu Linear Programming Kit (GLPK) \cite{glpk}. GLPK needs to be provided the stoichiometric matrix (MORE ABOUT THIS MATRIX? EXAMPLE?) with $n$ columns and $m$ rows, where $n$ is the number of reactions currently in the network, and $m$ is the number of substrates the reaction uses.  
-	
-	To enable the addition and removal of substrates to and from the cell auxiliary reactions are added to the ones available to the cell. These reactions do not appear in the cell and are not valid chemical reactions, they are simply expressing a flux to or from the cell. (eg. there is an auxiliary reaction that creates H$_2$O out of nothing) There are auxiliary reactions creating H$_2$O, the source substrate, and there are ones removing CO$_2$ and the sink substrate. There is also one that corresponds to a real reaction, the hydrolysis of ATP to ADP cells use to free up and use the energy stored by glycolysis (ATP~+H$_2$O~$\rightarrow$~ADP~+~P$_i$). In the glycolysis simulation the goal function was the flux of this previous reaction. 
-	TALK ABOUT OTHER GOAL FUNCTIONS HERE?
-\subsection{Data analysis}
-\label{sub:visualization}
-
-the use of Cytoscape $\rightarrow$ xgmml format and the  program part to output that
-
-\subsection{Population simulation}
-\label{sub:population_simulation}
-How to store the population, how to choose which one to mutate (as in \ref{ssub:Reproduction}. 
-
-New method of storing indexes only. Include the previous method too?
-
-
-
-\subsection{Comparing populations}
-\label{sub:comparing_populations}
-
-
-\subsubsection{Similarity Index}
-\label{ssub:Similarity Index}
-
-How to calculate, why is it useful? Can be calculated for nonzero flux reactions or all available ones too. 
-
-\subsubsection{Inverse participation ratio}
-\label{ssub:Inverse participation ratio}
-IPR vs Entropy
-
-\subsection{Technical bits RENAME}
-\label{sub:technical_bits_rename}
-
-\subsection{Random number generation}
-\label{sub:Random number generation}
-
-Good quality random numbers $\rightarrow$ mt19937 Mersenne Twister. Reproducibility is important $\rightarrow$ seeds always known. 
-
-As one of the main components of the process of evolution is the random mutations when cells divide, we will need to use random numbers in the program. Generating true random numbers is a cumbersome process, that uses an inherently random physical process (eg. thermal or atmospheric noise, radioactive decay counts, or quantum phenomena \cite{truerandom}) to produce random numbers. For most applications however it suffices to use Pseudo Random Number Generators (PRNG-s) to generate numbers that appear random, in a sense that they pass certain tests of randomness \cite[]{randomtests}. These PRNG-s use an initial value called seed (or multiple initial values), the knowledge of which allows anyone to calculate any element of the series of pseudorandom numbers. In applications where there is need for the unpredictability of the series (eg. cryptography) the seed(s) is chosen using a process that is considered to be random (eg. the time held by the computer's clock in nanoseconds, or the movement of the mouse under a sufficiently long time).
-
-In our case there is no need for such unpredictability, on the contrary, we would like the evolutions of populations to be reproducible (either by ourselves, for error checking, or by other researchers), however we would like to simulate multiple populations of cells with different underlying random numbers (to be independent from each other). This is easy to achieve, by using consecutive integers as seeds for the different parallel runs, and noting these numbers in the files produced by the program. This way if we start two populations using the same seed (and the same initial conditions) the results of the two simulations will be identical. 
-
-PRNG-s generate use the seeds to initialize their internal state, which is a set of bits the generator uses and changes whenever it produces a new pseudorandom number. As the internal state consists of a finite number of bits, given enough pseudorandom numbers are requested from the generator, the outputs will start to repeat themselves. The number of pseudorandom numbers we can get from a PRNG without repetition is called it's period. The default PRNG in C++ (\texttt{rand()}) has a period of $2^{32}$. As we would like to simulate the populations of cells for more than $2^{32}$ reproductions, we use the Mersenne Twister \cite{mersennetwister} generator, provided by the Boost C++ Libraries \cite{boostlibraries}. This generator is fast, provides high-quality pseudorandom numbers and has a period of $2^{19937}-1$, and will therefore provide more than enough random numbers for our simulations. In addition the Boost implementation is capable of producing both integers, and reals on given intervals. 
-
-
-\subsection{Storing the reaction network}
-\label{sub:Storing the reaction network}
-Structure of the input files -$\rightarrow$ algorithm to read them in $\rightarrow$ store them. 
-
-The neighbour list and it's use in adding reactions.
-
-
-
-	After they are read in from a file substrates are stored in a substrate object that store the index of the molecule, the free energy of creation, the name, the chemical formula, the charge, and a list of reactions it is involved in. This list is generated when reading in the reactions from the file provided.
-	
-	Reactions are stored in reaction objects that store the index, the substrates  (starting compounds), the products  (final compounds), the free energy change at standard conditions, the free energy change at the current conditions (calculated later), and the neighbouring reactions (calculated later) of the reaction. The free energy change of reactions is recalculated at the beginning of each run as described in Section \ref{sub:The free energy change}
-	
-	The original idea was to store the reaction network as a Graph object provided by the Boost Graph Library \cite{boostlibraries}. This was a feature rich graph implementation that allowed searching for neighbouring reactions that can be added (EXPLAINED LATER), however as it uses sophisticated methods (TALK ABOUT TEMPLATES?) to store the  graphs and therefore for the evolution of a single organism it could only calculate approximately 2 generations per second. 
-	
-	To speed up the calculations simple vectors were used to store the compound and reaction objects, such that each compound object contained a list of the reactions it appears in. Using this at the beginning of the program a neighbour-list was generated that for every reaction contained a list of neighbouring reactions, that share at least 1 compound with it (excluding internal metabolites). (EXAMPLE?) Using this neighbour-list the program was now able to handle $\sim 100$ generations per second. 
-
-\subsubsection{Parallel simulations}
-\label{ssub:Paralell simulations}
-Multiple populations with same initial network  run parallel$\rightarrow$ different random seed. Cplab machines, talk about the distributing/collecting scripts?
-
-
-
-\section{Results}
-\label{sec:results}
-
+	\textbf{SORT THIS OUT}
+	This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it we make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
 
 \subsection{Example of flux balance analysis}
 \label{sub:example_of_flux_balance_analysis}
 
+Here we give an example of how flux balance analysis is calculated. We consider a toy network, that has an easily verifyable solution. The network is shown on Figure \ref{fig:examplenetwork}, and it is one this part of the program was tested when written. 
 
-	As an example for such a stoichiometric matrix we show that of a simple network that was used for testing the part of the algorithm that executes flux balance analysis. Let us consider the metabolic network shown on Figure \ref{fig:examplenetwork}. The metabolites (in green) have been denoted by letters A, B and D. MAKE CO2 RED!!! The stoichiometric matrix of this metabolic network is shown at Equation~\ref{eq:examplematrix} (below). The metabolites each row corresponds to are shown on the LHS of the matrix. The first three columns of the matrix correspond to reactions $5151$, $5133$ and $131$ respectively. The other columns correspond to auxiliary reactions, providing the nutrient of the network (A), removing the end-product (lactate), providing water, providing CO$_2$, and converting ATP to ADP. 
+
+	The metabolites of the network (in green) have been denoted by letters A, B and D. MAKE CO2 RED!!! The stoichiometric matrix of this metabolic network is shown at Equation~\ref{eq:examplematrix} (below). The metabolites each row corresponds to are shown on the LHS of the matrix. The first three columns of the matrix correspond to reactions $5151$, $5133$ and $131$ respectively. The other columns correspond to auxiliary reactions, providing the nutrient of the network (A), removing the end-product (lactate), providing water, providing CO$_2$, and converting ATP to ADP. 
 
 \begin{figure}[t]
 	\centering
@@ -450,6 +376,51 @@ Multiple populations with same initial network  run parallel$\rightarrow$ differ
 		\end{matrix}
 	\end{equation}
 
+\subsection{Data analysis}
+\label{sub:visualization}
+
+the use of Cytoscape $\rightarrow$ xgmml format and the  program part to output that
+
+\subsection{Population simulation}
+\label{sub:population_simulation}
+How to store the population, how to choose which one to mutate. 
+
+New method of storing indexes only. Include the previous method too?
+
+
+
+\subsection{Comparing populations}
+\label{sub:comparing_populations}
+
+
+\subsubsection{Similarity Index}
+\label{ssub:Similarity Index}
+
+How to calculate, why is it useful? Can be calculated for nonzero flux reactions or all available ones too. 
+
+\subsubsection{Inverse participation ratio}
+\label{ssub:Inverse participation ratio}
+IPR vs Entropy
+
+\subsection{Technical bits RENAME}
+\label{sub:technical_bits}
+
+	Whenever we add a reaction to a mn we have to find the reactions that connect to the current network, through at least one shared metabolite, as described in section \ref{sub:implementing evolution}. it is very time consuming to list all metabolites currently in the network, then search through all the reactions to see if any of the used metabolites are used within them. to remedy this at the beginning of the program a neighbour-list is generated that contains for every reaction a list of neighbouring reactions, that share at least 1 compound with it (excluding internal metabolites). for example in our example network on figure \ref{fig:examplenetwork} reactions 131 and 5143 are neighbouring, as they share the metabolite ch$_3$-ch(oh)-cop, but reactions 131 and 5151 are not neighbouring. using this neighbour-list the program can now rapidly find the possible reactions to add to a network. 
+
+	an important component of a monte carlo simulation is the source of pseudorandom numbers. in our program we use the mersenne twister \cite{mersennetwister} generator, provided by the boost c++ libraries \cite{boostlibraries}. this generator is fast, provides high-quality pseudorandom numbers and has a period of $2^{19937}-1$, and will therefore provide more than enough pseudorandom numbers for our simulations.
+
+	To speed up calculations we simulated multiple populations parellely on different computers. In order for every population to be different, we used different initial values to seed the pseudorandom number generator. For the sake of reproducibility these seeds are noted with the output of the simulations. 
+
+
+\section{Results}
+\label{sec:results}
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{averagefittness_longerlog.pdf}
+	\caption{Averagefittnessongerlog}
+	\label{fig:averagefittness_longerlog}
+\end{figure}
 
 
 \subsection{Similar networks reached in parallel runs}
@@ -482,7 +453,7 @@ Too simple goal function
 %	
 %	To simulate evolution on a computer we need three things: replication, mutation and competition. Algorithms empowered by the evolutionary principles \cite{evolutionaryalgorithms} are used every day now to find optimal solutions to problems in all fields of science. These algorithms need a function for which to optimize the given system, called the goal function. The goal function of real-world cells is rather complex, with goals reaching from growth to reproduction. Translating these goals to the language of mathematics and computers is not an easy task. \cite{complexfeatures} sets the execution of more complex logical operations as a goal for the digital organisms in question. \cite{evolutioncomplex} use the import of precursors and their procession to more complex molecules as the goal function. 
 %	
-%	In my simulations I consider the rate of ADP-ATP conversion as the goal function after \cite{BartekLower}, however later I plan to experiment with different goal functions that also consider the amount of carbon products produced (that can be used for building the cell). 
+%	In my simulations we consider the rate of ADP-ATP conversion as the goal function after \cite{BartekLower}, however later we plan to experiment with different goal functions that also consider the amount of carbon products produced (that can be used for building the cell). 
 %	
 %	\section{trol}
 %	The core of the energy producing metabolic pathways of organisms are very similar, for all three domains of life, however there are many pathways that are chemically viable.  The throughput of these pathways greatly influences the fitness of any given organism. 
@@ -533,6 +504,33 @@ This way, depending on the specific needs of the cell the direction of reactions
 
 
 
+	OLD FROM HERE TILL NEXT CHAPTER
+
+	
+	Flux balance analysis works by trying to find the fluxes through the set of reactions available to the cell that maximize a certain goal function. This is done while keeping the fluxes such that they represent a steady state solution to the reaction network, meaning that any product created is used by an other reaction, and any reactants used are produced by an other reaction, except for the source and sink substrate and some internal metabolites. This is a reasonable assumption as cells usually import a small set of molecules (the source substrates, water, O$_2$, etc.) and use them up to build their own matter while disposing of again a few substrates (eg. CO$_2$). Throughout the flux balance analysis it is assumed that a large (but finite) amount of water is available for the cell to use, along with a smaller amount of the source substrate, and the cell can dispose of a large (but finite) amount of CO$_2$, along with a smaller amount of the sink substrate. Disposing of the sink substrate in this context means that it leaves the metabolic network, but not necessarily the cell, as it is often used to build the cell itself, or further processed by other metabolic networks (eg. pyruvate).
+	
+	The mathematical execution of flux balance analysis is essentially a linear programming problem. In our program we solve this using the Gnu Linear Programming Kit (GLPK) \cite{glpk}. GLPK needs to be provided the stoichiometric matrix (MORE ABOUT THIS MATRIX? EXAMPLE?) with $n$ columns and $m$ rows, where $n$ is the number of reactions currently in the network, and $m$ is the number of substrates the reaction uses.  
+	
+	To enable the addition and removal of substrates to and from the cell auxiliary reactions are added to the ones available to the cell. These reactions do not appear in the cell and are not valid chemical reactions, they are simply expressing a flux to or from the cell. (eg. there is an auxiliary reaction that creates H$_2$O out of nothing) There are auxiliary reactions creating H$_2$O, the source substrate, and there are ones removing CO$_2$ and the sink substrate. There is also one that corresponds to a real reaction, the hydrolysis of ATP to ADP cells use to free up and use the energy stored by glycolysis (ATP~+H$_2$O~$\rightarrow$~ADP~+~P$_i$). In the glycolysis simulation the goal function was the flux of this previous reaction. 
+	TALK ABOUT OTHER GOAL FUNCTIONS HERE?
+
+\subsection{Random number generation}
+\label{sub:Random number generation}
+
+Good quality random numbers $\rightarrow$ mt19937 Mersenne Twister. Reproducibility is important $\rightarrow$ seeds always known. 
+
+As one of the main components of the process of evolution is the random mutations when cells divide, we will need to use random numbers in the program. Generating true random numbers is a cumbersome process, that uses an inherently random physical process (eg. thermal or atmospheric noise, radioactive decay counts, or quantum phenomena \cite{truerandom}) to produce random numbers. For most applications however it suffices to use Pseudo Random Number Generators (PRNG-s) to generate numbers that appear random, in a sense that they pass certain tests of randomness \cite[]{randomtests}. These PRNG-s use an initial value called seed (or multiple initial values), the knowledge of which allows anyone to calculate any element of the series of pseudorandom numbers. In applications where there is need for the unpredictability of the series (eg. cryptography) the seed(s) is chosen using a process that is considered to be random (eg. the time held by the computer's clock in nanoseconds, or the movement of the mouse under a sufficiently long time).
+
+In our case there is no need for such unpredictability, on the contrary, we would like the evolutions of populations to be reproducible (either by ourselves, for error checking, or by other researchers), however we would like to simulate multiple populations of cells with different underlying random numbers (to be independent from each other). This is easy to achieve, by using consecutive integers as seeds for the different parallel runs, and noting these numbers in the files produced by the program. This way if we start two populations using the same seed (and the same initial conditions) the results of the two simulations will be identical. 
+
+PRNG-s generate use the seeds to initialize their internal state, which is a set of bits the generator uses and changes whenever it produces a new pseudorandom number. As the internal state consists of a finite number of bits, given enough pseudorandom numbers are requested from the generator, the outputs will start to repeat themselves. The number of pseudorandom numbers we can get from a PRNG without repetition is called it's period. The default PRNG in C++ (\texttt{rand()}) has a period of $2^{32}$. As we would like to simulate the populations of cells for more than $2^{32}$ reproductions, we use the Mersenne Twister \cite{mersennetwister} generator, provided by the Boost C++ Libraries \cite{boostlibraries}. This generator is fast, provides high-quality pseudorandom numbers and has a period of $2^{19937}-1$, and will therefore provide more than enough random numbers for our simulations. In addition the Boost implementation is capable of producing both integers, and reals on given intervals. 
+
+
+	After they are read in from a file substrates are stored in a substrate object that store the index of the molecule, the free energy of creation, the name, the chemical formula, the charge, and a list of reactions it is involved in. This list is generated when reading in the reactions from the file provided.
+	
+	Reactions are stored in reaction objects that store the index, the substrates  (starting compounds), the products  (final compounds), the free energy change at standard conditions, the free energy change at the current conditions (calculated later), and the neighbouring reactions (calculated later) of the reaction. The free energy change of reactions is recalculated at the beginning of each run as described in Section \ref{sub:The free energy change}
+
+	The original idea was to store the reaction network as a Graph object provided by the Boost Graph Library \cite{boostlibraries}. This was a feature rich graph implementation that allowed searching for neighbouring reactions that can be added (EXPLAINED LATER), however as it uses sophisticated methods (TALK ABOUT TEMPLATES?) to store the  graphs and therefore for the evolution of a single organism it could only calculate approximately 2 generations per second. 
 	\bibliography{dissertation}
 	\bibliographystyle{plainnat}
 \end{document}
