@@ -2,10 +2,10 @@ set macros
 set terminal svg size 1920, 1080 enhanced background rgb 'white'
 set output 'fittavgs.svg'
 
-linefiles=system('ls *.progress | sort -n  | head -n 5')
-linefiles2=system('ls *.progress | sort -n  | tail -n +6 |head -n 5')
-linefiles3=system('ls *.progress | sort -n  | tail -n +11 |head -n 5')
-linefiles4=system('ls *.progress | sort -n  | tail -n +16 |head -n 5')
+linefiles=system('ls *.progress | sort -n |cut -d. -f1 | head -n 5')
+linefiles2=system('ls *.progress | sort -n  |cut -d. -f1| tail -n +6 |head -n 5')
+linefiles3=system('ls *.progress | sort -n  |cut -d. -f1| tail -n +11 |head -n 5')
+linefiles4=system('ls *.progress | sort -n  |cut -d. -f1| tail -n +16 |head -n 5')
 
 #set terminal size 1000,1000
 #set terminal x11 geometry 1000x1000
@@ -22,10 +22,10 @@ set multiplot layout 4,1 columnsfirst
 
 #plot for [file in linefiles] file w l smooth sbezier title file
 @YLABS; @XLABS
-plot for [file in linefiles] file u 1:2 with lines title file
-plot for [file in linefiles2] file u 1:2 with lines title file
-plot for [file in linefiles3] file u 1:2 with lines title file
-plot for [file in linefiles4] file u 1:2 with lines title file
+plot for [file in linefiles] file.'.progress' u 1:2 with lines title 'Population '.file
+plot for [file in linefiles2] file.'.progress' u 1:2 with lines title 'Population '.file
+plot for [file in linefiles3] file.'.progress' u 1:2 with lines title 'Population '.file
+plot for [file in linefiles4] file.'.progress' u 1:2 with lines title 'Population '.file
 #
 
 
@@ -45,10 +45,10 @@ set multiplot layout 4,1 columnsfirst
 @YLABS; @XLABS
 
 
-plot for [file in linefiles] file u 1:3 with lines title file
-plot for [file in linefiles2] file u 1:3 with lines title file
-plot for [file in linefiles3] file u 1:3 with lines title file
-plot for [file in linefiles4] file u 1:3 with lines title file
+plot for [file in linefiles] file.'.progress' u 1:3 with lines title 'Population '.file
+plot for [file in linefiles2] file.'.progress' u 1:3 with lines title 'Population '.file
+plot for [file in linefiles3] file.'.progress' u 1:3 with lines title 'Population '.file
+plot for [file in linefiles4] file.'.progress' u 1:3 with lines title 'Population '.file
 
 
 unset multiplot
@@ -67,10 +67,10 @@ set multiplot layout 4,1 columnsfirst
 @YLABS; @XLABS
 
 
-plot for [file in linefiles] file u 1:4 with lines title file
-plot for [file in linefiles2] file u 1:4 with lines title file
-plot for [file in linefiles3] file u 1:4 with lines title file
-plot for [file in linefiles4] file u 1:4 with lines title file
+plot for [file in linefiles] file.'.progress' u 1:4 with lines title 'Population '.file
+plot for [file in linefiles2] file.'.progress' u 1:4 with lines title 'Population '.file
+plot for [file in linefiles3] file.'.progress' u 1:4 with lines title 'Population '.file
+plot for [file in linefiles4] file.'.progress' u 1:4 with lines title 'Population '.file
 
 unset multiplot
 
@@ -88,10 +88,10 @@ set multiplot layout 4,1 columnsfirst
 @YLABS; @XLABS
 
 
-plot for [file in linefiles] file u 1:5 with lines title file
-plot for [file in linefiles2] file u 1:5 with lines title file
-plot for [file in linefiles3] file u 1:5 with lines title file
-plot for [file in linefiles4] file u 1:5 with lines title file
+plot for [file in linefiles] file.'.progress' u 1:5 with lines title 'Population '.file
+plot for [file in linefiles2] file.'.progress' u 1:5 with lines title 'Population '.file
+plot for [file in linefiles3] file.'.progress' u 1:5 with lines title 'Population '.file
+plot for [file in linefiles4] file.'.progress' u 1:5 with lines title 'Population '.file
 
 
 unset multiplot
@@ -110,7 +110,7 @@ set multiplot layout 4,1 columnsfirst
 @YLABS; @XLABS
 
 
-plot for [file in linefiles] file u 1:6 with lines title file
-plot for [file in linefiles2] file u 1:6 with lines title file
-plot for [file in linefiles3] file u 1:6 with lines title file
-plot for [file in linefiles4] file u 1:6 with lines title file
+plot for [file in linefiles] file.'.progress' u 1:6 with lines title 'Population '.file
+plot for [file in linefiles2] file.'.progress' u 1:6 with lines title 'Population '.file
+plot for [file in linefiles3] file.'.progress' u 1:6 with lines title 'Population '.file
+plot for [file in linefiles4] file.'.progress' u 1:6 with lines title 'Population '.file
