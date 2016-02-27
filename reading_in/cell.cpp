@@ -709,7 +709,7 @@ double cell::calcThroughput(){
 
 	//target is to maximize the imaginary reactions throughput of the ADP->ATP reaction
 	//glp_set_obj_coef(lp,listSize+3,0.5);
-	//glp_set_obj_coef(lp,listSize+4,0.5);
+	//glp_set_obj_coef(lp,listSize+5,0.5);
 
 	//creating the arrays now
 	int length=ia.size();
