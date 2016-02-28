@@ -47,7 +47,7 @@
 
 	Similarity matrix 
 
-	Enthropy - Inverse participation ratio
+	Entropy - Inverse participation ratio
 
 	\section*{Definitions put it in a box}
 	
@@ -56,6 +56,8 @@
 	Metabolite: a chemical compound produced in the metabolic network
 
 	Nutrient: chemical compound(s) a cell consumes in order to provide itself with energy and materials.
+
+	Enzyme:
 
 	ATP - Adenosine triphosphate: the energy currency molecule of cells, has 3 phosphate groups. Energy is released when converting ATP to ADP (removing a phosphate group), and can be stored by converting ADP to ATP (adding a phosphate group).
 
@@ -77,7 +79,7 @@
 
 	Glycolysis: the metabolic pathway processing Glucose into Pyruvate and energy (in the form of the net 2 ADP $\rightarrow$ ATP conversions).
 
-	Trunk of glycolysis: also known as the payoff phase of glycolysis: the part of glycolysis that starts with G3P (Glyceraldehyde 3-phosphate) and end in Pyruvate. It is called the pay-off phase as this is the part that produces ATP (while in the previous part an investment of ATP must be made).
+	Trunk of glycolysis: also known as the pay-off phase of glycolysis: the part of glycolysis that starts with G3P (Glyceraldehyde 3-phosphate) and end in Pyruvate. It is called the pay-off phase as this is the part that produces ATP (while in the previous part an investment of ATP must be made).
 
 	\end{framed}
 
@@ -120,7 +122,7 @@
 	
 	\subsection{Evolution}\label{chap:evolution}
 	
-	Evolution works by exploiting the copying errors made in the genetic code when cells divide. After such a division the resulting cell may performance might differ slightly from that of it's predecessor at a certain task. If this change is positive in the sense that it allows the cell to multilply faster it can outcompete the original cell, meaning that in subsequent generations it can overtake the population. (NO TALK OF POPULATION BEFORE) As Charles Darwin wrote "...Natural selection acts only by taking advantage of slight successive variations; she can never take a great and sudden leap, but must advance by short and sure, though slow steps." \cite{darwin} 
+	Evolution works by exploiting the copying errors made in the genetic code when cells divide. After such a division the resulting cell may performance might differ slightly from that of it's predecessor at a certain task. If this change is positive in the sense that it allows the cell to multiply faster it can outcompete the original cell, meaning that in subsequent generations it can overtake the population. (NO TALK OF POPULATION BEFORE) As Charles Darwin wrote "...Natural selection acts only by taking advantage of slight successive variations; she can never take a great and sudden leap, but must advance by short and sure, though slow steps." \cite{darwin} 
 	
 	It is difficult to imagine how highly sophisticated functions (such as the eye, or feathers for flight, or even a complex metabolic network) could have evolved using slight variations. \cite{latent} argue that complex structures have evolved non-adaptively as exaptations, as byproducts of evolution of other functions. \cite{complexfeatures}  consider simple digital organisms that can obtain energy by performing logic functions. The organisms are provided an environment where they can reproduce (depending on the energy available to them) and mutate, and the more complex logical function they perform, the more energy they receive. They find that although to get to the most complex logical operation (yielding the most amount of energy) many mutations are needed, and when appearing it often destroys other less complex logical operations, once it is present, it provides such value that offsprings that don't have it are quickly eliminated by the competition.
 	
@@ -151,17 +153,17 @@
 
 	In the future - quantum mechanical calculation of the free energy changes of reactions is feasible - better answers then to the same questions
 
-	Stochastic processes when modelling the evolution - Moran process  (it is a reversible Markov chain) - which distribution it draws from - partition functions, random walks on the fittness landscape - stochastic optimization. 
+	Stochastic processes when modelling the evolution - Moran process  (it is a reversible Markov chain) - which distribution it draws from - partition functions, random walks on the fitness landscape - stochastic optimization. 
 
 	Metropolis - Hastings for the choice of reproducing cell
 	
-	The thermodynamic constraints on evolution - could change temeperature and concentrations. 
+	The thermodynamic constraints on evolution - could change temperature and concentrations. 
 
 	
 	
-	When calculating the direction of reactions we consider the free-energy change of the substrates and the proucts only. This does not take into account the free energy landscape of the reactions. It would be possible to use quantum mechanics to exactly calculate the free energy change of the reactions used, but it would be a job worthy of it's own project, and therefore we restrict our discussion to estimates of the free energy.
+	When calculating the direction of reactions we consider the free-energy change of the substrates and the products only. This does not take into account the free energy landscape of the reactions. It would be possible to use quantum mechanics to exactly calculate the free energy change of the reactions used, but it would be a job worthy of it's own project, and therefore we restrict our discussion to estimates of the free energy.
 	
-	The selection process used when chosing cells to reproduce is the Moran process, a well known Markov chain \cite[]{absorptionofmoran} STOCHASTIC LEARNING PROCESS
+	The selection process used when choosing cells to reproduce is the Moran process, a well known Markov chain \cite[]{absorptionofmoran} STOCHASTIC LEARNING PROCESS
 	
 	EXPAND HERE OR IN METHODS
 
@@ -176,7 +178,7 @@
 
 
 
-A set of compounds and reactions (as used by \cite[]{BartekLower}) was provided for the project. The list of compounds consised of 1966 CHOPN molecules of at most 3 carbon atoms, along with 13 so called internal metabolites (compounds that are not necessariliy CHOPN molecules fitting the previous criteria, but they are essential to the reactions in the MN-s, listed in Table \ref{environmentTable}). Internal metabolites are considered to be present in the cell, with the concentration as mentioned in Table \ref{environmentTable}. Later we intend to test the networks using different concentrations.(DO I?). We assume a steady INFLUX of the starting compound is available, and a steady flux of the end product (eg. pyruvate ) is removed (used by the cell), and every other metabolite has to be created and used by the MN.. 
+A set of compounds and reactions (as used by \cite[]{BartekLower}) was provided for the project. The list of compounds consisted of 1966 CHOPN molecules of at most 3 carbon atoms, along with 13 so called internal metabolites (compounds that are not necessarily CHOPN molecules fitting the previous criteria, but they are essential to the reactions in the MN-s, listed in Table \ref{environmentTable}). Internal metabolites are considered to be present in the cell, with the concentration as mentioned in Table \ref{environmentTable}. Later we intend to test the networks using different concentrations.(DO I?). We assume a steady INFLUX of the starting compound is available, and a steady flux of the end product (eg. pyruvate ) is removed (used by the cell), and every other metabolite has to be created and used by the MN.. 
 	
 	There are 11790 reactions of the at most 3 carbon compounds in the database used along with the reactants, the products and the free energy change of the reaction at standard conditions. The free energy changes are later calculated for arbitrary conditions as discussed in Section \ref{sub:The free energy change}
 	
@@ -186,7 +188,7 @@ A set of compounds and reactions (as used by \cite[]{BartekLower}) was provided 
 What compounds are used, why?
 Previous author's restrictions on artificial chemistries. Should this go to Intro? yes they should }
 
-	We will restrict the reactions available to the organisms we simulate to those using CHOPN molecules (containing only carbon, hydrogen, oxygen, phosphor and nitrogen) of at most 3 carbon atoms initially, with later increasing the maximal number of carbon atoms to $6$ . This is a realistic constraint as the TRUNK PICTURE? of the glycolytic pathway consists of such molecules considered initialy. The initial list of the molecules and reactions used are the same used by \cite{BartekLower}, and were provided by the project supervisor as described in Section \ref{sub:What was we provided with?}. The extended set of molecules and reactions were also generated and supplied by the project supervisor, with the methods of generation described in \cite[]{BartekLower}.
+	We will restrict the reactions available to the organisms we simulate to those using CHOPN molecules (containing only carbon, hydrogen, oxygen, phosphor and nitrogen) of at most 3 carbon atoms initially, with later increasing the maximal number of carbon atoms to $6$ . This is a realistic constraint as the TRUNK PICTURE? of the glycolytic pathway consists of such molecules considered initially. The initial list of the molecules and reactions used are the same used by \cite{BartekLower}, and were provided by the project supervisor as described in Section \ref{sub:What was we provided with?}. The extended set of molecules and reactions were also generated and supplied by the project supervisor, with the methods of generation described in \cite[]{BartekLower}.
 
 	an other assumption made in our model is that the direction of a reaction is determined only by it's free energy change as defined under the circumstances of the simulation. it is also assumed that given two reactions, both with free energy change larger (or smaller) than some pre-defined limit $l$ the maximal flux through both reactions is the same. this is not necessarily the case in real cells, and in addition to the free energy difference, the speed and direction of the reaction can be influenced by the free energy landscape between the initial and final states and by the cell via the use of enzymes. 
 
@@ -199,14 +201,14 @@ Previous author's restrictions on artificial chemistries. Should this go to Intr
 	
 	The anatomy of our cells is as follows: the cells are stationary with certain compounds present within their body with concentrations as shown in Table \ref{environmentTable}. The cells can import and export $H_2$O and CO$_2$ to and from their environments to replenish their reserves, if these compounds are used by their MN. They can also import one (later more) predefined nutrient to process, and they can dispose  one (later more) target molecule (NOTE: this molecule is only disposed from the viewpoint of the metabolic pathway. It is often further processed by subsequent pathways, with the example of pyruvate, that is the end product of the trunk of glycolysis, which is later fed into the citric acid cycle). 
 	
-	In real life a certain allele can spread in the population if it provides an reproductive advantage to the cells carrying it.  As ATP acts as the energy currency in cells (they can hydrolise ATP into ADP that releases energy) the fittness  measured by the cell's ADP $\rightarrow$ATP conversion rate is proportional to the growth rate of the cells, as reproduction (or division) is a very energy-demanding  process for the cells.  The implementation of more complex goal functions along with multiple input and output molecules is planned, eg. biomass production, which is also a requirement for reproduction. 
+	In real life a certain allele can spread in the population if it provides an reproductive advantage to the cells carrying it.  As ATP acts as the energy currency in cells (they can hydrolyse ATP into ADP that releases energy) the fitness  measured by the cell's ADP $\rightarrow$ATP conversion rate is proportional to the growth rate of the cells, as reproduction (or division) is a very energy-demanding  process for the cells.  The implementation of more complex goal functions along with multiple input and output molecules is planned, eg. biomass production, which is also a requirement for reproduction. 
 
 	DO WE NEED STATIONARITY?
 
-	Each of our cells has chance to reproduce, and this chance is proportional to their current fitness value, ensuring that cells with negative fittness (considered UNVIABLE?). At each reproductive step in the algorithm the cell to reproduce is drawn from a probability density function that is proportional to the fitness of each cell (proportional up to normalization), using theMoran process described in Section \ref{sub:implementing evolution}.
+	Each of our cells has chance to reproduce, and this chance is proportional to their current fitness value, ensuring that cells with negative fitness (considered UNVIABLE?). At each reproductive step in the algorithm the cell to reproduce is drawn from a probability density function that is proportional to the fitness of each cell (proportional up to normalization), using the Moran process described in Section \ref{sub:implementing evolution}.
 
 
-	We consider a constant sized population (which is reasonable in a space/FOOD DEPRIVED environment), meaning that every time a cell reproduces, a cell must die to accomodate the newborn one. The decasing cell is chosen uniformly from the population, therefore giving the expected lifetime of a cell to be 1 generation.
+	We consider a constant sized population (which is reasonable in a space/FOOD DEPRIVED environment), meaning that every time a cell reproduces, a cell must die to accommodate the newborn one. The deceasing cell is chosen uniformly from the population, therefore giving the expected lifetime of a cell to be 1 generation.
 
 	The cells in a population are considered to be close to each other, so  any two cells can meet and exchange genetic information in the process of horizontal gene transfer.
 
@@ -286,6 +288,8 @@ At every step of the Moran process a single member of the population is chosen t
 
 \textbf{Goal functions? $\rightarrow$ changing goal functions? Talk about trial networks (ethanol producing)?}
 
+There are two contributions to the fitness measure of a cell, it's energy production, and the number of reactions in it's MN.  A fitness score of $1$ is awarded for every ATP produced (the quantity measured is the flux through the auxillary reaction ATP $\rightarrow$ ADP modelling the energy output of the cell). For every reaction a small penalty is deducted from the fitness score of the cell (of magnitude $k_{reac}$), as should we not include this the cell's MN-s would grow without bounds until every reaction in our list would appear within them. This per reaction penalty is reasonable, as cells usually control their reactions through the use of enzymes that they have to manufacture, and code in their genetic code. 
+
 The probability density function (PDF) of which cell is selected for reproduction is proportional to the fitness of each cell (with the CAVEAT that cells with negative fitness are deemed unviable and are not allowed to reproduce). To know this PDF it is necessary to know the fitness of each cell at any given time point (for the normalization), and therefore it would be impractical to use this to chose the cell that will reproduce. Instead we use a Markov chain Monte Carlo method, the Metropolis - Hastings algorithm This process works as follows: (LIST?) first we uniformly chose a cell in our population. Then we generate a random number from the distribution $U \left( r,M \right)$ where $M$ is the maximal fitness value a cell can take. Let us denote the fitness of the chosen cell by $F_c$. Then if $F_c \geq r$ we accept the change, if not we start the process again. 
 
 This process CAN BE SHOWN to result in a sampling of cells equivalent to that of the PDF proportional to the fitness of each cell. DETAILED BALANCE ~ GIBBS etc
@@ -325,7 +329,7 @@ This process CAN BE SHOWN to result in a sampling of cells equivalent to that of
 \subsection{Example of flux balance analysis}
 \label{sub:example_of_flux_balance_analysis}
 
-Here we give an example of how flux balance analysis is calculated. We consider a toy network, that has an easily verifyable solution. The network is shown on Figure \ref{fig:examplenetwork}, and it is one this part of the program was tested when written. 
+Here we give an example of how flux balance analysis is calculated. We consider a toy network, that has an easily verifiable solution. The network is shown on Figure \ref{fig:examplenetwork}, and it is one this part of the program was tested when written. 
 
 
 	The metabolites of the network (in green) have been denoted by letters A, B and D. MAKE CO2 RED!!! The stoichiometric matrix of this metabolic network is shown at Equation~\ref{eq:examplematrix} (below). The metabolites each row corresponds to are shown on the LHS of the matrix. The first three columns of the matrix correspond to reactions $5151$, $5133$ and $131$ respectively. The other columns correspond to auxiliary reactions, providing the nutrient of the network (A), removing the end-product (lactate), providing water, providing CO$_2$, and converting ATP to ADP. 
@@ -387,16 +391,16 @@ Here we give an example of how flux balance analysis is calculated. We consider 
 
 the use of Cytoscape $\rightarrow$ xgmml format and the  program part to output that
 
-\subsection{Population simulation}
-\label{sub:population_simulation}
-How to store the population, how to choose which one to mutate. 
+To visualize the resulting MN-s we use the open source biological network visualization tool Cytoscape \cite{cytoscape}. Figures showing metabolic networks in this work have been generated using this (eg.  Figure \ref{fig:examplenetwork}). Our program was equipped with the functionality to export MN-s into the \texttt{XGMML} format that Cytoscape can read in. 
 
-New method of storing indexes only. Include the previous method too?
+While MN-s can be visually compared using Cytoscape, doing so for more than a handful of networks is a cumbersome task, therefore we considered AN AUTOMATED PROCESS to compare MN-s resulting from our simulation. 
+
+While the simulation is running, every few thousand generations some key descriptors of the populations are written out to a log file. This allows us to monitor the evolution of the populatinons while the simulation is running, and also to plot the timeline of their evolution. Examples of such graphs can be found in Section \ref{sec:results} (eg. Figures \ref{fig:averagefittness_longerlog} and \ref{fig:averagenetworksize_longerlog}). These descriptors are: the fitness of the fittest network in the population, the average fitness of the population, the entropy of the population, the number of reactions in the fittest network, and the average number of reactions in the population. When plotting these measures, the fitness of the fittest network and the average fitness are indistinguishable on the plots (the average fitness lags by a few generations --- the time it takes for a change in the MN to propagate through the population)
+
+Entropy is used as one of the measures of the diversity of the population. It is calculated as: $S=- \sum^{M}_{i=1} n_i \log n_i $ where $n_i$ denotes the number of cells of type $i$, and the sum runs through all the different types of cells in the population. (In a population usually there are multiple "copies" of any given cell, as the rate of mutations is low, eg. for $p_{point}=0.1$ only every tenth reproduction results in a new type of cell.) As we are considering a population with $N=100$ cells, the minimal entropy is $S_{min}=-100\log100=-460.52$, this value is attained when every cell in the population is identical ($p_{i_1}=100$, and $p_i=0$ for other $i$ values), as is the case initially in our populations. It's maximal value is $S_{max}=0$ attained when every cell is different in the population. This happens when the mutation rate is very high (eg. $P_{point}=1$). 
 
 
-
-\subsection{Comparing populations}
-\label{sub:comparing_populations}
+To compare networks between populations we define a similarity index between two MN-s, calculated as follows: we count the reactions appearing in both MN-s, then divide this count by the number of reactions in the larger network. This quantity is always between $0$ and $1$, with these extreme values attained if the two MN-s share no reactions, and if they are identical, respectively. It can be calculated for every reaction in the two MN-s or only for those that have non-zero flux through them. This is an important distiction, as for a high mutation rate, and small $k_{reac}$ value the two MN-s might have a lot of unused reactions that differ amongst them, but their used reactions could be the same. 
 
 
 \subsubsection{Similarity Index}
@@ -407,13 +411,21 @@ How to calculate, why is it useful? Can be calculated for nonzero flux reactions
 \subsubsection{Inverse participation ratio}
 \label{ssub:Inverse participation ratio}
 IPR vs Entropy
+\subsection{Population simulation}
+\label{sub:population_simulation}
+How to store the population, how to choose which one to mutate. 
+
+New method of storing indexes only. Include the previous method too?
+
+
+
 
 \subsection{Technical bits RENAME}
 \label{sub:technical_bits}
 
-	Whenever we add a reaction to a mn we have to find the reactions that connect to the current network, through at least one shared metabolite, as described in section \ref{sub:implementing evolution}. it is very time consuming to list all metabolites currently in the network, then search through all the reactions to see if any of the used metabolites are used within them. to remedy this at the beginning of the program a neighbour-list is generated that contains for every reaction a list of neighbouring reactions, that share at least 1 compound with it (excluding internal metabolites). for example in our example network on figure \ref{fig:examplenetwork} reactions 131 and 5143 are neighbouring, as they share the metabolite ch$_3$-ch(oh)-cop, but reactions 131 and 5151 are not neighbouring. using this neighbour-list the program can now rapidly find the possible reactions to add to a network. 
+	Whenever we add a reaction to a MN we have to find the reactions that connect to the current network, through at least one shared metabolite, as described in section \ref{sub:implementing evolution}. It is very time consuming to list all metabolites currently in the network, then search through all the reactions to see if any of the used metabolites are used within them. To remedy this at the beginning of the program a neighbour-list is generated that contains for every reaction a list of neighbouring reactions, that share at least 1 compound with it (excluding internal metabolites). For example in our example network on Figure \ref{fig:examplenetwork} reactions 131 and 5143 are neighbouring, as they share the metabolite CH$_3$-CH(OH)-COP, but reactions 131 and 5151 are not neighbouring. Using this neighbour-list the program can now rapidly find the possible reactions to add to a network. 
 
-	an important component of a monte carlo simulation is the source of pseudorandom numbers. in our program we use the mersenne twister \cite{mersennetwister} generator, provided by the boost c++ libraries \cite{boostlibraries}. this generator is fast, provides high-quality pseudorandom numbers and has a period of $2^{19937}-1$, and will therefore provide more than enough pseudorandom numbers for our simulations.
+	An important component of a Monte Carlo simulation is the source of pseudorandom numbers. In our program we use the Mersenne Twister \cite{mersennetwister} generator, provided by the boost C++ libraries \cite{boostlibraries}. This generator is fast, provides high-quality pseudorandom numbers and has a period of $2^{19937}-1$, and will therefore provide more than enough pseudorandom numbers for our simulations.
 
 	To speed up calculations we simulated multiple populations parellely on different computers. In order for every population to be different, we used different initial values to seed the pseudorandom number generator. For the sake of reproducibility these seeds are noted with the output of the simulations. 
 
@@ -430,11 +442,12 @@ IPR vs Entropy
 \end{figure}
 
 
-The first simulations we run were started from the subset of the reactions appearing in glycolysis that only use chemical compounds that appear in our list of compounds, starting from Dihydoxyacetone phosphate and ending in Pyruvate. This reaction network is shown on Figure \ref{fig:truncglycinit}. This is the trunk of the glycolytic pathway with an additional reaction ($416$ at the beginning of it. The ATP flux of this network is $0.5$, with the limiting reaction being $883$, that has a free energy change of $1.71$ eV at the conditions given by Table \ref{environmentTable}. This is a good initial network as it has plenty of potential to improve, eg by finding an alternative pathto reaction $883$ or finding completely new paths from the nutrient of the MN to the end product. 
+The first simulations we run were started from the subset of the reactions appearing in glycolysis that only use chemical compounds that appear in our list of compounds, starting from Dihydoxyacetone phosphate and ending in Pyruvate. This reaction network is shown on Figure \ref{fig:truncglycinit}. This is the trunk of the glycolytic pathway with an additional reaction ($416$ at the beginning of it. The ATP flux of this network is $0.5$, with the limiting reaction being $883$, that has a free energy change of $1.71$ eV at the conditions given by Table \ref{environmentTable}. This is a good initial network as it has plenty of potential to improve, eg by finding an alternative path to reaction $883$ or finding completely new paths from the nutrient of the MN to the end product. 
 
-The fittnes cost of having a reaction within the MN was set to $k_{reac}=0.001$ with the rate of point mutations as $P_{point}=0.01$ giving $1$ mutation per generation. The fittnes function used here was the flux of ADP to ATP conversion minus $k_{reac}$ times the number of reactions in the MN.
+The fitness cost of having a reaction within the MN was set to $k_{reac}=0.001$ with the rate of point mutations as $P_{point}=0.01$ giving $1$ mutation per generation. The fitness function used here was the flux of ADP to ATP conversion minus $k_{reac}$ times the number of reactions in the MN.
 
-The average fittnes of each population as a function of the number of generations since the initial network is shown on Figure \ref{fig:averagefittness_longerlog}. 
+The average fitness of each population as a function of the number of generations since the initial network is shown on Figure \ref{fig:averagefittness_longerlog}. Most populations have improved their fitness by increasing the ADP ATP conversion rate either by producing one or two more ATP-s  with the exception of Populations $6$ and $9$. We can see that the times of improvements are distributed UNIFORMLY? After any improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on Figure \ref{fig:averagenetworksize_longerlog}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. 
+
 
 \begin{figure}[htpb]
 	\centering
@@ -444,9 +457,24 @@ The average fittnes of each population as a function of the number of generation
 \end{figure}
 
 
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{averagenetworksize_longerlog.pdf}
+	\caption{Average network size longerlog BETTER TITLE}
+	\label{fig:averagenetworksize_longerlog}
+\end{figure}
 \subsection{Similar networks reached in parallel runs}
 \label{sub:similar_networks_reached_in_paralell_runs}
 
+The fittest network of Population 1 at the end of the simulation is shown on Figure \ref{fig:trunk_glyc_final_job1}. This network uses parts of the original network (reactions $416$ $883$ for the beginning of the path on the left of the figure. 
+
+WHY DOES REAL GLYCOLYSIS NOT USE REACTION 633?
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{trunk_glyc_final_job1.pdf}
+	\caption{Fittest network at the end of the simulation in Population 1}
+	\label{fig:trunk_glyc_final_job1}
+\end{figure}
 
 If mutations happen with 100$\%$ then rather fast improvement to best network. Very diverse populations in terms of available reactions, but somewhat similar within a single run. Different runs very different available reactions. For the nonzero flux reactions within a run is almost completely homogeneous, and lots of similarity between runs too. 
 
