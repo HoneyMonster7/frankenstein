@@ -43,6 +43,12 @@
 
 	How is Metropolis-Hastings using the partition function?
 
+	SmallKforfittness talk about it in methods - goal functions
+
+	Similarity matrix 
+
+	Enthropy - Inverse participation ratio
+
 	\section*{Definitions put it in a box}
 	
 	\begin{framed}
@@ -414,6 +420,21 @@ IPR vs Entropy
 
 \section{Results}
 \label{sec:results}
+
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{trunk_glyc_init.pdf}
+	\caption{Trunk of the glycolytic pathway plus few reactions at the beginning}
+	\label{fig:truncglycinit}
+\end{figure}
+
+
+The first simulations we run were started from the subset of the reactions appearing in glycolysis that only use chemical compounds that appear in our list of compounds, starting from Dihydoxyacetone phosphate and ending in Pyruvate. This reaction network is shown on Figure \ref{fig:truncglycinit}. This is the trunk of the glycolytic pathway with an additional reaction ($416$ at the beginning of it. The ATP flux of this network is $0.5$, with the limiting reaction being $883$, that has a free energy change of $1.71$ eV at the conditions given by Table \ref{environmentTable}. This is a good initial network as it has plenty of potential to improve, eg by finding an alternative pathto reaction $883$ or finding completely new paths from the nutrient of the MN to the end product. 
+
+The fittnes cost of having a reaction within the MN was set to $k_{reac}=0.001$ with the rate of point mutations as $P_{point}=0.01$ giving $1$ mutation per generation. The fittnes function used here was the flux of ADP to ATP conversion minus $k_{reac}$ times the number of reactions in the MN.
+
+The average fittnes of each population as a function of the number of generations since the initial network is shown on Figure \ref{fig:averagefittness_longerlog}. 
 
 \begin{figure}[htpb]
 	\centering
