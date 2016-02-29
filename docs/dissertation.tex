@@ -45,9 +45,9 @@
 
 	SmallKforfittness talk about it in methods - goal functions
 
-	Similarity matrix 
+	Similarity matrix (partilly done)
 
-	Entropy - Inverse participation ratio
+	Entropy (kindof done) - Inverse participation ratio 
 
 	\section*{Definitions put it in a box}
 	
@@ -269,6 +269,7 @@ Do not break up into subsections
 The possible mutations, why it makes sense to use only these, and possible other mutations that could have been used. The rate of mutations. 
 INTRO SENTENCE}
 
+\textbf{New method of storing indexes only --- pointers to types of cells. Include the previous method too?}
 To simulate evolution on a computer we need three things: replication, mutation and competition. Algorithms empowered by the evolutionary principles \cite{evolutionaryalgorithms} are used every day now to find optimal solutions to problems in all fields of science.
 
 
@@ -400,22 +401,15 @@ While the simulation is running, every few thousand generations some key descrip
 Entropy is used as one of the measures of the diversity of the population. It is calculated as: $S=- \sum^{M}_{i=1} n_i \log n_i $ where $n_i$ denotes the number of cells of type $i$, and the sum runs through all the different types of cells in the population. (In a population usually there are multiple "copies" of any given cell, as the rate of mutations is low, eg. for $p_{point}=0.1$ only every tenth reproduction results in a new type of cell.) As we are considering a population with $N=100$ cells, the minimal entropy is $S_{min}=-100\log100=-460.52$, this value is attained when every cell in the population is identical ($p_{i_1}=100$, and $p_i=0$ for other $i$ values), as is the case initially in our populations. It's maximal value is $S_{max}=0$ attained when every cell is different in the population. This happens when the mutation rate is very high (eg. $P_{point}=1$). 
 
 
-To compare networks between populations we define a similarity index between two MN-s, calculated as follows: we count the reactions appearing in both MN-s, then divide this count by the number of reactions in the larger network. This quantity is always between $0$ and $1$, with these extreme values attained if the two MN-s share no reactions, and if they are identical, respectively. It can be calculated for every reaction in the two MN-s or only for those that have non-zero flux through them. This is an important distiction, as for a high mutation rate, and small $k_{reac}$ value the two MN-s might have a lot of unused reactions that differ amongst them, but their used reactions could be the same. 
+To compare networks between populations we define a similarity index between two MN-s, calculated as follows: we count the reactions appearing in both MN-s, then divide this count by the number of reactions in the larger network. This quantity is always between $0$ and $1$, with these extreme values attained if the two MN-s share no reactions, and if they are identical, respectively. We calculate two similarity indices for each pair of MN-s $ \left\{ i,j \right\}$, one for every reaction in the two MN-s ($M_{i,j,all}$) and one only for those reactions that have non-zero flux through them ($M_{i,j,used}$). This is an important distiction, as for a high mutation rate, and small $k_{reac}$ value the two MN-s might have a lot of unused reactions that differ amongst them, but their used reactions could be the same. 
+
+While the simulations are running, we save the states of the populations at 10 occasions, both to be used as checkpoints if the calculation doesn't finish, and also to be able how the networks evolved. At these checkpoints the MN of every cell in the population are writeen out (in the \texttt{XGMML} format). This allows both the visualization of the networks and also their comparison using the similarity indices between them. As plotting the similarity indices as a matrix (as in FIGURE EXAMPLE) for every population at every checkpoint would be unpractical, we instead consider the similarity indices of MN-s within a population compared to the fittest network in the population, resulting in a vector of $N-1$ similarity indices (we don't compare the fittest network with itself). This would correspond to a column of the similarity matrix shown on Figure SIMILARITYMATRIXPLOT.
+
+These similarity indices are then summarized using the Inverse Participation Ratio of them. EXPLAIN  The similarity indices of each population are divided into 10 bins, and the IPR of the number of elements in the bin are calculated, using $IPR= \sum^{10}_{i=1} \frac{1}{p_i^2} $ where $p_i$ is the ratio of similarity indices in bin $i$ (this ensures normalization, $ \sum^{10}_{i=1} p_i=1$) 
+
+\textbf{IPR: How to calculate, why is it useful? Can be calculated for nonzero flux reactions or all available ones too. IPR vs Entropy}
 
 
-\subsubsection{Similarity Index}
-\label{ssub:Similarity Index}
-
-How to calculate, why is it useful? Can be calculated for nonzero flux reactions or all available ones too. 
-
-\subsubsection{Inverse participation ratio}
-\label{ssub:Inverse participation ratio}
-IPR vs Entropy
-\subsection{Population simulation}
-\label{sub:population_simulation}
-How to store the population, how to choose which one to mutate. 
-
-New method of storing indexes only. Include the previous method too?
 
 
 
@@ -463,8 +457,6 @@ The average fitness of each population as a function of the number of generation
 	\caption{Average network size longerlog BETTER TITLE}
 	\label{fig:averagenetworksize_longerlog}
 \end{figure}
-\subsection{Similar networks reached in parallel runs}
-\label{sub:similar_networks_reached_in_paralell_runs}
 
 The fittest network of Population 1 at the end of the simulation is shown on Figure \ref{fig:trunk_glyc_final_job1}. This network uses parts of the original network (reactions $416$ $883$ for the beginning of the path on the left of the figure. 
 
@@ -476,6 +468,19 @@ WHY DOES REAL GLYCOLYSIS NOT USE REACTION 633?
 	\label{fig:trunk_glyc_final_job1}
 \end{figure}
 
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{IPR_longerlog.pdf}
+	\caption{Inverse proportionality ratio plots of the first few populations}
+	\label{fig:IPR_firstrun}
+\end{figure}
+
+The IPR plots of the first few populations are shown on Figure \ref{fig:IPR_firstrun}, the plots of the not-shown populations are very similar to this one. The leftmost plot shows the IPR of the similarity indices of each cell compared to the best network. In these plots an IPR of $1$ means a completely homegeneous population (MOVE THIS SENTENCE TO METHODS?) There is some variation in the reactions within the MN-s due to the random mutations, however when looking at the middle plot showing the IPR for the similarity indices calculated using the reactions with nonzero fluxes, there is very little variation. This is due to the fact that once a network evolves, there is generally only a small amount of minor changes can occur with the used reactions. 
+
+
+\subsection{Similar networks reached in parallel runs}
+\label{sub:similar_networks_reached_in_paralell_runs}
 If mutations happen with 100$\%$ then rather fast improvement to best network. Very diverse populations in terms of available reactions, but somewhat similar within a single run. Different runs very different available reactions. For the nonzero flux reactions within a run is almost completely homogeneous, and lots of similarity between runs too. 
 
 If the mutation probabilities decrease improvements become more difficult.
