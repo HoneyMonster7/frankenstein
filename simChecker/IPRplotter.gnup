@@ -1,7 +1,7 @@
 
 set macros
 
-set key outside
+set key outside title "Population"
 
 set terminal svg size 1920, 580 enhanced background rgb 'white' fsize 22
 set output 'IPRplots.svg'
