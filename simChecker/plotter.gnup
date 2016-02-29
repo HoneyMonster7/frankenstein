@@ -2,11 +2,13 @@
 # find out where gnuplot lives
 
 
+set terminal svg size 1920, 1080 enhanced background rgb 'white'
+set output 'simmatrix.all.svg'
 
 
 XTICS="`cat rows.list`"
 
-nrofthem="`cat columns.WHICH.list | wc -l`"
+nrofthem="`cat columns.all.list | wc -l`"
 
 #unset xtics
 #unset ytics
@@ -36,10 +38,50 @@ set title "Similarity index between the reaction networks"
 
 unset key
 if (nrofthem > 15 ){
-	plot 'similarityMatrix.dat' matrix with image , \
+	plot 'similarityMatrix.all.dat' matrix with image , \
 } else {
 
-plot 'similarityMatrix.dat' matrix with image , \
+plot 'similarityMatrix.all.dat' matrix with image , \
+		'' matrix  using 1:2:(sprintf('%.2f',$3))  with labels 
+}
+#pause -1
+
+set output 'simmatrix.used.svg'
+
+nrofthem="`cat columns.all.list | wc -l`"
+
+#unset xtics
+#unset ytics
+
+set for [i=5:words(XTICS):10] xtics (word(XTICS,i) i-1)
+set for [i=5:words(XTICS):10] ytics (word(XTICS,i) i-1)
+
+set xtics rotate
+set view map
+
+set autoscale xfix
+set autoscale yfix
+
+set tics scale 0,0.001
+set mxtics 2
+set mytics 2
+
+set grid front mxtics mytics lw 1.5 lt -1 lc rgb 'white'
+
+set xrange [-0.5:nrofthem-0.5]
+set yrange [-0.5:nrofthem-0.5]
+
+set title "Similarity index between the reaction networks"
+
+#set xtics 0.5,1
+#set ytics 0.5,1
+
+unset key
+if (nrofthem > 15 ){
+	plot 'similarityMatrix.used.dat' matrix with image , \
+} else {
+
+plot 'similarityMatrix.used.dat' matrix with image , \
 		'' matrix  using 1:2:(sprintf('%.2f',$3))  with labels 
 }
 #pause -1

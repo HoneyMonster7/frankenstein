@@ -130,11 +130,10 @@ else
 		./simMatrix -b -l columns.used.list.ordered > similarityArray.used.dat
 	else
 		#calculating the whole similarity matrix
-		if [ "$onlyUsed" == 1 ]; then
-			./simMatrix -l columns.used.list > similarityMatrix.dat
-		else
-			./simMatrix -l columns.all.list > similarityMatrix.dat
-		fi
+		echo "calculating the similarity matrix for all the reactions"
+			./simMatrix -l columns.used.list > similarityMatrix.used.dat
+		echo "calculating the similarity matrix for the used reactions"
+			./simMatrix -l columns.all.list > similarityMatrix.all.dat
 	fi
 fi
 
