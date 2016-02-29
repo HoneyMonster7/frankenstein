@@ -101,7 +101,7 @@ if [ ! -d $jobtoan ]; then
 fi
 
 #echo "jobtoan is $jobtoan within there we have $(ls $jobtoan | grep tar.gz)"
-needToUntar=$(ls $jobtoan | grep tar.gz)
+needToUntar=$(ls $jobtoan | grep tar.gz| sort -nt. -k2,2)
 
 if [ -z  "$needToUntar" ]; then
 	echo "Can't find jobs in $jobtoan. Are you sure it's the right folder?"
@@ -163,8 +163,8 @@ if [ ! "$onlylastcp" == 1 ]; then
 		for job in $jobnames; do
 
 			#echo "Jobname is $job"
-			grep "job$job" fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
-			grep "job$job" fittness.list | sort -n -k 3 | awk '{print $2}' >listoffit.jnk
+			grep "job$job"CP fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
+			grep "job$job"CP fittness.list | sort -n -k 3 | awk '{print $2}' >listoffit.jnk
 			#cat listofjob.jnk
 			./simMatrix -l listofjob.jnk -b > "$job".all.array
 
@@ -279,8 +279,8 @@ rm *.xgmml
 for job in $jobnames; do
 
 	#echo "Jobname is $job"
-	grep "job$job" fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
-	grep "job$job" fittness.list | sort -n -k 3 | awk '{print $2}' >listoffit.jnk
+	grep "job$job"CP fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
+	grep "job$job"CP fittness.list | sort -n -k 3 | awk '{print $2}' >listoffit.jnk
 	#cat listofjob.jnk
 	./simMatrix -l listofjob.jnk -b > "$job".all.array
 
@@ -341,7 +341,8 @@ for job in $jobnames; do
 	
 done
 	
-rm *.jnk
+# leaving the jnk files for the last checkpoint only
+#rm *.jnk
 #paste ../*.fittavg > ../fittavgs.fitt
 #paste ../*.enthavg > ../enthavgs.enth
 
