@@ -122,6 +122,7 @@ do
 
 	chmod +x oncurrentNode.sh
 
+	echo "$hostname is running job $i with random seed $modrnd" >> $jobname/joblist.txt
 	echo "sending script to $hostname"
 	rsync -aPhq {oncurrentNode.sh,backup.tar.gz} "$hostname":/scratch/s1134965/frankenstein
 	echo "running script at $hostname"

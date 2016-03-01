@@ -315,6 +315,8 @@ for job in $jobnames; do
 	awk '{print $4}' "../job$job.fitt" > "../progress/$job.avgfitonly"
 	awk '{print $5}' "../job$job.fitt" > "../progress/$job.netsizeonly"
 	awk '{print $6}' "../job$job.fitt" > "../progress/$job.avgnetsizeonly"
+	awk '{print $7}' "../job$job.fitt" > "../progress/$job.bestusedonly"
+	awk '{print $8}' "../job$job.fitt" > "../progress/$job.avgusedonly"
 
 	#echo "job$job" > "../$job.fittavg"
 	#echo "job$job" > "../$job.enthavg"
@@ -325,14 +327,18 @@ for job in $jobnames; do
 		../../movAvg/movAvg 100 "../progress/$job.avgfitonly" >> "../progress/$job.avgfitavg"
 		../../movAvg/movAvg 100 "../progress/$job.netsizeonly" >> "../progress/$job.netsizeavg"
 		../../movAvg/movAvg 100 "../progress/$job.avgnetsizeonly" >> "../progress/$job.avgnetsizeavg"
+		../../movAvg/movAvg 100 "../progress/$job.bestusedonly" >> "../progress/$job.bestusedavg"
+		../../movAvg/movAvg 100 "../progress/$job.avgusedonly" >> "../progress/$job.avgusedavg"
 
 	rm ../progress/$job.fittonly
 	rm ../progress/$job.enthonly
 	rm ../progress/$job.avgfitonly
 	rm ../progress/$job.netsizeonly
 	rm ../progress/$job.avgnetsizeonly
+	rm ../progress/$job.bestusedonly
+	rm ../progress/$job.avgusedonly
 	
-	paste ../progress/$job.numbersonly ../progress/$job.fittavg ../progress/$job.enthavg ../progress/$job.avgfitavg ../progress/$job.netsizeavg ../progress/$job.avgnetsizeavg > ../progress/$job.progress
+	paste ../progress/$job.numbersonly ../progress/$job.fittavg ../progress/$job.enthavg ../progress/$job.avgfitavg ../progress/$job.netsizeavg ../progress/$job.avgnetsizeavg ../progress/$job.bestusedavg ../progress/$job.avgusedonly> ../progress/$job.progress
 
 
 	rm ../progress/$job.numbersonly
@@ -341,6 +347,8 @@ for job in $jobnames; do
 	rm ../progress/$job.avgfitavg
 	rm ../progress/$job.netsizeavg
 	rm ../progress/$job.avgnetsizeavg
+	rm ../progress/$job.bestusedavg
+	rm ../progress/$job.avgusedavg
 
 
 

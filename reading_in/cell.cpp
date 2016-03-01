@@ -956,13 +956,15 @@ void cell::findThePaths(std::vector<int> needMore, std::vector<int> needLess, st
 
 
 
-void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach,int k, int outerloop,const int generationsPerWriteout, int checkPointLength, std::ofstream& fileToWrite,double& previousAvgFittness, double maxFittQueue [], double avgFittQueue [], double entropyQueue [], int bestNetSizeQueue [], double avgNetSizeQueue []){
+void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach,int k, int outerloop,const int generationsPerWriteout, int checkPointLength, std::ofstream& fileToWrite,double& previousAvgFittness, double maxFittQueue [], double avgFittQueue [], double entropyQueue [], int bestNetSizeQueue [], double avgNetSizeQueue [], int bestUsedReacsQueue [], double avgUsedReacsQueue []){
 
 	double maxFittness=0;
 	double totFittness=0;
 	int bestNetworkSize;
 	int totalNetworkSize=0;
 	double enthropy=0;
+	int bestUsedReacs=0;
+	int totUsedReacs=0;
 
 	//now runnign through the population to find the desired quantities
 	//only running through the vector containing how many of each cells there are in the population
@@ -975,6 +977,17 @@ void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& ce
 			double currFittness=cellVector[i].getPerformance();
 			int currReactionSize=cellVector[i].getReacs().size();
 
+			int fluxcounter=0;
+			std::vector<double> currentFluxes=cellVector[i].getFluxes();
+			for (double inspectedFlux:currentFluxes)
+			{
+				if (std::abs(inspectedFlux)>1e-5) {
+					++fluxcounter;
+				}
+			}
+
+			totUsedReacs+=fluxcounter*element;
+
 			totFittness+=currFittness*element;
 			totalNetworkSize+=currReactionSize*element;
 
@@ -982,6 +995,7 @@ void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& ce
 				
 				maxFittness=currFittness;
 				bestNetworkSize=currReactionSize;
+				bestUsedReacs=fluxcounter;
 			}
 
 		}
@@ -999,13 +1013,13 @@ void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& ce
 			for (int i=1; i<generationsPerWriteout; ++i){
 
 				long long int number=k-generationsPerWriteout+i+outerloop*checkPointLength;
-				fileToWrite<<number<<" "<<maxFittQueue[i]<<" "<<entropyQueue[i]<<" "<<avgFittQueue[i]<<" "<<bestNetSizeQueue[i]<<" "<<avgNetSizeQueue[i]<<std::endl;
+				fileToWrite<<number<<" "<<maxFittQueue[i]<<" "<<entropyQueue[i]<<" "<<avgFittQueue[i]<<" "<<bestNetSizeQueue[i]<<" "<<avgNetSizeQueue[i]<<" "<<bestUsedReacsQueue[i]<<" "<<avgUsedReacsQueue[i]<<std::endl;
 
 			}
 		}
 	
 		long long int generationNr=k+outerloop*checkPointLength;
-		fileToWrite<<generationNr<<" "<<maxFittness<<" "<<-1*enthropy<<" "<<avgFittness<<" "<<bestNetworkSize<<" "<<totalNetworkSize/(double)cellVector.size()<<std::endl;
+		fileToWrite<<generationNr<<" "<<maxFittness<<" "<<-1*enthropy<<" "<<avgFittness<<" "<<bestNetworkSize<<" "<<totalNetworkSize/(double)cellVector.size()<<" "<<bestUsedReacs<<" "<<totUsedReacs/(double)cellVector.size()<<std::endl;
 		
 		//setting the previous avg network fittness to the current value
 		previousAvgFittness=avgFittness;
@@ -1017,7 +1031,8 @@ void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& ce
 	entropyQueue[remainderOfK]=-1*enthropy;
 	bestNetSizeQueue[remainderOfK]=bestNetworkSize;
 	avgNetSizeQueue[remainderOfK]=totalNetworkSize/(double)cellVector.size();
-
+	bestUsedReacsQueue[remainderOfK]=bestUsedReacs;
+	avgUsedReacsQueue[remainderOfK]=totUsedReacs/(double)cellVector.size();
 }
 	
 

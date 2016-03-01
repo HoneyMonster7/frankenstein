@@ -149,3 +149,55 @@ plot for [file in linefiles] file.'.progress' u 1:6 with lines title 'Population
 plot for [file in linefiles2] file.'.progress' u 1:6 with lines title 'Population '.file
 plot for [file in linefiles3] file.'.progress' u 1:6 with lines title 'Population '.file
 plot for [file in linefiles4] file.'.progress' u 1:6 with lines title 'Population '.file
+
+unset multiplot
+
+set output 'bestnetworkused.svg'
+
+set key outside
+
+YLABS="unset ylabel; set ylabel 'Number of reactions'"
+XLABS="unset xlabel; set xlabel 'Generations'"
+
+set multiplot layout 4,1 columnsfirst title "Number of used reactions in the best reaction networks"
+
+@YLABS; @XLABS
+
+
+dy = floor((ANETMAX-ANETMIN)/ntics*10.)/10.
+set ytics dy
+set yrange [:ANETMAX]
+dx = floor((XMAX-XMIN+0.5)/ntics*10.)/10.
+set xtics dx
+
+
+plot for [file in linefiles] file.'.progress' u 1:7 with lines title 'Population '.file
+plot for [file in linefiles2] file.'.progress' u 1:7 with lines title 'Population '.file
+plot for [file in linefiles3] file.'.progress' u 1:7 with lines title 'Population '.file
+plot for [file in linefiles4] file.'.progress' u 1:7 with lines title 'Population '.file
+
+unset multiplot
+
+set output 'avgnetworkused.svg'
+
+set key outside
+
+YLABS="unset ylabel; set ylabel 'Number of reactions'"
+XLABS="unset xlabel; set xlabel 'Generations'"
+
+set multiplot layout 4,1 columnsfirst title "Average number of used reactions in the reaction networks"
+
+@YLABS; @XLABS
+
+
+dy = floor((ANETMAX-ANETMIN)/ntics*10.)/10.
+set ytics dy
+set yrange [:ANETMAX]
+dx = floor((XMAX-XMIN+0.5)/ntics*10.)/10.
+set xtics dx
+
+
+plot for [file in linefiles] file.'.progress' u 1:8 with lines title 'Population '.file
+plot for [file in linefiles2] file.'.progress' u 1:8 with lines title 'Population '.file
+plot for [file in linefiles3] file.'.progress' u 1:8 with lines title 'Population '.file
+plot for [file in linefiles4] file.'.progress' u 1:8 with lines title 'Population '.file
