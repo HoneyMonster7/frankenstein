@@ -13,6 +13,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <queue>
+#include <time.h>
 //for the command line flags
 #include <unistd.h>
 
@@ -163,7 +164,7 @@ int main(int argc, char **argv)
 	cell::smallKforFitness=1e-3;
 	//setting the probabilities for mutations
 	cell::probabilityOfMutation=0.01;
-	cell::probabilityOfHorizontalGenetransfer=0.1;
+	cell::probabilityOfHorizontalGenetransfer=0;
 	//don't add nrofinternalmetabolites here
 	cell::sourceSubstrate.push_back(104);
 	cell::sinkSubstrate.push_back(54);
@@ -221,9 +222,12 @@ int main(int argc, char **argv)
 
 
 		int NRofCheckpoints=10;
-		int checkPointLength=100000;
+		int checkPointLength=6000000;
 		const int generationsPerWriteout=10000;
+		//43200 seconds is 12 hours
+		double timeBetweenTwoWriteouts=43200;
 		double previousAvgFittness=cellVector[0].getPerformance();
+
 
 		//defining the queues here
 		double maxFittQueue [generationsPerWriteout];
@@ -236,8 +240,13 @@ int main(int argc, char **argv)
 		int arrayPos=0;
 
 
+		int outerLoop=0;
+
+
+		std::time_t previousWriteoutTime=std::time(nullptr);
 		//outer loop is there in order to save networks every 10% of the simulation
-		for (int outerLoop=0; outerLoop<NRofCheckpoints; outerLoop++){
+		//for (int outerLoop=0; outerLoop<NRofCheckpoints; outerLoop++){
+		while (true){
 
 			for (int k=0; k<checkPointLength; k++){
 
@@ -290,9 +299,11 @@ int main(int argc, char **argv)
 			std::vector<cell> bestCells=cell::getBestNCells(populationIndex,cellVector,cellVector.size());
 
 
-			if (outerLoop != NRofCheckpoints){
+			std::time_t currentTime=std::time(nullptr);
+			double timeElapsed=std::difftime(currentTime,previousWriteoutTime);
+			if (timeElapsed>timeBetweenTwoWriteouts){
 
-				std::cout<<"Checkpointing now..."<<std::endl;
+				std::cout<<timeElapsed<<" seconds have passed ("<<timeElapsed/(double)3600<<" hours), time for Checkpointing!"<<std::endl;
 				//the checkpoints will be saved into separate folders
 				
 				//creating a directory for saving the checkpoints into
@@ -314,6 +325,7 @@ int main(int argc, char **argv)
 					forFileName<<forCheckpointFolder.str()<<"/"<<actualFilename<<"CP"<<outerLoop+1<<"NR"<<i+1<<"cell";
 					bestCells[i].printXGMML(forFileName.str());
 				}
+				previousWriteoutTime=currentTime;
 			}
 			else {
 				//final network doesn't need a checkpoint folder - Yes it does.
@@ -323,6 +335,7 @@ int main(int argc, char **argv)
 				//	bestCells[i].printXGMML(forFileName.str());
 				//}
 			}
+			++outerLoop;
 		}
 		
 
