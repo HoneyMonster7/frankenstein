@@ -81,6 +81,13 @@ do
 
 	isHostUp=`ssh -o BatchMode=yes -o ConnectTimeout=5 "$hostname" echo 1 2>&1`
 	
+	if [[ "$isHostUp" ==1 ]]; then
+		isReactionAlreadyRunning=`ssh "$hostname" ps ax -u s1134965 | grep reaction | grep -v grep`
+		if [[ -z "isReactionAlreadyRunning" ]]; then
+			isHostUp=0
+			echo "Reaction is already running on $hostname"
+		fi
+	fi
 	echo "tried $hostname"
 	while [ "$isHostUp" != "1" ]
 	do
@@ -89,6 +96,13 @@ do
 		hostname=`printf "cplab%0*d\n" $compNRLength $firstToTry`
 		echo " no luck there, trying $hostname"
 		isHostUp=`ssh -o BatchMode=yes -o ConnectTimeout=5 "$hostname" echo 1 2>&1`
+		if [[ "$isHostUp" ==1 ]]; then
+			isReactionAlreadyRunning=`ssh "$hostname" ps ax -u s1134965 | grep reaction | grep -v grep`
+			if [[ -z "isReactionAlreadyRunning" ]]; then
+				isHostUp=0
+				echo "Reaction is already running on $hostname"
+			fi
+		fi
 		#if [ "$isHostUp" -eq 1 ].
 		#then
 		#	echo "$hostname is reachable"
