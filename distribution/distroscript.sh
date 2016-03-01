@@ -65,7 +65,8 @@ do
 
 	# tar the exectuable and the data files needed
 
-	tar acf backup.tar.gz data/fullnew*.dat reading_in/build/reaction
+	echo "The jobname is $jobname" > whichjob.txt
+	tar acf backup.tar.gz data/fullnew*.dat reading_in/build/reaction whichjob.txt
 
 	echo "tarring completed, now looking for a node that is up"
 
