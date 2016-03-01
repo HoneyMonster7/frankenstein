@@ -478,6 +478,15 @@ WHY DOES REAL GLYCOLYSIS NOT USE REACTION 633?
 
 The IPR plots of the first few populations are shown on Figure \ref{fig:IPR_firstrun}, the plots of the not-shown populations are very similar to this one. The leftmost plot shows the IPR of the similarity indices of each cell compared to the best network. In these plots an IPR of $1$ means a completely homegeneous population (MOVE THIS SENTENCE TO METHODS?) There is some variation in the reactions within the MN-s due to the random mutations, however when looking at the middle plot showing the IPR for the similarity indices calculated using the reactions with nonzero fluxes, there is very little variation. This is due to the fact that once a network evolves, there is generally only a small amount of minor changes can occur with the used reactions. 
 
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{simmatrix_firstjob.png}
+	\caption{Similarity matrix of the first 5 populations of Simulation 1}
+	\label{fig:simmatrix_firstjob}
+\end{figure}
+
+The similarity indices for this simulation are shown on Figure \ref{fig:simmatrix_firstjob}, for all the reactions in the MN-s above the diagonal, and for the reactions with nonzero flux below it. 
+
 
 \subsection{Similar networks reached in parallel runs}
 \label{sub:similar_networks_reached_in_paralell_runs}
