@@ -7,9 +7,11 @@ numberneeded=0
 fittnessgraph=0
 onlylastcp=0
 
+junkForLastCPStays=0
+
 optionsforchecker=""
 
-while getopts ":bj:hun:fl" opt; do
+while getopts ":bj:hun:fls" opt; do
 
 	#things to do: 
 
@@ -45,6 +47,10 @@ while getopts ":bj:hun:fl" opt; do
 			echo "-l was triggered, with $OPTARG"
 			onlylastcp=1
 			;;
+		s)
+			echo "-s was triggered. Junk stays for CP10."
+			junkForLastCPStays=1
+			;;
 		b)
 			echo "-b was triggered"
 			onlybest=1
@@ -64,6 +70,7 @@ while getopts ":bj:hun:fl" opt; do
 			echo -e "\t -n [number] number of jobs to analyse. Will use the first [number] jobs. 0 for all jobs. Defaults to 0."
 			echo -e "\t -f outputs the fittness graphs too. at the moment it doesn't work together with the -u switch."
 			echo -e "\t -l extract and analyse the last checkpoint only"
+			echo -e "\t -s don't remove .jnk files for the last CP (replotting the SimMatrix)"
 			exit 0
 			;;
 		\?)
@@ -342,7 +349,9 @@ for job in $jobnames; do
 done
 	
 # leaving the jnk files for the last checkpoint only
-rm *.jnk
+if [[ "$junkForLastCPStays" != 1 ]]; then
+	rm *.jnk
+fi
 #paste ../*.fittavg > ../fittavgs.fitt
 #paste ../*.enthavg > ../enthavgs.enth
 
