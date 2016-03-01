@@ -342,7 +342,7 @@ for job in $jobnames; do
 done
 	
 # leaving the jnk files for the last checkpoint only
-#rm *.jnk
+rm *.jnk
 #paste ../*.fittavg > ../fittavgs.fitt
 #paste ../*.enthavg > ../enthavgs.enth
 
