@@ -753,6 +753,8 @@ double cell::calcThroughput(){
 	}
 	//std::cout<<std::endl;
 
+	//WARNING! this is ALL the fluxes, also the ones for the auxilliary reactions
+	//care must be taken to extract the fluxes you actually want
 	setFluxes(tmpFluxes);
 	//std::cout<<"goodness is "<<goodness<<std::endl;;
 	//std::cout<<"Fittness is "<<goodness-smallKforFitness*availableReactions.size()<<std::endl;;
@@ -979,6 +981,8 @@ void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& ce
 
 			int fluxcounter=0;
 			std::vector<double> currentFluxes=cellVector[i].getFluxes();
+			//the resizing is to make sure that we only count the nonzero real reactions not the auxilliary ones
+			currentFluxes.resize(currReactionSize);
 			for (double inspectedFlux:currentFluxes)
 			{
 				if (std::abs(inspectedFlux)>1e-5) {
