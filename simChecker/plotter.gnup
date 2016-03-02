@@ -39,10 +39,12 @@ set title "Similarity index between the reaction networks"
 unset key
 if (nrofthem > 15 ){
 	plot 'similarityMatrix.dat' matrix with image , \
+		x linetype rgb "#000000" 
 } else {
 
 plot 'similarityMatrix.dat' matrix with image , \
-		'' matrix  using 1:2:(sprintf('%.2f',$3))  with labels 
+		'' matrix  using 1:2:(sprintf('%.2f',$3))  with labels  , \
+		x linetype rgb "#000000" 
 }
 #pause -1
 
