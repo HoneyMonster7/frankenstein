@@ -14,41 +14,41 @@ t = 75.0
 # b: key height in pixels (bottom margin)
 b = 300.0
 # h: height of output in pixels
-h = 150.0*NROFCOLS + t + b
+h = 150.0*(NROFCOLS-3) + t + b
 
 set terminal svg size 800, h enhanced background rgb 'white' 
 set macro
 set output 'forpaper.svg'
 
 print NROFCOLS
-XMIN=`cat *.progress | datamash min 1`
-XMAX=`cat *.progress | datamash max 1`
+XMIN=`cat 1.progress 2.progress 3.progress | datamash min 1`
+XMAX=`cat 1.progress 2.progress 3.progress | datamash max 1`
 
-BFITMIN=`cat *.progress | datamash min 2`
-BFITMAX=`cat *.progress | datamash max 2`
-
-
-ENTMIN=`cat *.progress | datamash min 3`
-ENTMAX=`cat *.progress | datamash max 3`
-
-AFITMIN=`cat *.progress | datamash min 4`
-AFITMAX=`cat *.progress | datamash max 4`
-
-BNETMIN=`cat *.progress | datamash min 5`
-BNETMAX=`cat *.progress | datamash max 5`
+BFITMIN=`cat 1.progress 2.progress 3.progress | datamash min 2`
+BFITMAX=`cat 1.progress 2.progress 3.progress | datamash max 2`
 
 
-ANETMIN=`cat *.progress | datamash min 6`
-ANETMAX=`cat *.progress | datamash max 6`
+ENTMIN=`cat 1.progress 2.progress 3.progress | datamash min 3`
+ENTMAX=`cat 1.progress 2.progress 3.progress | datamash max 3`
+
+AFITMIN=`cat 1.progress 2.progress 3.progress | datamash min 4`
+AFITMAX=`cat 1.progress 2.progress 3.progress | datamash max 4`
+
+BNETMIN=`cat 1.progress 2.progress 3.progress | datamash min 5`
+BNETMAX=`cat 1.progress 2.progress 3.progress | datamash max 5`
+
+
+ANETMIN=`cat 1.progress 2.progress 3.progress | datamash min 6`
+ANETMAX=`cat 1.progress 2.progress 3.progress | datamash max 6`
 
 if (NROFCOLS > 7 ) {
 	print 'we shouldnt be here'
 	BUSEDMIN=5;
-	BUSEDMAX=system('cat *.progress | datamash max 7')
+	BUSEDMAX=system('cat 1.progress 2.progress 3.progress | datamash max 7')
 
 	print 'we shouldnt be here'
 	AUSEDMIN=5;
-	AUSEMAX=system('cat *.progress | datamash max 8')
+	AUSEMAX=system('cat 1.progress 2.progress 3.progress | datamash max 8')
 	print 'we shouldnt be here'
 }
 YLABS="unset ylabel; set ylabel 'Fittness' "
@@ -65,8 +65,8 @@ XLABS="unset xlabel; set xlabel 'Generations'"
 		dx = floor((XMAX-XMIN+0.5)/ntics*10.)/10.
 		set xtics dx
 		set format x "%.1t*10^{%S}";
-		set title "Fittness of the best organism in each population"
-		plot for [file in linefiles] file.'.progress' u 1:2 with lines title 'Population '.file
+		#set title "Fittness of the best organism in each population"
+		#plot for [file in linefiles] file.'.progress' u 1:2 with lines title 'Population '.file
 
 		dy = floor((AFITMAX-AFITMIN)/ntics*10.)/10.
 		set ytics dy
@@ -77,18 +77,20 @@ XLABS="unset xlabel; set xlabel 'Generations'"
 
 		dy = floor((ENTMAX-ENTMIN)/ntics*10.)/10.
 		set ytics dy
-		set yrange [:ENTMAX]
+		set yrange [ENTMIN:ENTMAX]
 
 		set title "Entroy of the population"
 		plot for [file in linefiles] file.'.progress' u 1:3 with lines title 'Population '.file
 
 
-		dy = floor((BNETMAX-BNETMIN)/ntics*10.)/10.
-		set ytics BNETMIN,dy,BNETMAX
-		set yrange [:BNETMAX]
+		set yrange [*:*]
 
-		set title "Size of the reaction network of the best organism in each population"
-		plot for [file in linefiles] file.'.progress' u 1:5 with lines title 'Population '.file
+		#dy = floor((BNETMAX-BNETMIN)/ntics*10.)/10.
+		#set ytics BNETMIN,dy,BNETMAX
+		#set yrange [:BNETMAX]
+
+		#set title "Size of the reaction network of the best organism in each population"
+		#plot for [file in linefiles] file.'.progress' u 1:5 with lines title 'Population '.file
 
 
 		dy = floor((ANETMAX-ANETMIN)/ntics*10.)/10.

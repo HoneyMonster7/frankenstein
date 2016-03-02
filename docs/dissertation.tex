@@ -396,12 +396,23 @@ To visualize the resulting MN-s we use the open source biological network visual
 
 While MN-s can be visually compared using Cytoscape, doing so for more than a handful of networks is a cumbersome task, therefore we considered AN AUTOMATED PROCESS to compare MN-s resulting from our simulation. 
 
-While the simulation is running, every few thousand generations some key descriptors of the populations are written out to a log file. This allows us to monitor the evolution of the populatinons while the simulation is running, and also to plot the timeline of their evolution. Examples of such graphs can be found in Section \ref{sec:results} (eg. Figures \ref{fig:averagefittness_longerlog} and \ref{fig:averagenetworksize_longerlog}). These descriptors are: the fitness of the fittest network in the population, the average fitness of the population, the entropy of the population, the number of reactions in the fittest network, and the average number of reactions in the population. When plotting these measures, the fitness of the fittest network and the average fitness are indistinguishable on the plots (the average fitness lags by a few generations --- the time it takes for a change in the MN to propagate through the population)
+While the simulation is running, every few thousand generations some key descriptors of the populations are written out to a log file. This allows us to monitor the evolution of the populatinons while the simulation is running, and also to plot the timeline of their evolution. Examples of such graphs can be found in Section \ref{sec:results} (eg. Figure \ref{fig:simulation1} ). These descriptors are: the fitness of the fittest network in the population, the average fitness of the population, the entropy of the population, the number of reactions in the fittest network, and the average number of reactions in the population. When plotting these measures, the fitness of the fittest network and the average fitness are indistinguishable on the plots (the average fitness lags by a few generations --- the time it takes for a change in the MN to propagate through the population)
 
 Entropy is used as one of the measures of the diversity of the population. It is calculated as: $S=- \sum^{M}_{i=1} n_i \log n_i $ where $n_i$ denotes the number of cells of type $i$, and the sum runs through all the different types of cells in the population. (In a population usually there are multiple "copies" of any given cell, as the rate of mutations is low, eg. for $p_{point}=0.1$ only every tenth reproduction results in a new type of cell.) As we are considering a population with $N=100$ cells, the minimal entropy is $S_{min}=-100\log100=-460.52$, this value is attained when every cell in the population is identical ($p_{i_1}=100$, and $p_i=0$ for other $i$ values), as is the case initially in our populations. It's maximal value is $S_{max}=0$ attained when every cell is different in the population. This happens when the mutation rate is very high (eg. $P_{point}=1$). 
 
 
-To compare networks between populations we define a similarity index between two MN-s, calculated as follows: we count the reactions appearing in both MN-s, then divide this count by the number of reactions in the larger network. This quantity is always between $0$ and $1$, with these extreme values attained if the two MN-s share no reactions, and if they are identical, respectively. We calculate two similarity indices for each pair of MN-s $ \left\{ i,j \right\}$, one for every reaction in the two MN-s ($M_{i,j,all}$) and one only for those reactions that have non-zero flux through them ($M_{i,j,used}$). This is an important distiction, as for a high mutation rate, and small $k_{reac}$ value the two MN-s might have a lot of unused reactions that differ amongst them, but their used reactions could be the same. 
+To compare networks between populations we define a similarity index between two MN-s, calculated as follows: we count the reactions appearing in both MN-s, then divide this count by the number of reactions in the larger network. This quantity is always between $0$ and $1$, with these extreme values attained if the two MN-s share no reactions, and if they are identical, respectively. We calculate two similarity indices for each pair of MN-s $ \left\{ i,j \right\}$, one for every reaction in the two MN-s ($M_{i,j,all}$) and one only for those reactions that have non-zero flux through them ($M_{i,j,used}$). This is an important distiction, as for a high mutation rate, and small $k_{reac}$ value the two MN-s might have a lot of unused reactions that differ amongst them, but their used reactions could be the same.  As the indices are symmetric ($M_{i,j,all}=M_{j,i,all}$ and  $M_{i,j,used}=M_{j,i,used}$) instead of two separate plots, we plot 
+
+$$
+M_{i,j}= \left\{
+	\begin{array}{ll}
+		M_{i,j,all} & \quad i \leq j \\
+		M_{i,j,used} & \quad \text{otherwise}
+	\end{array}
+\right.
+$$
+
+Thus we show the similarity indices calculated using all reactions above the diagonal of the plot, and those calculated using the used reactions below the diagonal. The diagonal entries are always $1$-s as any network is equivalent to itself. We plot the diagonal as a black line to separate the two regions of the plot. REPHRASE
 
 While the simulations are running, we save the states of the populations at 10 occasions, both to be used as checkpoints if the calculation doesn't finish, and also to be able how the networks evolved. At these checkpoints the MN of every cell in the population are writeen out (in the \texttt{XGMML} format). This allows both the visualization of the networks and also their comparison using the similarity indices between them. As plotting the similarity indices as a matrix (as in FIGURE EXAMPLE) for every population at every checkpoint would be unpractical, we instead consider the similarity indices of MN-s within a population compared to the fittest network in the population, resulting in a vector of $N-1$ similarity indices (we don't compare the fittest network with itself). This would correspond to a column of the similarity matrix shown on Figure SIMILARITYMATRIXPLOT.
 
@@ -436,38 +447,26 @@ These similarity indices are then summarized using the Inverse Participation Rat
 \end{figure}
 
 
-The first simulations we run were started from the subset of the reactions appearing in glycolysis that only use chemical compounds that appear in our list of compounds, starting from Dihydoxyacetone phosphate and ending in Pyruvate. This reaction network is shown on Figure \ref{fig:truncglycinit}. This is the trunk of the glycolytic pathway with an additional reaction ($416$ at the beginning of it. The ATP flux of this network is $0.5$, with the limiting reaction being $883$, that has a free energy change of $1.71$ eV at the conditions given by Table \ref{environmentTable}. This is a good initial network as it has plenty of potential to improve, eg by finding an alternative path to reaction $883$ or finding completely new paths from the nutrient of the MN to the end product. 
-
-The fitness cost of having a reaction within the MN was set to $k_{reac}=0.001$ with the rate of point mutations as $P_{point}=0.01$ giving $1$ mutation per generation. The fitness function used here was the flux of ADP to ATP conversion minus $k_{reac}$ times the number of reactions in the MN.
-
-The average fitness of each population as a function of the number of generations since the initial network is shown on Figure \ref{fig:averagefittness_longerlog}. Most populations have improved their fitness by increasing the ADP ATP conversion rate either by producing one or two more ATP-s  with the exception of Populations $6$ and $9$. We can see that the times of improvements are distributed UNIFORMLY? After any improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on Figure \ref{fig:averagenetworksize_longerlog}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. 
-
+The first simulations we run were started from the subset of the reactions appearing in glycolysis that only use chemical compounds that appear in our list of compounds, starting from Dihydoxyacetone phosphate and ending in Pyruvate. This reaction network is shown on Figure \ref{fig:truncglycinit}. This is the trunk of the glycolytic pathway with an additional reaction ($416$ at the beginning of it), and the removal of the ATP producing reaction $633$, in exchange for $1069$, that fulfills a similar role, but instead of creating ATP from ADP it discards the phosphate group it SHEDS from 1,3 biphosphorglycerate. The ATP flux of this network is $0.5$, with the limiting reaction being $883$, that has a free energy change of $1.71$ eV at the conditions given by Table \ref{environmentTable}. This is a good initial network as it has plenty of potential to improve, eg by "rediscovering" reaction $633$, or finding completely new paths from the nutrient of the MN to the end product. For the sake of brevity we shall refer to this simulation as Simulation $1$.
 
 \begin{figure}[htpb]
 	\centering
-	\includegraphics[width=1\linewidth]{averagefittness_longerlog.pdf}
-	\caption{Averagefittnessongerlog}
-	\label{fig:averagefittness_longerlog}
+	\includegraphics[width=1\linewidth]{simulation1.pdf}
+	\caption{Diagnostic plots for 3 typical populations of Simulation 1}
+	\label{fig:simulation1}
 \end{figure}
 
+The fitness cost of having a reaction within the MN was set to $k_{reac}=0.001$ with the rate of point mutations as $P_{point}=0.01$ giving an expected $1$ mutation per generation. The fitness function used here was the flux of ADP to ATP conversion minus $k_{reac}$ times the number of reactions in the MN.
 
-\begin{figure}[htpb]
-	\centering
-	\includegraphics[width=1\linewidth]{averagenetworksize_longerlog.pdf}
-	\caption{Average network size longerlog BETTER TITLE}
-	\label{fig:averagenetworksize_longerlog}
-\end{figure}
+When simulating, we started with 20 identical, uniform populations, the program to simulate each of them used a different seed for the PRNG, therefore the populations evolved differently, and independently from one another. We started 20 populations in each case, not all of which finish the simulation due to technical difficulties. Of these we generally show diagnostic plots for 3 typical populations, unless there is a specific population we discuss. 
 
-The fittest network of Population 1 at the end of the simulation is shown on Figure \ref{fig:trunk_glyc_final_job1}. This network uses parts of the original network (reactions $416$ $883$ for the beginning of the path on the left of the figure. 
 
-WHY DOES REAL GLYCOLYSIS NOT USE REACTION 633?
-\begin{figure}[htpb]
-	\centering
-	\includegraphics[width=1\linewidth]{trunk_glyc_final_job1.pdf}
-	\caption{Fittest network at the end of the simulation in Population 1}
-	\label{fig:trunk_glyc_final_job1}
-\end{figure}
+The fitness of the best network, and the average fitness of $3$ typical populations of Simulation 1 as a function of the number of generations since the initial network is shown on the first two graphs of Figure \ref{fig:simulation1}. The two graphs are very similar, due to the fact that unless there is a significant ($\geq 0.3$) fittness increase, we only save the data for these diagnostic plots every $10000$ generations ($\sim$ every $10$ seconds). Most populations have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed UNIFORMLY and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on the last two graphs of Figure \ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. 
 
+
+The entropies of the $3$ populations are shown in the middle graph of Figure \ref{fig:simulation1}. The only significant jumps in the entropies can be identified with the improvements in the popoulations, and the steady value of entropy is $\sim -360$. CAN IT??? DOES THIS MATTER? This can correspond to $3$ approximately equal sized sub-population, all of them having $\sim 33$ reactions, as then $S$ would be $3\times 33 \ln \left( 33 \right)=-349.7$
+
+The fittest network of Population 1 at the end of the simulation is shown on Figure \ref{fig:trunk_glyc_final_job1}. This network uses parts of the original network (reactions $416$ and $883$ for the beginning of the path on the left of the figure, and reaction $633$ was "rediscovered" by the network. 
 
 \begin{figure}[htpb]
 	\centering
@@ -475,6 +474,16 @@ WHY DOES REAL GLYCOLYSIS NOT USE REACTION 633?
 	\caption{Inverse proportionality ratio plots of the first few populations}
 	\label{fig:IPR_firstrun}
 \end{figure}
+
+WHY DOES REAL GLYCOLYSIS NOT USE REACTION 633? it does, we 'deliberately got rid of it'
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{trunk_glyc_final_job1.pdf}
+	\caption{Reactions with nonzero flux in the fittest network at the end of the simulation in Population 1}
+	\label{fig:trunk_glyc_final_job1}
+\end{figure}
+
+
 
 The IPR plots of the first few populations are shown on Figure \ref{fig:IPR_firstrun}, the plots of the not-shown populations are very similar to this one. The leftmost plot shows the IPR of the similarity indices of each cell compared to the best network. In these plots an IPR of $1$ means a completely homegeneous population (MOVE THIS SENTENCE TO METHODS?) There is some variation in the reactions within the MN-s due to the random mutations, however when looking at the middle plot showing the IPR for the similarity indices calculated using the reactions with nonzero fluxes, there is very little variation. This is due to the fact that once a network evolves, there is generally only a small amount of minor changes can occur with the used reactions. 
 
