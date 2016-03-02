@@ -22,21 +22,21 @@ Metabolic networks very similar use only a small set of reactions and compounds 
 
 What my project is about: explain why this set of reactions was chosen, why the uniformity? Test if reason is evolution.
 
-\subsection{About evolution}
+\subsection{Biological evolution}
 \label{sub:About evolution}
 Three main ingredients: reproduction, mutation selection, why is it important for physics, maths and computer science?
 
-\subsection{About Graph Theory}
+\subsection{Metabolic networks as graphs}
 \label{sub:About Graph THeory}
 
 Topological similarities to human social networks, internet, small worldliness, error tolerance, modularity. 
 
-\subsection{What I will do}
+\subsection{Goals of the project}
 \label{sub:What I will do}
 
 Subset of molecules used, simulating population of artificial organisms with selection process like evolution. Looking at patterns of improvements.
 
-\subsection{Where is the physics}
+\subsection{Connection to physics}
 \label{sub:Where is the physics}
 
 Free energy change calculations, survival of the fittest using the moran process, Metropolis algorithm? Enthropy and Inverse participation ratio as a measure of disorder. 
@@ -45,7 +45,7 @@ Free energy change calculations, survival of the fittest using the moran process
 \section{Methods}
 \label{sec:methods}
 
-\subsection{What was I provided with?}
+\subsection{The data provided}
 \label{sub:What was I provided with?}
 List of reactants and reactions, with standard free E changes. 
 \subsubsection{Restrictions on chemistry}
@@ -57,9 +57,9 @@ Previous author's restrictions on artificial chemistries. Should this go to Intr
 Structure of the input files -$\rightarrow$ algorithm to read them in $\rightarrow$ store them. 
 
 The neighbour list and it's use in adding reactions.
-\subsection{The free energy change}
+\subsection{Calculating the free energy change}
 \label{sub:The free energy change}
-The physics of the formula to calculate it. The role of deciding the direction of reactions.  $\rightarrow$ valid ranges can be changed at the beginning of the program.
+The physics of the formula to calculate it. The role of deciding the direction of reactions.  $\rightarrow$ valid ranges  that can be changed at the beginning of the program.
 
 \subsection{Random number generation}
 \label{sub:Random number generation}
@@ -74,7 +74,7 @@ Good quality random numbers $\rightarrow$ mt19937 Mersenne Twister. Reproducibil
 Detailed description $\rightarrow$ equations, example matrix? Which fluxes are free? Which fluxes are limited? GLPK 
 
 
-\subsection{Implementing evolution}
+\subsection{In silico Evolution}
 \label{sub:Implementing evolution}
 \subsubsection{Mutations}
 \label{ssub:Mutations}
@@ -87,7 +87,7 @@ survival of the fittest using the Moran process - Metropolis algorithm?
 \label{ssub:Competition}
 Goal functions? $\rightarrow$ changing goal functions? Talk about trial networks (ethanol producing)?
 
-\subsection{Visualization}
+\subsection{Visualization of metabolic pathways}
 \label{sub:visualization}
 
 the use of Cytoscape $\rightarrow$ xgmml format and the  program part to output that
@@ -100,7 +100,7 @@ New method of storing indexes only. Include the previous method too?
 
 \subsubsection{Parallel simulations}
 \label{ssub:Paralell simulations}
-Multiple populations with same initial network  run paralell$\rightarrow$ different random seed. Cplab machines 
+Multiple populations with same initial network  run paralell$\rightarrow$ different random seed. Cplab machines, talk about the distributing/collecting scripts?
 
 
 \subsection{Comparing populations}
@@ -119,9 +119,24 @@ IPR vs Enthropy
 \section{Results}
 \label{sec:results}
 
+\subsection{Similar networks reached in paralell runs}
+\label{sub:similar_networks_reached_in_paralell_runs}
+
+
 If mutations happen with 100$\%$ then rather fast improvement to best network. Very diverse populations in terms of available reactions, but somewhat similar within a single run. Different runs very different available reactions. For the nonzero flux reactions within a run is almost completely homogeneous, and lots of similarity between runs too. 
 
 If the mutation probabilities decrease improvements become more difficult.
+
+\subsection{Limitations}
+\label{sub:limitations}
+Dynamics of chemical reactions ignored
+
+Restrictions in the types of mutations
+
+Small interactions between cells
+
+Too simple goal function
+
 
 
 \section{Discussion}
