@@ -11,7 +11,7 @@ compNRLength=3
 
 nrofmachines=20
 
-firstToTry=22
+firstToTry=2
 
 echo "Find a job name:"
 read jobname
@@ -82,9 +82,9 @@ do
 
 	isHostUp=`ssh -o BatchMode=yes -o ConnectTimeout=5 "$hostname" echo 1 2>&1`
 	
-	if [[ "$isHostUp" ==1 ]]; then
+	if [ "$isHostUp" ==1 ]; then
 		isReactionAlreadyRunning=`ssh "$hostname" ps ax -u s1134965 | grep reaction | grep -v grep`
-		if [[ -z "isReactionAlreadyRunning" ]]; then
+		if [ -z "isReactionAlreadyRunning" ]; then
 			isHostUp=0
 			echo "Reaction is already running on $hostname"
 		fi
@@ -97,9 +97,9 @@ do
 		hostname=`printf "cplab%0*d\n" $compNRLength $firstToTry`
 		echo " no luck there, trying $hostname"
 		isHostUp=`ssh -o BatchMode=yes -o ConnectTimeout=5 "$hostname" echo 1 2>&1`
-		if [[ "$isHostUp" ==1 ]]; then
+		if [ "$isHostUp" ==1 ]; then
 			isReactionAlreadyRunning=`ssh "$hostname" ps ax -u s1134965 | grep reaction | grep -v grep`
-			if [[ -z "isReactionAlreadyRunning" ]]; then
+			if [ -z "isReactionAlreadyRunning" ]; then
 				isHostUp=0
 				echo "Reaction is already running on $hostname"
 			fi
