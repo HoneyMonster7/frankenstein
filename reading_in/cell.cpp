@@ -672,13 +672,15 @@ double cell::calcThroughput(){
 	}
 
 	//bounding the imaginary reactions, only certain amount of material can be taken at once
-	glp_set_col_bnds(lp,listSize+1,GLP_DB,0.0,10.0);
+	//water
+	glp_set_col_bnds(lp,listSize+1,GLP_DB,0.0,40.0);
+	//co2
 	glp_set_col_bnds(lp,listSize+2,GLP_DB,0.0,40.0);
-	glp_set_col_bnds(lp,listSize+3,GLP_DB,0.0,40.0);
-	glp_set_col_bnds(lp,listSize+5,GLP_DB,0.0,10.0);
-	glp_set_col_bnds(lp,listSize+6,GLP_DB,-10.0,10.0);
+	//adp->atp auxilliary
+	glp_set_col_bnds(lp,listSize+3,GLP_DB,-10.0,40.0);
+	//nad_red->nad_ox
+	glp_set_col_bnds(lp,listSize+4,GLP_DB,-40.0,40.0);
 
-	glp_set_col_bnds(lp,listSize+4,GLP_DB,-10.0,10.0);
 	//add imaginary reaction here:
 	//adding water
 	ia.push_back(substrateIndex[-1+nrOfInternalMetabolites]);	ja.push_back(listSize+1); ar.push_back(1.0);
@@ -695,10 +697,14 @@ double cell::calcThroughput(){
 	//removing the sink substrate
 	for (int sinkIndex=0; sinkIndex<sinkSubstrate.size(); ++sinkIndex){
 		ia.push_back(substrateIndex[sinkSubstrate[sinkIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+sinkIndex+1); ar.push_back(-1.0);
+		//bounding the sinks
+		glp_set_col_bnds(lp,listSize+4+sinkIndex+1,GLP_DB,0.0,10.0);
 	}
 	//adding source substrates
 	for (int sourceIndex=0; sourceIndex<sourceSubstrate.size(); ++sourceIndex){
 		ia.push_back(substrateIndex[sourceSubstrate[sourceIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+sinkSubstrate.size()+sourceIndex+1); ar.push_back(1.0);
+		//bounding the sources
+		glp_set_col_bnds(lp,listSize+4+sinkSubstrate.size()+sourceIndex+1,GLP_DB,0.0,10.0);
 	}
 
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
