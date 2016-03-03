@@ -163,9 +163,10 @@ int main(int argc, char **argv)
 	cell::smallKforFitness=1e-3;
 	//setting the probabilities for mutations
 	cell::probabilityOfMutation=0.01;
-	cell::probabilityOfHorizontalGenetransfer=0.1;
+	cell::probabilityOfHorizontalGenetransfer=0;
 	//don't add nrofinternalmetabolites here
 	cell::sourceSubstrate.push_back(104);
+	//cell::sourceSubstrate.push_back(267);
 	cell::sinkSubstrate.push_back(54);
 
 
@@ -221,7 +222,7 @@ int main(int argc, char **argv)
 
 
 		int NRofCheckpoints=10;
-		int checkPointLength=100000;
+		int checkPointLength=6000000;
 		const int generationsPerWriteout=10000;
 		double previousAvgFittness=cellVector[0].getPerformance();
 
