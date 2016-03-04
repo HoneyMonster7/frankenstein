@@ -167,6 +167,7 @@ int main(int argc, char **argv)
 	cell::probabilityOfHorizontalGenetransfer=0;
 	//don't add nrofinternalmetabolites here
 	cell::sourceSubstrate.push_back(104);
+	//cell::sourceSubstrate.push_back(267);
 	cell::sinkSubstrate.push_back(54);
 
 

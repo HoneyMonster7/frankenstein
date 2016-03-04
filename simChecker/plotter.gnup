@@ -29,7 +29,7 @@ set mytics 2
 set grid front mxtics mytics lw 1.5 lt -1 lc rgb 'white'
 
 set xrange [-0.5:nrofthem-0.5]
-set yrange [-0.5:nrofthem-0.5]
+set yrange [-0.5:nrofthem-0.5] reverse
 
 set title "Similarity index between the reaction networks"
 
@@ -39,10 +39,12 @@ set title "Similarity index between the reaction networks"
 unset key
 if (nrofthem > 15 ){
 	plot 'similarityMatrix.dat' matrix with image , \
+		x linetype rgb "#000000" 
 } else {
 
 plot 'similarityMatrix.dat' matrix with image , \
-		'' matrix  using 1:2:(sprintf('%.2f',$3))  with labels 
+		'' matrix  using 1:2:(sprintf('%.2f',$3))  with labels  , \
+		x linetype rgb "#000000" 
 }
 #pause -1
 
