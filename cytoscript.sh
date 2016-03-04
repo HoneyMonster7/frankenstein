@@ -7,38 +7,38 @@ network load file file=longerLog/job10CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred
 
-network load file file=longerLog/job10CP10NR2cell.xgmml
+network load file file=longerLog/job9CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred
 
-network load file file=longerLog/job10CP10NR3cell.xgmml
+network load file file=longerLog/job8CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred
 
-network load file file=longerLog/job10CP10NR4cell.xgmml
+network load file file=longerLog/job7CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred
 
-network load file file=longerLog/job10CP10NR5cell.xgmml
+network load file file=longerLog/job6CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred
 
-network load file file=longerLog/job10CP10NR6cell.xgmml
+network load file file=longerLog/job5CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred
 
-network load file file=longerLog/job10CP10NR7cell.xgmml
+network load file file=longerLog/job4CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred
 
-network load file file=longerLog/job10CP10NR8cell.xgmml
+network load file file=longerLog/job3CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred
 
-network load file file=longerLog/job10CP10NR9cell.xgmml
+network load file file=longerLog/job2CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred
 
-network load file file=longerLog/job10CP10NR10cell.xgmml
+network load file file=longerLog/job1CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred
