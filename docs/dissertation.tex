@@ -212,9 +212,10 @@ Previous author's restrictions on artificial chemistries. Should this go to Intr
 \label{sub:The free energy change}
 The physics of the formula to calculate it. The role of deciding the direction of reactions.  $\rightarrow$ valid ranges  that can be changed at the beginning of the program.
 
+	The Gibbs Free Energy is the amount of energy at a given reaction that can be used to do work, or if it is negative, then the amount of work that has to be done on the system for the reaction to happen. 
 
 
-	The list of reactions provided to me by my supervisor contained the following for each reaction: 
+	The list of reactions provided the project supervisor contained the following for each reaction: 
 	\begin{enumerate}
 		\item List of compounds the reaction uses
 		\item List of product the reaction produces
@@ -253,9 +254,16 @@ The physics of the formula to calculate it. The role of deciding the direction o
 	\end{table}
 
 
+	\begin{figure}[htpb]
+		\centering
+		\includegraphics[width=0.6\linewidth]{freeEchangeFig.png}
+		\caption{Free Energy landscapes of three reactions, showing the different flux-constraints imposed in our model. Figure from \cite{principlesofbio}}
+		\label{fig:freeEchangeFig}
+	\end{figure}
 
-	The constraints imposed on the flux of each reaction, depending on the free energy change of them are as follows: for the $m$th reaction the flux $v_m$ has to satisfy $0\leq v_m \leq 1 $ if $\Delta G \leq -L$~eV, $-1\leq v_m \leq 0 $ if $\Delta G \geq L$~eV. As in the real world the reactions happening in a cell are usually reversible with (an example for this is is the reaction of carbonic acid and water H$_2$CO$_3$$_{(l)}$ + H$_2$O$_{(l)} \leftrightarrows$ HCO$^-_3$$_{(aq)}$+H$_3$O$^+$$_{(aq)}$), we allow reactions with free energy change between a constant $-L$ and $L$ eV to happen in any direction. Currently the value of $L=10$~eV but it is a parameter easily changed in the program. 
+	The constraints imposed on the flux of each reaction, depending on the free energy change of them are as follows: for the $m$th reaction the flux $v_m$ has to satisfy $0\leq v_m \leq 1 $ if $\Delta G \leq -L$~eV, $-1\leq v_m \leq 0 $ if $\Delta G \geq L$~eV. As in the real world the reactions happening in a cell are usually reversible with (an example for this is is the reaction of carbonic acid and water H$_2$CO$_3$$_{(l)}$ + H$_2$O$_{(l)} \leftrightarrows$ HCO$^-_3$$_{(aq)}$+H$_3$O$^+$$_{(aq)}$), we allow reactions with free energy change between a constant $-L$ and $L$ eV to happen in any direction. Currently the value of $L=10$~eV but it is a parameter easily changed in the program. In Figure \ref{fig:freeEchangeFig} we show possible cases of this. Assuming $\Delta G_1 > L$ Reaction 1 would have it's flux restricted as $-1\leq v_1 \leq 0$, also if $\Delta G_2 < -L$ $v_2$ is restricted as $0 \leq v_2 \leq 1$, and if $|\Delta G_3 | \leq L$ we have $-0.5 \leq v_3 \leq 0.5$. 
 
+	In real life the likelihood of these reactions happening, and so the flux through them depends on the height of the potential barrier between the original substrates and the end products. If the barrier is high the reaction might not happen unless the amount of energy required to overcome it is invested. Cells are able to lower the heights of such barriers using catalytic enzymes, therefore our model is not unrealistic by neglecting their role in determining the directions and fluxes of the reactions. 
 
 \subsection{In silico Evolution}
 \label{sub:implementing evolution}
@@ -265,12 +273,9 @@ The possible mutations, why it makes sense to use only these, and possible other
 INTRO SENTENCE}
 
 \textbf{New method of storing indexes only --- pointers to types of cells. Include the previous method too?}
-To simulate evolution on a computer we need three things: replication, mutation and competition. Algorithms empowered by the evolutionary principles \cite{evolutionaryalgorithms} are used every day now to find optimal solutions to problems in all fields of science.
-
-
-	The real evolution of the genomes of organisms uses a variety of methods as discussed in Section \ref{chap:evolution}. Of these, our cells use point mutations and horizontal gene transfer.
+To simulate biological evolution on a computer we need three things: replication, mutation and competition. The basics of these can easily be implemented in our program, giving a process similar to biological evolution. Our simulations always start with a homogeneous population (all cells are identical), that later diverges as a result of mutations. The real evolution of the genomes of organisms uses a variety of methods some of which are discussed in Section \ref{chap:evolution}. Of these, our cells use point mutations and horizontal gene transfer.
 	
-	Point mutations either add or delete a reaction that is currently available to the cell. Simply adding a reaction to those available to the cell at random from the list of all the reactions is unlikely to result in a reaction that could be used by the cell, as with a high probability the added reaction would use reactants that are not present in the cell (the added reaction would be disconnected from the current MN), and produce compounds that are not used in it. As discussed in Section \ref{sub:Flux Balance analysis} the flux through these reactions would be zero. Therefore when adding reactions, we only consider those that are linked  to one of the current reactions, either by using a compound that  the network is capable of producing, or providing one that it can consume. EXAMPLE FOR TRIAL NETWORK USED IN FBA SECTION? This way the graph of the reactions and compounds available to the cell stays a connected graph (disregarding deletions). Choosing the list of reactions that can be added uses the neighbour-list defined in Section \ref{sub:technical_bits}. When deleting a reaction every currently available reaction has equal probability of being deleted. This can and does result in DISCONNECTED graphs, but such disconnected parts are usually small, otherwise they bear too high a cost to maintain and are therefore an evolutionary disadvantage. (COSt OF REACTIONS).  
+	Point mutations either add or delete a reaction to the MN. Simply adding a reaction to those available to the cell at random from the list of all the reactions is unlikely to result in a reaction that could be used by the cell. This is because with a high probability the added reaction would be disconnected from the current MN. As discussed in Section \ref{sub:Flux Balance analysis} the flux through these reactions would be zero. Therefore when adding reactions, we only consider those that are linked  to one of the current reactions, either by using a compound that  the network is capable of producing, or providing one that it can consume. EXAMPLE FOR TRIAL NETWORK USED IN FBA SECTION? This way the graph of the reactions and compounds available to the cell stays a connected graph (disregarding deletions). Choosing the list of reactions that can be added uses the neighbour-list defined in OUR ALGORITHM APPENDIX X. When deleting a reaction every currently available reaction has equal probability of being deleted. This can and does result in DISCONNECTED graphs, but such disconnected parts are usually small, otherwise they bear too high a cost to maintain and are therefore an evolutionary disadvantage. (COSt OF REACTIONS).  
 	
 \textbf{survival of the fittest using the Moran process - Metropolis algorithm?
 Moran process - reversible markov chain
@@ -279,14 +284,19 @@ Detailed balance equation}
 
 The most elementary event in a population of our organisms is a reproduction, implemented in a process similar to the Moran process \cite{moranprocess} 
 
-At every step of the Moran process a single member of the population is chosen to reproduce (with or without mutations) and an other member of the population dies, to keep the size of the population constant.At every such step the cell has some probability of mutating, both for a point mutation ($P_{point}$), and for horizontal gene transfer ($P_{HGT}$) from an other randomly chosen cell.  Therefore this process is a random walk in the space of all possible genes (MN-s) of the members of the population. 
+At every step of the Moran process a single member of the population is chosen to reproduce (with or without mutations) and an other member of the population dies, to keep the size of the population constant. At every such step the cell has some probability of mutating, both for a point mutation ($P_{point}$), and for horizontal gene transfer ($P_{HGT}$) from an other randomly chosen cell.  This process is a random walk in the space of all possible genes (MN-s allowed by the chemistry of the cells) 
 
 
 \textbf{Goal functions? $\rightarrow$ changing goal functions? Talk about trial networks (ethanol producing)?}
 
-There are two contributions to the fitness measure of a cell, it's energy production, and the number of reactions in it's MN.  A fitness score of $1$ is awarded for every ATP produced (the quantity measured is the flux through the auxillary reaction ATP $\rightarrow$ ADP modelling the energy output of the cell). For every reaction a small penalty is deducted from the fitness score of the cell (of magnitude $k_{reac}$), as should we not include this the cell's MN-s would grow without bounds until every reaction in our list would appear within them. This per reaction penalty is reasonable, as cells usually control their reactions through the use of enzymes that they have to manufacture, and code in their genetic code. 
+There are two contributions to the fitness measure of a cell, it's energy production, and the number of reactions in it's MN.  In the original goal function a fitness score of $1$ is awarded for every ADP $\rightarrow$ ATP executed by the cell. For every reaction in the MN the cell pays a small cost $k_{reac}$  from the fitness score of the cell, as cells usually control their reactions through the use of enzymes that they have to manufacture, and code in their genetic code. Should we not include this cost the cell's MN-s could grow without bounds until every reaction in our list would appear within them. Later we consider more complex goal functions that reward biomass production CITE, at different weights compared to the energy production. 
 
-The probability density function (PDF) of which cell is selected for reproduction is proportional to the fitness of each cell (with the CAVEAT that cells with negative fitness are deemed unviable and are not allowed to reproduce). To know this PDF it is necessary to know the fitness of each cell at any given time point (for the normalization), and therefore it would be impractical to use this to chose the cell that will reproduce. Instead we use a Markov chain Monte Carlo method, the Metropolis - Hastings algorithm This process works as follows: (LIST?) first we uniformly chose a cell in our population. Then we generate a random number from the distribution $U \left( r,M \right)$ where $M$ is the maximal fitness value a cell can take. Let us denote the fitness of the chosen cell by $F_c$. Then if $F_c \geq r$ we accept the change, if not we start the process again. 
+The probability density function (PDF) of which cell is selected for reproduction is proportional to the fitness of each cell (with the CAVEAT that cells with negative fitness are deemed unviable and are not allowed to reproduce). To know this PDF it is necessary to know the fitness of each cell at any given time point (for the normalization), and therefore it would be impractical to use this to chose the cell that will reproduce. Instead we sample as follows: (LIST?)i
+\begin{enumerate}
+	\item We uniformly chose a cell in our population --- $c_i$
+	\item We generate a random number from the distribution $U \left( r,M \right)$ where $M$ is the maximal fitness value a cell can take
+	\item If the fittness of $c_i$,  $F_{c_i} \geq r$ we accept the change, if not we start the process again
+\end{enumerate}
 
 This process CAN BE SHOWN to result in a sampling of cells equivalent to that of the PDF proportional to the fitness of each cell. DETAILED BALANCE ~ GIBBS etc
 
@@ -299,28 +309,34 @@ This process CAN BE SHOWN to result in a sampling of cells equivalent to that of
 
 	To calculate the throughput of the metabolic network of our organisms we use flux balance analysis \cite{whatisfluxbalance}. 	
 
-	The goal of flux balance analysis is to calculate the steady state fluxes ($\mathbf{v}$) through all the reactions subject to some constraints, (described later in this section), while maximizing a function $Z=\mathbf{c}^T \mathbf{v}$ of the fluxes (called goal function) in the solution space allowed by the constraints. 
+	The goal of flux balance analysis is to calculate the steady state fluxes ($\mathbf{v}$) through all the reactions, subject to some constraints, (described later in this section), while maximizing a linear function $Z=\mathbf{c}^T \mathbf{v}$ of the fluxes (called goal function) in the solution space allowed by the constraints. 
 
-	\begin{figure}[t]
+	\begin{figure}[htpb]
 		\centering
 		\includegraphics[width=0.8\linewidth]{fba_frompaper.png}
 		\caption{The process of flux balance analysis. First we apply the steady state constraints along with FURTHER CONSTRAINTS on the fluxes, then we maximize the goal function in the allowable solution space found. Figure from \cite[]{whatisfluxbalance} }
 		\label{fig:fluxbalance}
 	\end{figure}
 
-	When using flux balance analysis we represent the MB as a stoichiometric matrix $S$ ($m\times n$), with each row corresponding to a compound in the network ($n$ compounds), and each column corresponding to a reaction ($m$ reactions). In each column we have the stoichiometric coefficients of the given reaction that correspond to the compound of the given row. Negative stoichiometric coefficients are used for the metabolites consumed, positive for those produced, and zeros for the metabolites that do not participate in the given reaction.
- 
-	We want to find a set of fluxes $\mathbf{v}$ that are steady state fluxes, satisfying $S\mathbf{v}=\mathbf{0}$. The steady state assumption of the method means that the amount of any given compound produced in the reactions should equal the amount consumed by other reactions, except for some special compounds. These special compounds are considered the nutrients and the end-products of a metabolic network. For example the nutrients of our network on Figure \ref {fig:examplenetwork} is FIRST COMPOUND, water and $O_2$, while it's end products are pyruvate and $CO_2$. To incorporate compounds that can have a non-zero change in CONCENTRATION could be introduced to flux balance analysis could be done through relaxing the constraint that the EQUATION-s of these compounds (among Equations \ref{eq:lineqs}) have to equal zero. This introduces complications, as often the amount of certain compounds produced appear in the goal function  $Z=\mathbf{c}^T \mathbf{v}$. To overcome this we introduce auxiliary reactions to the stoichiometric matrix $S$, for the compounds the cell consumes and produces. Such an auxiliary reaction is for example $ \rightarrow H_2O$, that "creates water out of nothing", or in other words corresponds to the potential water intake of the cell ENABLING THE CELL TO TAKE UP WATER?
+	When using flux balance analysis we represent the MN as a stoichiometric matrix $S$ ($m\times n$), with each row corresponding to a compound in the network ($n$ compounds), and each column corresponding to a reaction ($m$ reactions). In each column we have the stoichiometric coefficients of the given reaction that correspond to the compound of the given row. Negative stoichiometric coefficients are used for the metabolites consumed, positive for those produced, and zeros for the metabolites that do not participate in the given reaction.
+	
+	We want to find a set of fluxes  $\mathbf{v}=\left( v_1,v_2,...,v_m \right)$ that are steady state fluxes, satisfying $S\mathbf{v}=\mathbf{0}$ (the allowable solution space in Figure \ref{fig:fluxbalance}). These equations take the form
+	
+	\begin{equation}\label{eq:steadystateeq}
+		\begin{matrix}
+			S_{1,1} v_1 + S_{1,2} v_2 + ... + S_{1,m} v_m=0 \\
+			S_{2,1} v_1 + S_{2,2} v_2 + ... + S_{2,m} v_m=0 \\
+			... \\
+			S_{n,1} v_1 + S_{n,2} v_2 + ... + S_{n,m} v_m=0 \\
+		\end{matrix}
+	\end{equation}
+	The steady state assumption of the method means that the amount of any given compound produced in the reactions should equal the amount consumed by other reactions, except for some special compounds. These special compounds are considered the nutrients and the end-products of the MN. For example the nutrients of our network on Figure \ref {fig:examplenetwork} is FIRST COMPOUND, water and $O_2$, while it's end products are pyruvate and $CO_2$. Incorporating compounds that the MN can import/export to it's environment to flux balance analysis could be done through relaxing the constraint that the equation corresponding to the given compound among those in Equation \ref{eq:steadystateeq} have to equal zero. This introduces complications, as often the amount of these compounds produced appears in the goal function  $Z=\mathbf{c}^T \mathbf{v}$. To overcome this we introduce auxiliary reactions to the stoichiometric matrix $S$, for the compounds the cell consumes and produces. Such an auxiliary reaction is for example " $ \rightarrow H_2O$", that "creates water out of nothing", or in other words corresponds to the potential water intake of the cell ENABLING THE CELL TO TAKE UP WATER?
 
-	As the fluxes are calculated on an arbitrary scale, we can impose an arbitrary bound on the fluxes of real (non-auxiliary) reactions.
 
-
-	The form of the goal function is $Z=\mathbf{c}^T \mathbf{v}$ with the elements of $\mathbf{c}$ being the weights of the fluxes through each reaction in the goal function. In the simplest cases $c_i=0$ for all but a single value of $i$, in which case the goal is to maximize the flux through a single reaction, which is often chosen to be the biomass removing auxiliary equation. In our case the original goal function used is the one converting ATP to ADP. This reaction occurs in cells, (ATP~+H$_2$O~$\rightarrow$~ADP~+~P$_i$), and it releases energy. As cells store energy in ATP molecules,  by maximizing the flux through the ATP producing reaction, we are maximizing the energy output of the cell. In many cases this is synonymous with maximizing the growth rate of the cell. (CITATION). OTHER GOAL FUNCTIONS?
+	In the allowable solution space we want to maximize the goal function $Z \left( \mathbf{v} \right)$ The form of the goal function is $Z=\mathbf{c}^T \mathbf{v}$ with the elements of $\mathbf{c}$ being the weights of the fluxes of each reaction in the goal function. In the simplest cases $c_i=0$ for all but a single value of $i$, in which case the goal is to maximize the flux through a single reaction, which is often chosen to be the biomass removing auxiliary equation. In our case the original goal function used is the one converting ATP to ADP. This reaction occurs in cells, (ATP~+H$_2$O~$\rightarrow$~ADP~+~P$_i$), and it releases energy. As cells store energy in ATP molecules,  by maximizing the flux through the ATP producing reaction, we are maximizing the energy output of the cell. In many cases this is synonymous with maximizing the growth rate of the cell. (CITATION). OTHER GOAL FUNCTIONS?
 	
 	There are many software packages capable of solving linear programming problems, we use the Gnu Linear Programming Kit (GLPK) \cite{glpk}. GLPK is implemented in C, and has all the functionality we need to calculate the fitness of our metabolic network. For the code calculating the fitnesses see the function calcThroughput in APPENDIX.
 
-	\textbf{SORT THIS OUT}
-	This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it we make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
 
 \subsection{Example of flux balance analysis}
 \label{sub:example_of_flux_balance_analysis}
@@ -328,9 +344,9 @@ This process CAN BE SHOWN to result in a sampling of cells equivalent to that of
 Here we give an example of how flux balance analysis is calculated. We consider a toy network, that has an easily verifiable solution. The network is shown on Figure \ref{fig:examplenetwork}, and it is one this part of the program was tested when written. 
 
 
-	The metabolites of the network (in green) have been denoted by letters A, B and D. MAKE CO2 RED!!! The stoichiometric matrix of this metabolic network is shown at Equation~\ref{eq:examplematrix} (below). The metabolites each row corresponds to are shown on the LHS of the matrix. The first three columns of the matrix correspond to reactions $5151$, $5133$ and $131$ respectively. The other columns correspond to auxiliary reactions, providing the nutrient of the network (A), removing the end-product (lactate), providing water, providing CO$_2$, and converting ATP to ADP. 
+	The metabolites of the network (in green) have been denoted by letters A, B and D. MAKE CO2 RED!!! The stoichiometric matrix of this metabolic network is shown at Equation~\ref{eq:examplematrix} (below), with the metabolites the rows correspond to are shown on the left of the matrix. The first three columns of the matrix correspond to reactions $5151$, $5133$ and $131$ respectively. The other columns correspond to auxiliary reactions, providing the nutrient of the network (A), removing the end-product (lactate), providing water, providing CO$_2$, and converting ATP to ADP in this order.
 
-\begin{figure}[t]
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.5\linewidth]{initial_network_ABC.png}
 	\caption{Example of a simple network. Reactions: light blue, metabolites: green, nutrient: light green, end-product: yellow, internal metabolites:red}
@@ -366,7 +382,7 @@ Here we give an example of how flux balance analysis is calculated. We consider 
 	\end{equation}
 
 
-	Flux balance analysis finds the set of fluxes $\mathbf{v}=\left( v_1,v_2,...,v_m \right)$, that satisfy $S\mathbf{v}=\mathbf{0}$ and maximize the goal function $f \left( \mathbf{v} \right)$. The linear equations that are implied by $S\mathbf{v}=\mathbf{0}$ for the example network of Figure \ref{fig:examplenetwork} are shown below, at Equation \ref{eq:lineqs}. Constraints on the system are imposed in two ways. Firstly by $S\mathbf{v}=0$ we require that the fluxes represent the steady state solution, and secondly by restricting the values of $v_i$ by inequalities ($v_{lower,i}\leq v_i \leq v_{higher,i}$) we can restrict the flux of individual reactions, their directions, and the amount of COMPOUNDS the cell can take up and dispose of. 
+	The linear equations that are implied by $S\mathbf{v}=\mathbf{0}$ for the example network of Figure \ref{fig:examplenetwork} are shown below, at Equation \ref{eq:lineqs}. Constraints on the system are imposed in two ways. Firstly by $S\mathbf{v}=0$ we require that the fluxes represent the steady state solution, and secondly by restricting the values of $v_i$ by inequalities ($v_{lower,i}\leq v_i \leq v_{higher,i}$) we can restrict the flux of individual reactions, their directions, and the amount of COMPOUNDS the cell can take up and dispose of. 
 	
 
 	\begin{equation}\label{eq:lineqs}
@@ -387,7 +403,7 @@ Here we give an example of how flux balance analysis is calculated. We consider 
 
 the use of Cytoscape $\rightarrow$ xgmml format and the  program part to output that
 
-To visualize the resulting MN-s we use the open source biological network visualization tool Cytoscape \cite{cytoscape}. Figures showing metabolic networks in this work have been generated using this (eg.  Figure \ref{fig:examplenetwork}). Our program was equipped with the functionality to export MN-s into the \texttt{XGMML} format that Cytoscape can read in. 
+To visualize the resulting MN-s we use the open source biological network visualization tool Cytoscape \cite{cytoscape}. Figures showing metabolic networks in this work have been generated using this (eg.  Figure \ref{fig:examplenetwork}) for brevity. Our program was equipped with the functionality to export MN-s into the \texttt{XGMML} format that Cytoscape can read in. 
 
 While MN-s can be visually compared using Cytoscape, doing so for more than a handful of networks is a cumbersome task, therefore we considered AN AUTOMATED PROCESS to compare MN-s resulting from our simulation. 
 
@@ -524,6 +540,8 @@ Too simple goal function
 \section{Discussion}
 \label{sec:discussion}
 
+	\textbf{SORT THIS OUT}
+	This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it we make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
 
 %	\iffalse
 %	
