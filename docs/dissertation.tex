@@ -257,7 +257,7 @@ The physics of the formula to calculate it. The role of deciding the direction o
 	\begin{figure}[htpb]
 		\centering
 		\includegraphics[width=0.6\linewidth]{freeEchangeFig.png}
-		\caption{Free Energy landscapes of three reactions, showing the different flux-constraints imposed in our model. Figure from \cite{principlesofbio}}
+		\caption{Free Energy landscapes of three reactions, showing the different flux-constraints imposed in our model. Figure reproduced from \cite{principlesofbio}}
 		\label{fig:freeEchangeFig}
 	\end{figure}
 
@@ -314,7 +314,7 @@ This process CAN BE SHOWN to result in a sampling of cells equivalent to that of
 	\begin{figure}[htpb]
 		\centering
 		\includegraphics[width=0.8\linewidth]{fba_frompaper.png}
-		\caption{The process of flux balance analysis. First we apply the steady state constraints along with FURTHER CONSTRAINTS on the fluxes, then we maximize the goal function in the allowable solution space found. Figure from \cite[]{whatisfluxbalance} }
+		\caption{The process of flux balance analysis. First we apply the steady state constraints along with FURTHER CONSTRAINTS on the fluxes, then we maximize the goal function in the allowable solution space found. Figure reproduced from \cite[]{whatisfluxbalance} }
 		\label{fig:fluxbalance}
 	\end{figure}
 
@@ -341,7 +341,7 @@ This process CAN BE SHOWN to result in a sampling of cells equivalent to that of
 \subsection{Example of flux balance analysis}
 \label{sub:example_of_flux_balance_analysis}
 
-Here we give an example of how flux balance analysis is calculated. We consider a toy network, that has an easily verifiable solution. The network is shown on Figure \ref{fig:examplenetwork}, and it is one this part of the program was tested when written. 
+Here we give an example of how flux balance analysis is calculated. We consider a toy network, that has an easily verifiable solution. The network is shown on Figure \ref{fig:examplenetwork}, and it is one this part of the program was tested when written. For the purpose of this example let us consider the cost of a reaction is $k_{reac}=0.01$.
 
 
 	The metabolites of the network (in green) have been denoted by letters A, B and D. MAKE CO2 RED!!! The stoichiometric matrix of this metabolic network is shown at Equation~\ref{eq:examplematrix} (below), with the metabolites the rows correspond to are shown on the left of the matrix. The first three columns of the matrix correspond to reactions $5151$, $5133$ and $131$ respectively. The other columns correspond to auxiliary reactions, providing the nutrient of the network (A), removing the end-product (lactate), providing water, providing CO$_2$, and converting ATP to ADP in this order.
@@ -373,7 +373,7 @@ Here we give an example of how flux balance analysis is calculated. We consider 
 			  0 & +1 & -1 &  0 &  0 &  0 & 0 & 0 & \\ 
 			  0  &  0 & +1 &  0 & -1 &  0 & 0 & 0 & \\ 
 			  -1 & -1 &  0 &  0 &  0 &+1  & 0 & 0 & \\ 
-			  +1 & +1 &  0 &  0 &  0 &  0 & +1&0 &  \\ 
+			  +1 & +1 &  0 &  0 &  0 &  0 & -1&0 &  \\ 
 			  0 & +1 &  0 &  0 &  0 & 0 &0 & -1 &\\ 
 			  0 & -1 &  0 &  0 &  0 & 0 &0 & +1 & \\ 
 			  
@@ -386,33 +386,68 @@ Here we give an example of how flux balance analysis is calculated. We consider 
 	
 
 	\begin{equation}\label{eq:lineqs}
+	\begin{matrix}
+		\texttt{A}   \\
+		\texttt{B}\\
+		\texttt{D}\\
+		\texttt{lactate}\\
+		\texttt{water}\\
+		\texttt{CO}_2\\
+		\texttt{ATP}\\
+		\texttt{ADP}
+	\end{matrix}
 		\begin{matrix}
 			- v_1+v_4=0 \\
 			v_1-v_2=0 \\
 			v_2-v_3=0 \\
 			v_3-v_5=0 \\
 			-v_1-v_2+v_6=0 \\
-			v_1+v_2+v_7=0 \\
+			v_1+v_2-v_7=0 \\
 			v_2-v_8=0 \\
 			-v_2+v_8=0
 		\end{matrix}
 	\end{equation}
 
+	The bounds on the given reactions are as follows: 
+
+	\begin{equation}\label{eq:bounds}
+		\begin{matrix}
+			0\leq v_1 \leq 1\\
+			0\leq v_2 \leq 1\\
+			0\leq v_3 \leq 1\\
+			0\leq v_4 \leq 10\\
+			0\leq v_5 \leq \infty \\
+			0\leq v_6 \leq 40\\
+			0\leq v_7 \leq 40\\
+			0\leq v_8 \leq \infty\\
+		\end{matrix}
+	\end{equation}
+
+	The limiting fluxes should in any case be those of the real reactions (in our case $v_1, v_2,$ and $v_3$. The cell's nutrient intake ($v_4$) is set to a high but finite value, this is important as a this puts a high bound on the fitness function. Such a theoretical upper bound for the fittness function must be known, as it is used in the algorithm when we select the next cell that reproduces. The cell's water intake and CO$_2$ disposal are limited by a high value for the same reason. Care is taken in order to keep these values high enough not to be limiting for the evolution of the network. REPHRASE The pyruvate removal and the ATP $\rightarrow$ ADP conversion reactions need not be bounded, as they are limited by the nutrient uptake of the cell. 
+
+	The goal function in this case is $v_8$, the energy output of the cell, this is to be maximized within the constraints.
+
+	The optimal solution of the equations with the bounds given at Equation \ref{eq:bounds} is 
+	\begin{equation}\label{eq:solution}
+		v_1=1 , v_2=1, v_3=1, v_4=1, v_5=1, v_6=2, v_7=2, v_8=1
+	\end{equation}
+	Giving the value of the goal function to be $Z=v_8=1$. As the MN has $3$ reactions the final fitness value for it would be $Z-3\times k_{reac}=1-3\times 0.01=0.97$
 \subsection{Data analysis}
 \label{sub:visualization}
 
 the use of Cytoscape $\rightarrow$ xgmml format and the  program part to output that
 
-To visualize the resulting MN-s we use the open source biological network visualization tool Cytoscape \cite{cytoscape}. Figures showing metabolic networks in this work have been generated using this (eg.  Figure \ref{fig:examplenetwork}) for brevity. Our program was equipped with the functionality to export MN-s into the \texttt{XGMML} format that Cytoscape can read in. 
+To visualize the resulting MN-s we use the open source biological network visualization tool Cytoscape \cite{cytoscape}. Figures showing metabolic networks in this work have been generated using this software (eg.  Figure \ref{fig:examplenetwork}) for brevity. Our program was equipped with the functionality to export MN-s into the \texttt{XGMML} format that Cytoscape can read in. 
 
-While MN-s can be visually compared using Cytoscape, doing so for more than a handful of networks is a cumbersome task, therefore we considered AN AUTOMATED PROCESS to compare MN-s resulting from our simulation. 
+While MN-s can be visually compared using Cytoscape, doing so for more than a handful of networks is a cumbersome task, therefore we considered some summary statistics to compare MN-s resulting from our simulations.
 
-While the simulation is running, every few thousand generations some key descriptors of the populations are written out to a log file. This allows us to monitor the evolution of the populatinons while the simulation is running, and also to plot the timeline of their evolution. Examples of such graphs can be found in Section \ref{sec:results} (eg. Figure \ref{fig:simulation1} ). These descriptors are: the fitness of the fittest network in the population, the average fitness of the population, the entropy of the population, the number of reactions in the fittest network, and the average number of reactions in the population. When plotting these measures, the fitness of the fittest network and the average fitness are indistinguishable on the plots (the average fitness lags by a few generations --- the time it takes for a change in the MN to propagate through the population)
-
-Entropy is used as one of the measures of the diversity of the population. It is calculated as: $S=- \sum^{M}_{i=1} n_i \log n_i $ where $n_i$ denotes the number of cells of type $i$, and the sum runs through all the different types of cells in the population. (In a population usually there are multiple "copies" of any given cell, as the rate of mutations is low, eg. for $p_{point}=0.1$ only every tenth reproduction results in a new type of cell.) As we are considering a population with $N=100$ cells, the minimal entropy is $S_{min}=-100\log100=-460.52$, this value is attained when every cell in the population is identical ($p_{i_1}=100$, and $p_i=0$ for other $i$ values), as is the case initially in our populations. It's maximal value is $S_{max}=0$ attained when every cell is different in the population. This happens when the mutation rate is very high (eg. $P_{point}=1$). 
+While the simulation is running, every few thousand generations some key descriptors of the populations are written out to a log file. This allows us to monitor the evolution of the populatinons while the simulation is running, and also to plot the timeline of their evolution. Examples of such graphs can be found in Section \ref{sec:results} (eg. Figure \ref{fig:simulation1} ). These descriptors are: the fitness of the fittest network in the population, the average fitness of the population, the entropy of the population, the number of reactions in the fittest network, the average number of reactions in the population the number of used reactions (those with non-zero flux) in the best MN, and the average number of such reactions per MN in the population. 
 
 
-To compare networks between populations we define a similarity index between two MN-s, calculated as follows: we count the reactions appearing in both MN-s, then divide this count by the number of reactions in the larger network. This quantity is always between $0$ and $1$, with these extreme values attained if the two MN-s share no reactions, and if they are identical, respectively. We calculate two similarity indices for each pair of MN-s $ \left\{ i,j \right\}$, one for every reaction in the two MN-s ($M_{i,j,all}$) and one only for those reactions that have non-zero flux through them ($M_{i,j,used}$). This is an important distiction, as for a high mutation rate, and small $k_{reac}$ value the two MN-s might have a lot of unused reactions that differ amongst them, but their used reactions could be the same.  As the indices are symmetric ($M_{i,j,all}=M_{j,i,all}$ and  $M_{i,j,used}=M_{j,i,used}$) instead of two separate plots, we plot 
+Entropy is used as one of the measures of the diversity of the population. It is calculated as: $S=- \sum^{M}_{i=1} n_i \log n_i $ where $n_i$ denotes the number of cells of type $i$, and the sum runs through all the different types of cells in the population.  As we are considering a population with $N=100$ cells, the minimal entropy is $S_{min}=-100\log100=-460.52$, this value is attained when every cell in the population is identical ($p_{i_1}=100$, and $p_i=0$ for other $i$ values), as is the case initially in our populations. It's maximal value is $S_{max}=0$ attained when every cell is different in the population. This happens when the mutation rate is very high (eg. $P_{point}=1$). 
+
+
+To compare networks between populations we define a similarity index $M_{i,j}$ between two MN-s $i$ and $j$, calculated as follows: we count the reactions appearing in both MN-s, then divide this count by the number of reactions in the larger network. $0\leq M_{i,j} \leq 1$, with these extreme values attained if the two MN-s share no reactions, and if they are identical, respectively. We calculate two similarity indices for each pair of MN-s, one for every reaction in the two MN-s ($M_{i,j,all}$) and one only for those reactions that have non-zero flux through them in the optimal solution ($M_{i,j,used}$). This is an important distiction, as for a high mutation rate, and small $k_{reac}$ value the two MN-s might have a lot of unused reactions that differ amongst them, but their used reactions could be the same.  As the indices are symmetric ($M_{i,j,all}=M_{j,i,all}$ and  $M_{i,j,used}=M_{j,i,used}$) instead of two separate plots, we plot 
 
 $$
 M_{i,j}= \left\{
@@ -425,9 +460,9 @@ $$
 
 Thus we show the similarity indices calculated using all reactions above the diagonal of the plot, and those calculated using the used reactions below the diagonal. The diagonal entries are always $1$-s as any network is equivalent to itself. We plot the diagonal as a black line to separate the two regions of the plot. REPHRASE
 
-While the simulations are running, we save the states of the populations at 10 occasions, both to be used as checkpoints if the calculation doesn't finish, and also to be able how the networks evolved. At these checkpoints the MN of every cell in the population are writeen out (in the \texttt{XGMML} format). This allows both the visualization of the networks and also their comparison using the similarity indices between them. As plotting the similarity indices as a matrix (as in FIGURE EXAMPLE) for every population at every checkpoint would be unpractical, we instead consider the similarity indices of MN-s within a population compared to the fittest network in the population, resulting in a vector of $N-1$ similarity indices (we don't compare the fittest network with itself). This would correspond to a column of the similarity matrix shown on Figure SIMILARITYMATRIXPLOT.
+While the simulations are running, we save the states of the populations at 10 occasions, both to be used as checkpoints if the calculation doesn't finish, and also to be able how the networks evolved. At these checkpoints the MN of every cell in the population are writen out (in the \texttt{XGMML} format). This allows both the visualization of the networks and also their comparison using the similarity indices between them. As plotting the similarity indices as a matrix (as in FIGURE EXAMPLE) for every population at every checkpoint would be unpractical, we instead consider the similarity indices of MN-s within a population compared to the fittest network in the population, resulting in a vector of $N-1$ similarity indices (we don't compare the fittest network with itself). This would correspond to a column of the similarity matrix shown on Figure SIMILARITYMATRIXPLOT.
 
-These similarity indices are then summarized using the Inverse Participation Ratio of them. EXPLAIN  The similarity indices of each population are divided into 10 bins, and the IPR of the number of elements in the bin are calculated, using $IPR= \sum^{10}_{i=1} \frac{1}{p_i^2} $ where $p_i$ is the ratio of similarity indices in bin $i$ (this ensures normalization, $ \sum^{10}_{i=1} p_i=1$) 
+These similarity indices are then summarized using the Inverse Participation Ratio of them. EXPLAIN  The similarity indices of each population are divided into 10 bins, and the IPR of the proportion of elements in the bin are calculated, using $IPR= \sum^{10}_{i=1} \frac{1}{p_i^2} $ where $p_i$ is the proportion of similarity indices in bin $i$ (this ensures normalization, $ \sum^{10}_{i=1} p_i=1$). The minimum of this IPR value is $1$, attained for a completely homogeneous population, while the maximum of $10$ is attained when each of the 10 bins have an equal amount of simlarity indices within them (the most disordered state).  At each checkpoint the IPR of the two similarity indices $M_{i,j,all}$ and $M_{i,j,used}$ are calculated along with the IPR of the fitness values at the checkpoint. 
 
 \textbf{IPR: How to calculate, why is it useful? Can be calculated for nonzero flux reactions or all available ones too. IPR vs Entropy}
 
@@ -439,7 +474,9 @@ These similarity indices are then summarized using the Inverse Participation Rat
 \subsection{Technical bits RENAME}
 \label{sub:technical_bits}
 
-	Whenever we add a reaction to a MN we have to find the reactions that connect to the current network, through at least one shared metabolite, as described in section \ref{sub:implementing evolution}. It is very time consuming to list all metabolites currently in the network, then search through all the reactions to see if any of the used metabolites are used within them. To remedy this at the beginning of the program a neighbour-list is generated that contains for every reaction a list of neighbouring reactions, that share at least 1 compound with it (excluding internal metabolites). For example in our example network on Figure \ref{fig:examplenetwork} reactions 131 and 5143 are neighbouring, as they share the metabolite CH$_3$-CH(OH)-COP, but reactions 131 and 5151 are not neighbouring. Using this neighbour-list the program can now rapidly find the possible reactions to add to a network. 
+(In a population usually there are multiple "copies" of any given cell, as the rate of mutations is low, eg. for $p_{point}=0.1$ only every tenth reproduction results in a new type of cell.)
+
+	Whenever we add a reaction to a MN we have to find the reactions that connect to the current network, through at least one shared metabolite, as described in section \ref{sub:implementing evolution}. It is very time consuming to list all metabolites currently in the network, then search through all the reactions to see if any of the used metabolites are used within them. To remedy this at the beginning of the program a neighbour-list is generated that contains for every reaction a list of neighbouring reactions, that share at least 1 compound with it (excluding internal metabolites). For example in our example network on Figure \ref{fig:examplenetwork} reactions 131 and 5143 are neighbouring, as they share the metabolite CH$_3$-CH(OH)-COP, but reactions 131 and 5151 are not neighbouring. Using this neighbour-list our program can now rapidly find the possible reactions to add to a network. 
 
 	An important component of a Monte Carlo simulation is the source of pseudorandom numbers. In our program we use the Mersenne Twister \cite{mersennetwister} generator, provided by the boost C++ libraries \cite{boostlibraries}. This generator is fast, provides high-quality pseudorandom numbers and has a period of $2^{19937}-1$, and will therefore provide more than enough pseudorandom numbers for our simulations.
 
@@ -459,7 +496,7 @@ These similarity indices are then summarized using the Inverse Participation Rat
 \end{figure}
 
 
-The first simulations we run were started from the subset of the reactions appearing in glycolysis that only use chemical compounds that appear in our list of compounds, starting from Dihydoxyacetone phosphate and ending in Pyruvate. This reaction network is shown on Figure \ref{fig:truncglycinit}. This is the trunk of the glycolytic pathway with an additional reaction ($416$ at the beginning of it), and the removal of the ATP producing reaction $633$, in exchange for $1069$, that fulfills a similar role, but instead of creating ATP from ADP it discards the phosphate group it SHEDS from 1,3 biphosphorglycerate. The ATP flux of this network is $0.5$, with the limiting reaction being $883$, that has a free energy change of $1.71$ eV at the conditions given by Table \ref{environmentTable}. This is a good initial network as it has plenty of potential to improve, eg by "rediscovering" reaction $633$, or finding completely new paths from the nutrient of the MN to the end product. For the sake of brevity we shall refer to this simulation as Simulation $1$.
+The first pair of simulations we run were started from the subset of the reactions appearing in glycolysis that only use chemical compounds that appear in our list of compounds, starting from Dihydoxyacetone phosphate and ending in Pyruvate. This reaction network is shown on Figure \ref{fig:truncglycinit}. This is the trunk of the glycolytic pathway with an additional reaction ($416$ at the beginning of it), and the removal of the ATP producing reaction $633$, in exchange for $1069$, that fulfills a similar role, but instead of creating ATP from ADP it discards the phosphate group it SHEDS from 1,3 biphosphorglycerate. The ATP flux of this network is $0.5$, with the limiting reaction being $883$, that has a free energy change of $1.71$ eV at the conditions given by Table \ref{environmentTable}. This is a good initial network as it has plenty of potential to improve, eg by "rediscovering" reaction $633$, or finding completely new paths from the nutrient of the MN to the end product. For the sake of brevity we shall refer to this simulation as Simulation $1$.
 
 \begin{figure}[htpb]
 	\centering
@@ -470,10 +507,9 @@ The first simulations we run were started from the subset of the reactions appea
 
 The fitness cost of having a reaction within the MN was set to $k_{reac}=0.001$ with the rate of point mutations as $P_{point}=0.01$ giving an expected $1$ mutation per generation. The fitness function used here was the flux of ADP to ATP conversion minus $k_{reac}$ times the number of reactions in the MN.
 
-When simulating, we started with 20 identical, uniform populations, the program to simulate each of them used a different seed for the PRNG, therefore the populations evolved differently, and independently from one another. We started 20 populations in each case, not all of which finish the simulation due to technical difficulties. Of these we generally show diagnostic plots for 3 typical populations, unless there is a specific population we discuss. 
+When simulating, we started with 20 identical, uniform populations, the program to simulate each of them used a different seed for the PRNG, therefore the populations evolved differently, and independently from one another. Not all the 20 populations finish the simulation due to technical difficulties. Of these we generally show diagnostic plots for 3 typical populations, unless there is a specific population we discuss. 
 
-
-The fitness of the best network, and the average fitness of $3$ typical populations of Simulation 1 as a function of the number of generations since the initial network is shown on the first two graphs of Figure \ref{fig:simulation1}. The two graphs are very similar, due to the fact that unless there is a significant ($\geq 0.3$) fittness increase, we only save the data for these diagnostic plots every $10000$ generations ($\sim$ every $10$ seconds). Most populations have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed UNIFORMLY and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on the last two graphs of Figure \ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. 
+The fitness of the best network, and the average fitness of $3$ typical populations of Simulation 1 as a function of the number of generations since the initial network is shown on the first two graphs of Figure \ref{fig:simulation1}. We normally save the summary statistics every $10000$ generations ($\sim 10$ s), but keep the values of these summary statistics for the INTERMITTENT generations in-memory. If there was a significant improvement in the fitness of the population we write the intermittent steps out too, so the transition of the population can be observed. The number of generations a significant fitness improvement takes to spread in the population is on the order of $10$, therefore it remains invisible on a plot whose $x$ axis is on the order of $10^6-10^7$ such as Figure \ref{fig:simulation1}. The first two graphs are therefore very similar. Most populations have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed UNIFORMLY and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on the last two graphs of Figure \ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. 
 
 
 The entropies of the $3$ populations are shown in the middle graph of Figure \ref{fig:simulation1}. The only significant jumps in the entropies can be identified with the improvements in the popoulations, and the steady value of entropy is $\sim -360$. CAN IT??? DOES THIS MATTER? This can correspond to $3$ approximately equal sized sub-population, all of them having $\sim 33$ reactions, as then $S$ would be $3\times 33 \ln \left( 33 \right)=-349.7$
@@ -487,7 +523,6 @@ The fittest network of Population 1 at the end of the simulation is shown on Fig
 	\label{fig:IPR_firstrun}
 \end{figure}
 
-WHY DOES REAL GLYCOLYSIS NOT USE REACTION 633? it does, we 'deliberately got rid of it'
 \begin{figure}[htpb]
 	\centering
 	\includegraphics[width=1\linewidth]{trunk_glyc_final_job1.pdf}
@@ -497,7 +532,7 @@ WHY DOES REAL GLYCOLYSIS NOT USE REACTION 633? it does, we 'deliberately got rid
 
 
 
-The IPR plots of the first few populations are shown on Figure \ref{fig:IPR_firstrun}, the plots of the not-shown populations are very similar to this one. The leftmost plot shows the IPR of the similarity indices of each cell compared to the best network. In these plots an IPR of $1$ means a completely homegeneous population (MOVE THIS SENTENCE TO METHODS?) There is some variation in the reactions within the MN-s due to the random mutations, however when looking at the middle plot showing the IPR for the similarity indices calculated using the reactions with nonzero fluxes, there is very little variation. This is due to the fact that once a network evolves, there is generally only a small amount of minor changes can occur with the used reactions. 
+The IPR plots of the first few populations are shown on Figure \ref{fig:IPR_firstrun}, the plots of the not-shown populations are very similar to this one. The leftmost plot shows the IPR of the similarity indices of each cell compared to the best network. There is some variation in the reactions within the MN-s due to the random mutations, however when looking at the middle plot showing the IPR for the similarity indices calculated using the reactions with nonzero fluxes, there is very little variation. This is due to the fact that once a network evolves, there is generally only a small amount of minor changes can occur with the used reactions. 
 
 \begin{figure}[htpb]
 	\centering
