@@ -26,8 +26,11 @@ int main(int argc, char **argv)
 	int seedForGenerator=1;
 	int c;
 	std::string jobName;
+	double probOfPointMut=1.0;
+	double probOfHorizGene=0;
+	double smallK=1e-3;
 
-	while ((c = getopt(argc,argv,"hs:j:")) != -1)
+	while ((c = getopt(argc,argv,"hs:j:p:g:k:")) != -1)
 		switch(c)
 		{
 			case 's':
@@ -35,9 +38,21 @@ int main(int argc, char **argv)
 				seedForGenerator=std::stoi(optarg);
 				//std::cout<<"Parsed, it is: "<<seedForGenerator<<std::endl;
 				break;
+			case 'p':
+				probOfPointMut=std::stod(optarg);
+				break;
+			case 'g':
+				probOfHorizGene=std::stod(optarg);
+				break;
+			case 'k':
+				smallK=std::stod(optarg);
+				break;
 			case 'h':
 				std::cout<<"Accepted options:"<<std::endl;
 				std::cout<<"\t -s [intSeed] seed for the MersenneTwister, default is 1, max is 2147483647"<<std::endl;
+				std::cout<<"\t -p [probOfPointMut] probablity of point mutations (double) should be beteen 0 and 1. Default:1"<<std::endl;
+				std::cout<<"\t -g [probOfHorizGene] probablity of horzontal gene transfer (double) should be beteen 0 and 1, preferably lower than probOfPointMut. Default:0"<<std::endl;
+				std::cout<<"\t -k [smallKforFitness] cost of a reaction within the reaction network. Default:0.001"<<std::endl;
 				std::cout<<"\t -j [jobName] name for the folder to output the results into. If skipped a timestamped directory will be used for this."<<std::endl;
 				exit(0);
 				break;
@@ -49,6 +64,12 @@ int main(int argc, char **argv)
 					std::cout<<"Option -s requires an integer argument"<<std::endl;
 				else if (optopt =='j')
 					std::cout<<"Option -j requires the desired folder name (jobName)"<<std::endl;
+				else if (optopt =='p')
+					std::cout<<"Option -p requires the desired probality of point mutations (double)"<<std::endl;
+				else if (optopt =='g')
+					std::cout<<"Option -g requires the desired probality of horizontal gene transfer"<<std::endl;
+				else if (optopt =='k')
+					std::cout<<"Option -k requires the desired cost for reactions"<<std::endl;
 				else
 					std::cout<<"Unknown option, try -h for allowed options."<<std::endl;
 				return 1;
@@ -85,6 +106,8 @@ int main(int argc, char **argv)
 		std::cout<<"Error creating directory!"<<std::endl;
 		exit(1);
 	}
+
+	std::cout<<"The chosen probablity for point mutations is: "<<probOfPointMut<<" and for horizontal gene transfer it is: "<<probOfHorizGene<<std::endl;
 
 	std::ofstream improvementlog;
 	improvementlog.open(actualFilename+"/"+actualFilename+".fitt");
@@ -160,10 +183,10 @@ int main(int argc, char **argv)
 	cell::reactionVector=reacVector;
 	cell::substrateVector=substrateVector;
 	//this is the k value for the fitness function
-	cell::smallKforFitness=1e-3;
+	cell::smallKforFitness=smallK;
 	//setting the probabilities for mutations
-	cell::probabilityOfMutation=0.01;
-	cell::probabilityOfHorizontalGenetransfer=0;
+	cell::probabilityOfMutation=probOfPointMut;
+	cell::probabilityOfHorizontalGenetransfer=probOfHorizGene;
 	//don't add nrofinternalmetabolites here
 	cell::sourceSubstrate.push_back(104);
 	//cell::sourceSubstrate.push_back(267);
@@ -220,11 +243,18 @@ int main(int argc, char **argv)
 		// this is the pathfinding algorithm, not used now
 		//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, actualFilename);
 
+		//if both mutations happen, we have to calculate the the throughput twice, therefore there is no need to use the inclusion exclusion principle's formula here
+		double probabilityOfAnyMutation=cell::probabilityOfMutation+cell::probabilityOfHorizontalGenetransfer;
+		int numberOfMutationsToSimulate=600000;
+
+		double dcheckpointLenght=(numberOfMutationsToSimulate/probabilityOfAnyMutation)/(10*numberOfCells);
 
 		int NRofCheckpoints=10;
-		int checkPointLength=60000;
+		int checkPointLength=(int)dcheckpointLenght;
 		const int generationsPerWriteout=10000;
 		double previousAvgFittness=cellVector[0].getPerformance();
+
+		std::cout<<"To simulate "<<numberOfMutationsToSimulate<<" mutations, the checkPointLength has been set to "<<checkPointLength<<std::endl;
 
 		//defining the queues here
 		double maxFittQueue [generationsPerWriteout];
