@@ -18,7 +18,7 @@ int main(int argc, char **argv){
 	bool allProvided=false;
 
 	std::string listOfAllFiles="columns.list";
-	std::string listOfUsedFiles="columns.list";
+	std::string listOfUsedFiles="columns.list.other";
 
 	int c;
 
@@ -105,37 +105,39 @@ int main(int argc, char **argv){
 		exit(1);
 	}
 
-	//reading in the used reactions
-	std::ifstream inUsedFile(listOfUsedFiles);
-
 	std::vector<std::set<int>> reacMatrixUsed;
+	if ( !versusFirst){
+		//reading in the used reactions
+		std::ifstream inUsedFile(listOfUsedFiles);
 
-	if (inUsedFile)
-	{
-		while (inUsedFile >> filenames){
 
-			std::ifstream nowReading(filenames);
-			std::vector<int> tmpVector;
-			std::set<int> tmpSet;
-			int tmpInt;
+		if (inUsedFile)
+		{
+			while (inUsedFile >> filenames){
 
-			names.emplace_back(filenames);
+				std::ifstream nowReading(filenames);
+				std::vector<int> tmpVector;
+				std::set<int> tmpSet;
+				int tmpInt;
 
-			while (nowReading>>tmpInt){
+				names.emplace_back(filenames);
 
-				tmpVector.emplace_back(tmpInt);
-				tmpSet.insert(tmpInt);
+				while (nowReading>>tmpInt){
+
+					tmpVector.emplace_back(tmpInt);
+					tmpSet.insert(tmpInt);
+				}
+				reacMatrixUsed.emplace_back(tmpSet);
+
 			}
-			reacMatrixUsed.emplace_back(tmpSet);
+		}	
+		else {
 
+			std::cout<<"File "<<listOfUsedFiles<<" not found. Exiting now."<<std::endl;
+			exit(1);
 		}
-	}	
-	else {
 
-		std::cout<<"File "<<listOfUsedFiles<<" not found. Exiting now."<<std::endl;
-		exit(1);
 	}
-
 
 	//for (auto writingOut:reacMatrixAll){
 

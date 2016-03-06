@@ -29,6 +29,12 @@ BNETMAX=`cat *.progress | datamash max 5`
 ANETMIN=`cat *.progress | datamash min 6`
 ANETMAX=`cat *.progress | datamash max 6`
 
+UBNETMIN=`cat *.progress | datamash min 7`
+UBNETMAX=`cat *.progress | datamash max 7`
+
+UANETMIN=`cat *.progress | datamash min 8`
+UANETMAX=`cat *.progress | datamash max 8`
+
 YLABS="unset ylabel; set ylabel 'Fittness' "
 XLABS="unset xlabel; set xlabel 'Generations'"
 
@@ -164,9 +170,9 @@ set multiplot layout 4,1 columnsfirst title "Number of used reactions in the bes
 @YLABS; @XLABS
 
 
-dy = floor((ANETMAX-ANETMIN)/ntics*10.)/10.
+dy = floor((UBNETMAX-UBNETMIN)/ntics*10.)/10.
 set ytics dy
-set yrange [:ANETMAX]
+set yrange [:UBNETMAX]
 dx = floor((XMAX-XMIN+0.5)/ntics*10.)/10.
 set xtics dx
 
@@ -190,9 +196,9 @@ set multiplot layout 4,1 columnsfirst title "Average number of used reactions in
 @YLABS; @XLABS
 
 
-dy = floor((ANETMAX-ANETMIN)/ntics*10.)/10.
+dy = floor((UANETMAX-UANETMIN)/ntics*10.)/10.
 set ytics dy
-set yrange [:ANETMAX]
+set yrange [:UANETMAX]
 dx = floor((XMAX-XMIN+0.5)/ntics*10.)/10.
 set xtics dx
 

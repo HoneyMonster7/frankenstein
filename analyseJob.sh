@@ -307,7 +307,7 @@ for job in $jobnames; do
 
 	#now calculating the running average of the best fittnesses
 
-	sed -ni '/Current/!p' ../job$job.fitt
+	#sed -ni '/Current/!p' ../job$job.fitt
 
 	awk '{print $1}' "../job$job.fitt" > "../progress/$job.numbersonly"
 	awk '{print $2}' "../job$job.fitt" > "../progress/$job.fittonly"
@@ -330,25 +330,10 @@ for job in $jobnames; do
 		../../movAvg/movAvg 100 "../progress/$job.bestusedonly" >> "../progress/$job.bestusedavg"
 		../../movAvg/movAvg 100 "../progress/$job.avgusedonly" >> "../progress/$job.avgusedavg"
 
-	rm ../progress/$job.fittonly
-	rm ../progress/$job.enthonly
-	rm ../progress/$job.avgfitonly
-	rm ../progress/$job.netsizeonly
-	rm ../progress/$job.avgnetsizeonly
-	rm ../progress/$job.bestusedonly
-	rm ../progress/$job.avgusedonly
 	
 	paste ../progress/$job.numbersonly ../progress/$job.fittavg ../progress/$job.enthavg ../progress/$job.avgfitavg ../progress/$job.netsizeavg ../progress/$job.avgnetsizeavg ../progress/$job.bestusedavg ../progress/$job.avgusedonly> ../progress/$job.progress
 
 
-	rm ../progress/$job.numbersonly
-	rm ../progress/$job.fittavg
-	rm ../progress/$job.enthavg
-	rm ../progress/$job.avgfitavg
-	rm ../progress/$job.netsizeavg
-	rm ../progress/$job.avgnetsizeavg
-	rm ../progress/$job.bestusedavg
-	rm ../progress/$job.avgusedavg
 
 
 
@@ -359,6 +344,24 @@ done
 # leaving the jnk files for the last checkpoint only
 if [[ "$junkForLastCPStays" != 1 ]]; then
 	rm *.jnk
+
+	rm ../progress/*.fittonly
+	rm ../progress/*.enthonly
+	rm ../progress/*.avgfitonly
+	rm ../progress/*.netsizeonly
+	rm ../progress/*.avgnetsizeonly
+	rm ../progress/*.bestusedonly
+	rm ../progress/*.avgusedonly
+
+
+	rm ../progress/*.numbersonly
+	rm ../progress/*.fittavg
+	rm ../progress/*.enthavg
+	rm ../progress/*.avgfitavg
+	rm ../progress/*.netsizeavg
+	rm ../progress/*.avgnetsizeavg
+	rm ../progress/*.bestusedavg
+	rm ../progress/*.avgusedavg
 fi
 #paste ../*.fittavg > ../fittavgs.fitt
 #paste ../*.enthavg > ../enthavgs.enth
