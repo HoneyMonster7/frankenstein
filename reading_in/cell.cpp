@@ -22,6 +22,7 @@ cell::cell(std::vector<int>& tmpAvailReacs)
 	std::vector<double> fluxThroughReacs(availableReactions.size());
 	performance=initialPerformance;
 	firstPerformance=initialPerformance/22;
+	std::vector<int> additionalSinks;
 }
 
 
@@ -111,6 +112,14 @@ void cell::printXGMML(std::string filename){
 	}
 
 	for (auto sinkSubstrate_one:sinkSubstrate){
+		std::string sinkName=substrateVector[sinkSubstrate_one+nrOfInternalMetabolites].niceSubstrateName();
+
+		compoundIDs.erase(sinkSubstrate_one);
+		xgmmlFile<<"<node label=\""<<sinkName<<"\" id=\""<<sinkSubstrate_one+nrOfInternalMetabolites<<"\">"<<std::endl;
+		xgmmlFile<<"\t <att name=\"Type\" type=\"string\" value=\"Sink\"/>"<<std::endl;
+		xgmmlFile<<"</node>"<<std::endl;
+	}
+	for (auto sinkSubstrate_one:additionalSinks){
 		std::string sinkName=substrateVector[sinkSubstrate_one+nrOfInternalMetabolites].niceSubstrateName();
 
 		compoundIDs.erase(sinkSubstrate_one);
@@ -583,6 +592,9 @@ double cell::calcThroughput(){
 	for(int sinkSubstrate_one:sinkSubstrate){
 		substrateSet.insert(sinkSubstrate_one+nrOfInternalMetabolites);
 	}
+	for(int sinkSubstrate_one:additionalSinks){
+		substrateSet.insert(sinkSubstrate_one+nrOfInternalMetabolites);
+	}
 	for(int sourceSubstrate_one:sourceSubstrate){
 		substrateSet.insert(sourceSubstrate_one+nrOfInternalMetabolites);
 	}
@@ -595,6 +607,10 @@ double cell::calcThroughput(){
 		substrateSet.erase(substrateSet.begin());
 	}
 
+
+	int nrOfNormalSinks=sinkSubstrate.size();
+	int nrOfNormalSource=sourceSubstrate.size();
+	int nrOfAdditionalSinks=additionalSinks.size();
 
 	glp_prob *lp;
 	lp=glp_create_prob();
@@ -612,7 +628,7 @@ double cell::calcThroughput(){
 	}
 	//extra column for the imaginary reaction getting rid of the final compound (objective function)
 	int listSize=availableReactions.size();
-	glp_add_cols(lp,listSize+4+sinkSubstrate.size()+sourceSubstrate.size());
+	glp_add_cols(lp,listSize+4+nrOfNormalSinks+nrOfNormalSource+nrOfAdditionalSinks);
 
 	//for(int i=1; i<=listSize+4; i++){ glp_set_col_bnds(lp,i,GLP_LO,0.0,0.0);}
 
@@ -695,16 +711,22 @@ double cell::calcThroughput(){
 	//removing Nad_red
 	ia.push_back(substrateIndex[-4+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
 	//removing the sink substrate
-	for (int sinkIndex=0; sinkIndex<sinkSubstrate.size(); ++sinkIndex){
+	for (int sinkIndex=0; sinkIndex<nrOfNormalSinks; ++sinkIndex){
 		ia.push_back(substrateIndex[sinkSubstrate[sinkIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+sinkIndex+1); ar.push_back(-1.0);
 		//bounding the sinks
 		glp_set_col_bnds(lp,listSize+4+sinkIndex+1,GLP_DB,0.0,10.0);
 	}
+	//the additional sinks (if any)
+	for (int sinkIndex=0; sinkIndex<nrOfAdditionalSinks; ++sinkIndex){
+		ia.push_back(substrateIndex[additionalSinks[sinkIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+sinkIndex+1+nrOfNormalSinks); ar.push_back(-1.0);
+		//bounding the sinks
+		glp_set_col_bnds(lp,listSize+4+nrOfNormalSinks+sinkIndex+1,GLP_DB,0.0,10.0);
+	}
 	//adding source substrates
-	for (int sourceIndex=0; sourceIndex<sourceSubstrate.size(); ++sourceIndex){
-		ia.push_back(substrateIndex[sourceSubstrate[sourceIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+sinkSubstrate.size()+sourceIndex+1); ar.push_back(1.0);
+	for (int sourceIndex=0; sourceIndex<nrOfNormalSource; ++sourceIndex){
+		ia.push_back(substrateIndex[sourceSubstrate[sourceIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+nrOfNormalSinks+nrOfAdditionalSinks+sourceIndex+1); ar.push_back(1.0);
 		//bounding the sources
-		glp_set_col_bnds(lp,listSize+4+sinkSubstrate.size()+sourceIndex+1,GLP_DB,0.0,10.0);
+		glp_set_col_bnds(lp,listSize+4+nrOfNormalSinks+nrOfAdditionalSinks+sourceIndex+1,GLP_DB,0.0,10.0);
 	}
 
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);

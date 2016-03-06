@@ -36,6 +36,7 @@ class cell{
 
 	std::vector<int> availableReactions;
 	double performance;
+	std::vector<int> additionalSinks;
 	private: double firstPerformance;
 			 std::vector<double> fluxThroughReacs;
 	public: 
@@ -57,6 +58,7 @@ class cell{
 	inline double getPerformance() const {return performance;}
 
 	inline std::vector<double> getFluxes() {return fluxThroughReacs;}
+	inline std::vector<int> getAddSinks() {return additionalSinks;}
 	void mutate(RandomGeneratorType& generator);
 	cell  mutateAndReturn(RandomGeneratorType& generator);
 
