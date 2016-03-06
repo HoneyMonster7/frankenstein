@@ -222,7 +222,7 @@ int main(int argc, char **argv)
 
 
 		int NRofCheckpoints=10;
-		int checkPointLength=6000000;
+		int checkPointLength=60000;
 		const int generationsPerWriteout=10000;
 		double previousAvgFittness=cellVector[0].getPerformance();
 
@@ -237,6 +237,7 @@ int main(int argc, char **argv)
 		int arrayPos=0;
 
 
+		std::time_t startTime=std::time(nullptr);
 		//outer loop is there in order to save networks every 10% of the simulation
 		for (int outerLoop=0; outerLoop<NRofCheckpoints; outerLoop++){
 
@@ -283,7 +284,13 @@ int main(int argc, char **argv)
 				//}
 
 			}
+			std::time_t currentTime=std::time(nullptr);
 
+
+
+			double timeElapsed=std::difftime(currentTime,startTime);
+
+			std::cout<<"Time for Checkpointing! "<<timeElapsed<<" seconds have passed since the start, that's "<<(outerLoop+1)*checkPointLength/timeElapsed<<" generations per seconds."<<std::endl;
 			//cell::printPopulationFittnesses(populationIndex,cellVector);
 
 			cell currentBest=cell::printNFittest(populationIndex,cellVector,numberOfCells);
