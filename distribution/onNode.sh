@@ -7,7 +7,7 @@ source /etc/profile
 #set >y
 cd /scratch/s1134965/frankenstein
 
-longname="jobJOBNR"
+longname="SIMNjobJOBNR"
 
 tar xvf backup.tar.gz
 

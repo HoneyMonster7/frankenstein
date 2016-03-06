@@ -9,9 +9,9 @@ thishostsname=`hostname | cut -d. -f1`
 thisdirectory=`pwd `
 compNRLength=3
 
-nrofmachines=10
+nrofmachines=20
 
-firstToTry=88
+firstToTry=41
 
 echo "Find a job name:"
 read jobname
@@ -82,7 +82,7 @@ do
 
 	isHostUp=`ssh -o BatchMode=yes -o ConnectTimeout=5 "$hostname" echo 1 2>&1`
 	
-	if  [["$isHostUp" -eq "1" ]]; then
+	if  [ "$isHostUp" == "1" ]; then
 		isReactionAlreadyRunning=`ssh "$hostname" ps ax -u s1134965 | grep reaction | grep -v grep`
 		if [ -z "isReactionAlreadyRunning" ]; then
 			isHostUp=0
@@ -112,23 +112,23 @@ do
 	done
 	echo " found $hostname personalizing the script for it"
 
-	scriptname="oncurrentNode$jobname$i"
+	scriptname="oncurrentNode$jobname$i.sh"
 
 	echo "hostname is $hostname, thishostsname is $thishostsname, thisfolder is $thisdirectory"
 	#echo "sed \"s/NODENR/$hostname/\" distribution/onNode.sh | sed  \"s/MOTHERHOST/$thishostsname/\"| sed  \"s#FOLDERTOCOLLECT#$thisdirectory#\" > oncurrentNode.sh"
-	sed "s/JOBNR/$i/g" distribution/onNode.sh | sed  "s/MOTHERHOST/$thishostsname/g"| sed  "s#FOLDERTOCOLLECT#$thisdirectory/$jobname#g"| sed "s/RANDOMSEED/$modrnd/" > $scriptname
+	sed "s/JOBNR/$i/g" distribution/onNode.sh |sed "s/SIMN/$jobname/g" | sed  "s/MOTHERHOST/$thishostsname/g"| sed  "s#FOLDERTOCOLLECT#$thisdirectory/$jobname#g"| sed "s/RANDOMSEED/$modrnd/" > $scriptname
 
 
 	#sed -i "s/MOTHERHOST/$thishostsname/g/" oncurrentNode.sh
 	#sed -i "s/FOLDERTOCOLLECT/$thisdirectory/g/" oncurrentNode.sh
 
-	chmod +x oncurrentNode.sh
+	chmod +x $scriptname
 
 	echo "$hostname is running job $i with random seed $modrnd" >> $jobname/joblist.txt
 	echo "sending script to $hostname"
 	rsync -aPhq {$scriptname,backup.tar.gz} "$hostname":/scratch/s1134965/frankenstein
 	echo "running script at $hostname"
-	ssh  -t "$hostname" 'bash -l -c /scratch/s1134965/frankenstein/$scripname >/scratch/s1134965/frankenstein/out 2>/scratch/s1134965/frankenstein/err </dev/null &' &
+	ssh  -t "$hostname" 'bash -l -c' /scratch/s1134965/frankenstein/$scriptname ' >/scratch/s1134965/frankenstein/out 2>/scratch/s1134965/frankenstein/err </dev/null &' &
 
 	mv $scriptname distribution/tmp/
 
