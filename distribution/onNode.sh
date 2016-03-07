@@ -9,6 +9,8 @@ cd /scratch/s1134965/frankenstein
 
 longname="SIMNjobJOBNR"
 
+nameofsim="SIMN"
+
 tar xvf backup.tar.gz
 
 if [[ -d "$longname" ]]; then
@@ -16,7 +18,7 @@ if [[ -d "$longname" ]]; then
 fi
 
 
-nohup reading_in/build/reaction -s $seedtostartwith -j $longname
+nohup reading_in/build/reaction -s $seedtostartwith -j $longname -p 0.01
 
 echo "The random seed used to initiate the prng was $seedtostartwith" > $longname/originalseed.txt
 
@@ -31,3 +33,5 @@ tar acf response.JOBNR.tar.gz --exclude reaction  $longname
 rsync -aPhq response.JOBNR.tar.gz MOTHERHOST:FOLDERTOCOLLECT
 
 mv $longname previousJob
+mv out.$nameofsim previousJob
+mv err.$nameofsim previousJob

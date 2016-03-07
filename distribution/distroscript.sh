@@ -11,7 +11,7 @@ compNRLength=3
 
 nrofmachines=20
 
-firstToTry=41
+firstToTry=2
 
 echo "Find a job name:"
 read jobname
@@ -128,7 +128,7 @@ do
 	echo "sending script to $hostname"
 	rsync -aPhq {$scriptname,backup.tar.gz} "$hostname":/scratch/s1134965/frankenstein
 	echo "running script at $hostname"
-	ssh  -t "$hostname" 'bash -l -c' /scratch/s1134965/frankenstein/$scriptname ' >/scratch/s1134965/frankenstein/out 2>/scratch/s1134965/frankenstein/err </dev/null &' &
+	ssh  -t "$hostname" 'bash -l -c' /scratch/s1134965/frankenstein/$scriptname ' >/scratch/s1134965/frankenstein/out.'$jobname' 2>/scratch/s1134965/frankenstein/err.'$jobname' </dev/null &' &
 
 	mv $scriptname distribution/tmp/
 
