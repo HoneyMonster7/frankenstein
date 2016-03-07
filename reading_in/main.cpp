@@ -251,14 +251,15 @@ int main(int argc, char **argv)
 		//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, actualFilename);
 
 		//if both mutations happen, we have to calculate the the throughput twice, therefore there is no need to use the inclusion exclusion principle's formula here
-		double probabilityOfAnyMutation=cell::probabilityOfMutation+cell::probabilityOfHorizontalGenetransfer;
-		int numberOfMutationsToSimulate=600000;
+		double probabilityOfAnyMutation=cell::probabilityOfMutation+cell::probabilityOfHorizontalGenetransfer*0.05;
+		int numberOfMutationsToSimulate=50000000;
 
 		double dcheckpointLenght=(numberOfMutationsToSimulate/probabilityOfAnyMutation)/(10*numberOfCells);
+		double genPerWriteout=1000000*cell::probabilityOfMutation;
 
 		int NRofCheckpoints=10;
 		int checkPointLength=(int)dcheckpointLenght;
-		const int generationsPerWriteout=1000;
+		const int generationsPerWriteout=(int)genPerWriteout;
 		double previousAvgFittness=cellVector[0].getPerformance();
 
 		std::cout<<"To simulate "<<numberOfMutationsToSimulate<<" mutations, the checkPointLength has been set to "<<checkPointLength<<std::endl;
