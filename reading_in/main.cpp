@@ -258,7 +258,7 @@ int main(int argc, char **argv)
 
 		int NRofCheckpoints=10;
 		int checkPointLength=(int)dcheckpointLenght;
-		const int generationsPerWriteout=10000;
+		const int generationsPerWriteout=1000;
 		double previousAvgFittness=cellVector[0].getPerformance();
 
 		std::cout<<"To simulate "<<numberOfMutationsToSimulate<<" mutations, the checkPointLength has been set to "<<checkPointLength<<std::endl;
