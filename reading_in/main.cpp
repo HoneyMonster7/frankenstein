@@ -252,7 +252,7 @@ int main(int argc, char **argv)
 
 		//if both mutations happen, we have to calculate the the throughput twice, therefore there is no need to use the inclusion exclusion principle's formula here
 		double probabilityOfAnyMutation=cell::probabilityOfMutation+cell::probabilityOfHorizontalGenetransfer;
-		int numberOfMutationsToSimulate=600000;
+		int numberOfMutationsToSimulate=60000000;
 
 		double dcheckpointLenght=(numberOfMutationsToSimulate/probabilityOfAnyMutation)/(10*numberOfCells);
 
