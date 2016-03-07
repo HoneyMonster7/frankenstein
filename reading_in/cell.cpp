@@ -725,6 +725,9 @@ double cell::calcThroughput(){
 	glp_set_col_bnds(lp,listSize+3,GLP_DB,-10.0,40.0);
 	//nad_red->nad_ox
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-40.0,40.0);
+	//adding/removing phosphate
+	glp_set_col_bnds(lp,listSize+4,GLP_DB,-40.0,40.0);
+
 
 	//add imaginary reaction here:
 	//adding water
@@ -739,23 +742,25 @@ double cell::calcThroughput(){
 	ia.push_back(substrateIndex[-3+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(1.0);
 	//removing Nad_red
 	ia.push_back(substrateIndex[-4+nrOfInternalMetabolites]);	ja.push_back(listSize+4); ar.push_back(-1.0);
+	//adding phosphate
+	ia.push_back(substrateIndex[-8+nrOfInternalMetabolites]);	ja.push_back(listSize+5); ar.push_back(1.0);
 	//removing the sink substrate
 	for (int sinkIndex=0; sinkIndex<nrOfNormalSinks; ++sinkIndex){
-		ia.push_back(substrateIndex[sinkSubstrate[sinkIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+sinkIndex+1); ar.push_back(-1.0);
+		ia.push_back(substrateIndex[sinkSubstrate[sinkIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+5+sinkIndex+1); ar.push_back(-1.0);
 		//bounding the sinks
-		glp_set_col_bnds(lp,listSize+4+sinkIndex+1,GLP_DB,0.0,10.0);
+		glp_set_col_bnds(lp,listSize+5+sinkIndex+1,GLP_DB,0.0,10.0);
 	}
 	//the additional sinks (if any)
 	for (int sinkIndex=0; sinkIndex<nrOfAdditionalSinks; ++sinkIndex){
-		ia.push_back(substrateIndex[additionalSinks[sinkIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+sinkIndex+1+nrOfNormalSinks); ar.push_back(-1.0);
+		ia.push_back(substrateIndex[additionalSinks[sinkIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+5+sinkIndex+1+nrOfNormalSinks); ar.push_back(-1.0);
 		//bounding the sinks
-		glp_set_col_bnds(lp,listSize+4+nrOfNormalSinks+sinkIndex+1,GLP_DB,0.0,10.0);
+		glp_set_col_bnds(lp,listSize+5+nrOfNormalSinks+sinkIndex+1,GLP_DB,0.0,10.0);
 	}
 	//adding source substrates
 	for (int sourceIndex=0; sourceIndex<nrOfNormalSource; ++sourceIndex){
-		ia.push_back(substrateIndex[sourceSubstrate[sourceIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+4+nrOfNormalSinks+nrOfAdditionalSinks+sourceIndex+1); ar.push_back(1.0);
+		ia.push_back(substrateIndex[sourceSubstrate[sourceIndex]+nrOfInternalMetabolites]);	ja.push_back(listSize+5+nrOfNormalSinks+nrOfAdditionalSinks+sourceIndex+1); ar.push_back(1.0);
 		//bounding the sources
-		glp_set_col_bnds(lp,listSize+4+nrOfNormalSinks+nrOfAdditionalSinks+sourceIndex+1,GLP_DB,0.0,10.0);
+		glp_set_col_bnds(lp,listSize+5+nrOfNormalSinks+nrOfAdditionalSinks+sourceIndex+1,GLP_DB,0.0,10.0);
 	}
 
 	//ia.push_back(43+14);	ja.push_back(listSize+2); ar.push_back(1.0);
@@ -766,7 +771,7 @@ double cell::calcThroughput(){
 
 	//target is to maximize the imaginary reactions throughput of the ADP->ATP reaction
 	//glp_set_obj_coef(lp,listSize+3,0.5);
-	//glp_set_obj_coef(lp,listSize+5,0.5);
+	//glp_set_obj_coef(lp,listSize+5,1);
 
 	//creating the arrays now
 	int length=ia.size();
