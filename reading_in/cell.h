@@ -48,9 +48,12 @@ class cell{
 			static double smallKforFitness;
 			static double probabilityOfMutation;
 			static double probabilityOfHorizontalGenetransfer;
+			static double probabilityOfSinkMutation;
 
 	//public: 
 	cell(std::vector<int>& availableReactons);
+	//other constructor that works similarily but won't calculate fittness automatically
+	cell(std::vector<int>& availableReactons, int notUsed);
 	cell();
 	bool operator<(const cell& other) const;
 	
@@ -83,6 +86,11 @@ class cell{
 
 	static void printProgressFile(std::vector<int>& population, std::vector<cell>& cellVector, std::vector<int>& howManyOfEach, int k, int outerloop,const int generationsPerWriteout, int checkPointLength, std::ofstream& fileToWrite,double& previousFittness, double maxFittQueue [], double avgFittQueue [], double entropyQueue [], int bestNetSizeQueue [], double avgNetSizeQueue [], int bestUsedReacsQueue [], double avgUsedReacsQueue []);
 
+	void deleteThisSink(int thisSinkIsToBeGone);
+	void addThisSink(int thisSinkIsNowYours);
+	void theseAreYourAddSinks(std::vector<int> theseSinksAreNowYours);
+	//ONLY USE IN MUTATIONS. TAKE CARE WITH THIS, REMEMBER TO CALC THROUGHPUT
+	void setReacs(std::vector<int> theseAreYourNewReacs);
 
 	private: static int randomIntInRange(RandomGeneratorType& generator, int maxNumber);
 			 static double randomRealInRange(RandomGeneratorType& generator, double maxNumber);

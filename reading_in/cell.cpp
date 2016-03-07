@@ -11,6 +11,7 @@ std::vector<int> cell::sourceSubstrate;
 std::vector<int> cell::sinkSubstrate;
 double cell::smallKforFitness;
 double cell::probabilityOfMutation;
+double cell::probabilityOfSinkMutation;
 double cell::probabilityOfHorizontalGenetransfer;
 
 cell::cell(std::vector<int>& tmpAvailReacs)
@@ -25,9 +26,37 @@ cell::cell(std::vector<int>& tmpAvailReacs)
 	std::vector<int> additionalSinks;
 }
 
+//this constructor just creates the vector availablereacs and initializes the other variables
+cell::cell(std::vector<int>& tmpAvailReacs, int notUsed)
+
+		 :availableReactions(tmpAvailReacs)
+
+{
+	double initialPerformance=0;
+	std::vector<double> fluxThroughReacs(availableReactions.size());
+	performance=initialPerformance;
+	firstPerformance=initialPerformance/22;
+	std::vector<int> additionalSinks;
+}
 
 cell::cell() {}
 
+void cell::addThisSink(int thisSinkIsNowYours) {
+
+	additionalSinks.emplace_back(thisSinkIsNowYours);
+	performance=calcThroughput();
+}
+
+void cell::theseAreYourAddSinks(std::vector<int> theseSinksAreNowYours){
+
+	additionalSinks=theseSinksAreNowYours;
+	performance=calcThroughput();
+}
+void cell::deleteThisSink(int thisSinkIsToBeGone){
+
+	//thisSinkIsToBeGone needs to be the index of the sink to remove
+	additionalSinks.erase(additionalSinks.begin()+thisSinkIsToBeGone);
+}
 
 void cell::printReacs() {
 
@@ -329,8 +358,8 @@ cell cell::mutateAndReturn( RandomGeneratorType& generator ){
 		trialNewCell.erase(trialNewCell.begin()+deleteThisOne);
 	}
 
-	
-	cell tryIfWorks(trialNewCell);
+	//not calculating flux just here
+	cell tryIfWorks(trialNewCell,0);
 
 	return tryIfWorks;
 
@@ -363,6 +392,8 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 	int whichOneToMutate;
 	bool areWeMutating=false;
 	bool areWeHorizontalTransferring=false;
+	bool doWeMutateSinks=false;
+	bool wasThereAChange=false;
 
 	while(!gotOneToMutate){
 
@@ -380,6 +411,8 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 	
 	double luckyToMutate=randomRealInRange(generator,1);
 	double luckyToHorizontalGene=randomRealInRange(generator,1);
+	double luckySinkMutate=randomRealInRange(generator,1);
+
 	if (luckyToMutate<cell::probabilityOfMutation) {
 		areWeMutating=true;	
 	}
@@ -388,9 +421,16 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 		areWeHorizontalTransferring=true;
 	}
 
+	if (luckySinkMutate<cell::probabilityOfSinkMutation) {
+		doWeMutateSinks=true;
+	}
+
 	//now mutate the selected cell, and put it in the place of the dying cell
 	
+	std::vector<int> additionalSinks=cellVector[population[whichOneToMutate]].getAddSinks();
+	std::vector<int> originalReacs=cellVector[population[whichOneToMutate]].getReacs();
 
+	cell tmpCellWithoutPerfCalc(originalReacs);
 
 	if (areWeHorizontalTransferring){
 
@@ -401,7 +441,7 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 
 		int whichReacToDonate=randomIntInRange(generator,GenesOfDonor.size()-1);
 
-		std::vector<int> GenesOfCurrent=cellVector[population[whichOneToMutate]].getReacs();
+		std::vector<int> GenesOfCurrent=tmpCellWithoutPerfCalc.getReacs();
 
 		//converting to unordered set to avoid double reactions
 		std::unordered_set<int> setOfGenesOfCurrent(GenesOfCurrent.begin(), GenesOfCurrent.end());
@@ -413,25 +453,8 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 			//converting back to vector for initialization of the new cell
 			std::vector<int> GenesWithTransferred(setOfGenesOfCurrent.begin(), setOfGenesOfCurrent.end());
 
-			cell currentWithTransferredGenes(GenesWithTransferred);
-
-			--howManyOfEach[population[whichOneToMutate]];
-			int whichIsUnused=population.size();
-			for (int i=0; i<howManyOfEach.size();i++){
-
-				if (howManyOfEach[i]==0) {
-				whichIsUnused=i;
-				break;
-				}
-			}
-			//creating a new cell for the changed one
-			cellVector[whichIsUnused]=currentWithTransferredGenes;
-			++howManyOfEach[whichIsUnused];
-
-			//as the chosen cell has received some genes it should not point to the same cell as before
-			population[whichOneToMutate]=whichIsUnused;
-
-
+			tmpCellWithoutPerfCalc.setReacs(GenesWithTransferred);
+			wasThereAChange=true;
 		}
 
 		//std::vector<int> genesOfDonor=cellVector[population[
@@ -439,38 +462,102 @@ void cell::mutatePopulation(std::vector<int>& population,std::vector<int>& howMa
 
 	if (areWeMutating) {
 		//creating the mutatnt cell
-		cell offspringOfChosenCell=cellVector[population[whichOneToMutate]].mutateAndReturn(generator);
+		cell offspringOfChosenCell=tmpCellWithoutPerfCalc.mutateAndReturn(generator);
 
-		//now we need to find a place to store this mutatnt cell in cellVector
-		//
-		//decrease the number of those cells that die
-		--howManyOfEach[population[whichCellDies]];
-		//if the for loop doesn't find any unused places in cellVector, the statement after will exit with an error (this should never happen in normal circumstances)
-		int whichIsUnused=population.size();
-		for (int i=0; i<howManyOfEach.size();i++){
+		tmpCellWithoutPerfCalc.setReacs(offspringOfChosenCell.getReacs());
+		wasThereAChange=true;
 
-			if (howManyOfEach[i]==0) {
-			whichIsUnused=i;
-			break;
-			}
-		}
-		//we have an unused element in cellVector now
-		cellVector[whichIsUnused]=offspringOfChosenCell;
-
-		//create the population element that points to the newborn cell
-		population[whichCellDies]=whichIsUnused;
-		//increase the number corresponding to this newborn cell
-		++howManyOfEach[whichIsUnused];
-
-	}
-	else{
-		//if there's only reproduction without mutation just change the pointer of the dying cell to the reproducing one and adjust the numbers in howManyOfEach
-		--howManyOfEach[population[whichCellDies]];
-		population[whichCellDies]=population[whichOneToMutate];
-		++howManyOfEach[population[whichOneToMutate]];
 
 	}
 	//std::cout<<"The unlucky one is: "<<whichCellDies<<std::endl;
+	
+	std::vector<int> availableReactions=tmpCellWithoutPerfCalc.getReacs();
+	if(doWeMutateSinks){
+		double probOfAddingSink=0.5;
+		double luckyToAddSink=randomRealInRange(generator,1);
+
+		if (luckyToAddSink>probOfAddingSink){
+			//we get to delete a sink
+			if(additionalSinks.size()>0){
+				//only delete a sink if there is any additional
+				int whichSinkIsToBeGone=randomIntInRange(generator,additionalSinks.size()-1);
+				std::cout<<"We are deleting sink nr: "<<whichSinkIsToBeGone<<" which is "<<additionalSinks[whichSinkIsToBeGone]<<std::endl;
+				additionalSinks.erase(additionalSinks.begin()+whichSinkIsToBeGone);
+				wasThereAChange=true;
+			}
+		}
+		else{
+			//list all the compounds in the reaction network now
+			std::set<int> substrateSet;
+
+			for (int i=0; i<availableReactions.size();i++){
+				reaction currentReac=reactionVector[availableReactions[i]-1];
+				//std::cout<<"Reaction "<<currentReac.getListNr()<<" has ";
+				for (int j:currentReac.getsubstrates()){
+					substrateSet.insert(j);
+					//	std::cout<<substrateVector[j+nrOfInternalMetabolites].niceSubstrateName()<<", ";
+				}
+				for (int j:currentReac.getproducts()){
+					substrateSet.insert(j);
+					//	std::cout<<substrateVector[j+nrOfInternalMetabolites].niceSubstrateName()<<", ";
+				}
+			}
+			//erasing internal metabolites from the set, as we already have those at the beginning of the list
+			for(int metab=-1*nrOfInternalMetabolites; metab<0; metab++){substrateSet.erase(metab);}
+			//in order to always have the source and sink nodes
+			for(int sinkSubstrate_one:sinkSubstrate){
+				substrateSet.erase(sinkSubstrate_one);
+			}
+			for(int sinkSubstrate_one:additionalSinks){
+				substrateSet.erase(sinkSubstrate_one);
+			}
+			for(int sourceSubstrate_one:sourceSubstrate){
+				substrateSet.erase(sourceSubstrate_one);
+			}
+			//now choosing which subsrate should be the new sink
+			if(substrateSet.size()>1){
+				int whichIsOurNewSink=randomIntInRange(generator,substrateSet.size()-1);
+				std::set<int>::iterator i=substrateSet.begin();
+				std::advance(i,whichIsOurNewSink);
+				additionalSinks.emplace_back(*i);
+				wasThereAChange=true;
+			}
+		}
+		if(wasThereAChange){
+			//since there was a change now we'll have to recalculate the performance
+			//this is done when we re-add the additional sinks (if any)
+			tmpCellWithoutPerfCalc.theseAreYourAddSinks(additionalSinks);
+
+			//now we need to find a place to store this mutatnt cell in cellVector
+			//
+			//decrease the number of those cells that die
+			--howManyOfEach[population[whichCellDies]];
+			//if the for loop doesn't find any unused places in cellVector, the statement after will exit with an error (this should never happen in normal circumstances)
+			int whichIsUnused=population.size();
+			for (int i=0; i<howManyOfEach.size();i++){
+
+				if (howManyOfEach[i]==0) {
+					whichIsUnused=i;
+					break;
+				}
+			}
+			//we have an unused element in cellVector now
+			cellVector[whichIsUnused]=tmpCellWithoutPerfCalc;
+
+			//create the population element that points to the newborn cell
+			population[whichCellDies]=whichIsUnused;
+			//increase the number corresponding to this newborn cell
+			++howManyOfEach[whichIsUnused];
+		}
+		else{
+			//if there's only reproduction without mutation just change the pointer of the dying cell to the reproducing one and adjust the numbers in howManyOfEach
+			--howManyOfEach[population[whichCellDies]];
+			population[whichCellDies]=population[whichOneToMutate];
+			++howManyOfEach[population[whichOneToMutate]];
+
+		}
+
+	}
 	
 }
 
@@ -1065,6 +1152,12 @@ void cell::printProgressFile(std::vector<int>& population, std::vector<cell>& ce
 	avgNetSizeQueue[remainderOfK]=totalNetworkSize/(double)cellVector.size();
 	bestUsedReacsQueue[remainderOfK]=bestUsedReacs;
 	avgUsedReacsQueue[remainderOfK]=totUsedReacs/(double)cellVector.size();
+}
+
+void cell::setReacs(std::vector<int> theseAreYourNewReacs){
+
+	//Note: no performance recalc was done here. We do that after all the mutations are done when re-adding the additional sinks
+	availableReactions=theseAreYourNewReacs;
 }
 	
 

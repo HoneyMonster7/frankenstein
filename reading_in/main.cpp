@@ -29,8 +29,9 @@ int main(int argc, char **argv)
 	double probOfPointMut=1.0;
 	double probOfHorizGene=0;
 	double smallK=1e-3;
+	double probOfSinkMutation=0;
 
-	while ((c = getopt(argc,argv,"hs:j:p:g:k:")) != -1)
+	while ((c = getopt(argc,argv,"hs:j:p:g:k:a:")) != -1)
 		switch(c)
 		{
 			case 's':
@@ -47,12 +48,16 @@ int main(int argc, char **argv)
 			case 'k':
 				smallK=std::stod(optarg);
 				break;
+			case 'a':
+				probOfSinkMutation=std::stod(optarg);
+				break;
 			case 'h':
 				std::cout<<"Accepted options:"<<std::endl;
 				std::cout<<"\t -s [intSeed] seed for the MersenneTwister, default is 1, max is 2147483647"<<std::endl;
 				std::cout<<"\t -p [probOfPointMut] probablity of point mutations (double) should be beteen 0 and 1. Default:1"<<std::endl;
 				std::cout<<"\t -g [probOfHorizGene] probablity of horzontal gene transfer (double) should be beteen 0 and 1, preferably lower than probOfPointMut. Default:0"<<std::endl;
 				std::cout<<"\t -k [smallKforFitness] cost of a reaction within the reaction network. Default:0.001"<<std::endl;
+				std::cout<<"\t -a [probOfSinkMutation] probability of a sink mutation (addition or deletion with equal probability). Default:0"<<std::endl;
 				std::cout<<"\t -j [jobName] name for the folder to output the results into. If skipped a timestamped directory will be used for this."<<std::endl;
 				exit(0);
 				break;
@@ -70,6 +75,8 @@ int main(int argc, char **argv)
 					std::cout<<"Option -g requires the desired probality of horizontal gene transfer"<<std::endl;
 				else if (optopt =='k')
 					std::cout<<"Option -k requires the desired cost for reactions"<<std::endl;
+				else if (optopt =='a')
+					std::cout<<"Option -a requires the desired probability"<<std::endl;
 				else
 					std::cout<<"Unknown option, try -h for allowed options."<<std::endl;
 				return 1;
