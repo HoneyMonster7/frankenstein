@@ -210,6 +210,7 @@ fi
 #testing if the last checkpoint is in a folder in the tar file (format changed at the end of january)
 testthistar=$(echo "$needToUntar" | head -n 1)
 testresult=$(tar -zvtf $jobtoan/$testthistar | grep CP10\/$)
+testresult="forcedtobetrue"
 prefix=""
 antiprefix=""
 if [ -z "$testresult" ]; then
@@ -236,9 +237,9 @@ for fname in $needToUntar; do
 
 	if [ "$onlybest" == 0 ]; then
 
-		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/$antiprefix --strip=1 job$jobnr/"*job*CP10*xgmml"
+		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/$antiprefix --strip=1 *job$jobnr/"*job*CP10*xgmml"
 	else
-		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/$antiprefix --strip=1 job$jobnr/"*job*CP10NR1cell.xgmml"
+		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/$antiprefix --strip=1 *job$jobnr/"*job*CP10NR1cell.xgmml"
 	fi
 
 		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 *job$jobnr/"*job*.fitt"
@@ -418,7 +419,7 @@ gnuplot --persist IPRplotter.gnup
 
 #./simMatrix
 
-rm *.xgmml 2> /dev/null
+#rm *.xgmml 2> /dev/null
 #rm *.fitt
 #rm similarityCalc.sh
 #rm simMatrix
