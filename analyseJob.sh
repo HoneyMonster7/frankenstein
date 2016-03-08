@@ -137,9 +137,9 @@ if [ ! "$onlylastcp" == 1 ]; then
 			#if we need to get all the cells get all of them, otherwise get the best ones only
 			if [ "$onlybest" == 0 ]; then
 
-				tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/CP$checkpoint/"job*CP$checkpoint*xgmml"
+				tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 *job$jobnr/CP$checkpoint/"*job*CP$checkpoint*xgmml"
 			else
-				tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/CP$checkpoint/"job*CP"$checkpoint"NR1cell.xgmml"
+				tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 *job$jobnr/CP$checkpoint/"*job*CP"$checkpoint"NR1cell.xgmml"
 			fi
 
 		done
@@ -167,7 +167,8 @@ if [ ! "$onlylastcp" == 1 ]; then
 		fi
 
 
-		for job in $jobnames; do
+		#for job in $jobnames; do
+		for job in `ls *.xgmml | grep NR11| sed 's/.*job/job/g' | cut -db -f2 | cut -dC -f1`; do
 
 			#echo "Jobname is $job"
 			grep "job$job"CP fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
@@ -240,15 +241,15 @@ for fname in $needToUntar; do
 		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan/$antiprefix --strip=1 job$jobnr/"*job*CP10NR1cell.xgmml"
 	fi
 
-		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 job$jobnr/"job*.fitt"
+		tar -zxf $jobtoan/$fname --wildcards -C $jobtoan --strip=1 *job$jobnr/"*job*.fitt"
 
 done
 
 
-if [ $? != 0 ]; then
-	echo "There was a problem while extracting job results. Check if the folder contains jobs. Exiting."
-	exit 1
-fi
+#if [ $? != 0 ]; then
+#	echo "There was a problem while extracting job results. Check if the folder contains jobs. Exiting."
+#	exit 1
+#fi
 
 cp simChecker/similarityCalc.sh $jobtoan/CP10
 
@@ -282,8 +283,8 @@ echo "options are: $optionsforchecker"
 checkpoint=10
 
 #rm *.jnk
-rm *.xgmml
-for job in $jobnames; do
+#for job in $jobnames; do
+		for job in `ls *.xgmml | grep NR11| sed 's/.*job/job/g' | cut -db -f2 | cut -dC -f1`; do
 
 	#echo "Jobname is $job"
 	grep "job$job"CP fittness.list | sort -n -k 3 | awk '{print $1}' >listofjob.jnk
@@ -305,18 +306,22 @@ for job in $jobnames; do
 	#need to look into why the fittness one doesn't work
 	echo -n "$partfit " >> $checkpoint.IPR.fitt
 
+done
+
+for jobfile in `ls ../*.fitt `; do
+	job="$(echo $jobfile| sed 's/.*job//g' | cut -d. -f1)"
 	#now calculating the running average of the best fittnesses
 
 	#sed -ni '/Current/!p' ../job$job.fitt
 
-	awk '{print $1}' "../job$job.fitt" > "../progress/$job.numbersonly"
-	awk '{print $2}' "../job$job.fitt" > "../progress/$job.fittonly"
-	awk '{print $3}' "../job$job.fitt" > "../progress/$job.enthonly"
-	awk '{print $4}' "../job$job.fitt" > "../progress/$job.avgfitonly"
-	awk '{print $5}' "../job$job.fitt" > "../progress/$job.netsizeonly"
-	awk '{print $6}' "../job$job.fitt" > "../progress/$job.avgnetsizeonly"
-	awk '{print $7}' "../job$job.fitt" > "../progress/$job.bestusedonly"
-	awk '{print $8}' "../job$job.fitt" > "../progress/$job.avgusedonly"
+	awk '{print $1}' "$jobfile" > "../progress/$job.numbersonly"
+	awk '{print $2}' "$jobfile" > "../progress/$job.fittonly"
+	awk '{print $3}' "$jobfile" > "../progress/$job.enthonly"
+	awk '{print $4}' "$jobfile" > "../progress/$job.avgfitonly"
+	awk '{print $5}' "$jobfile" > "../progress/$job.netsizeonly"
+	awk '{print $6}' "$jobfile" > "../progress/$job.avgnetsizeonly"
+	awk '{print $7}' "$jobfile" > "../progress/$job.bestusedonly"
+	awk '{print $8}' "$jobfile" > "../progress/$job.avgusedonly"
 
 	#echo "job$job" > "../$job.fittavg"
 	#echo "job$job" > "../$job.enthavg"
@@ -331,7 +336,7 @@ for job in $jobnames; do
 		../../movAvg/movAvg 100 "../progress/$job.avgusedonly" >> "../progress/$job.avgusedavg"
 
 	
-	paste ../progress/$job.numbersonly ../progress/$job.fittavg ../progress/$job.enthavg ../progress/$job.avgfitavg ../progress/$job.netsizeavg ../progress/$job.avgnetsizeavg ../progress/$job.bestusedavg ../progress/$job.avgusedonly> ../progress/$job.progress
+	paste ../progress/$job.numbersonly ../progress/$job.fittavg ../progress/$job.enthavg ../progress/$job.avgfitavg ../progress/$job.netsizeavg ../progress/$job.avgnetsizeavg ../progress/$job.bestusedavg ../progress/$job.avgusedonly| grep ^[0-9] > ../progress/$job.progress
 
 
 
@@ -345,6 +350,7 @@ done
 if [[ "$junkForLastCPStays" != 1 ]]; then
 	rm *.jnk
 
+	rm *.xgmml
 	rm ../progress/*.fittonly
 	rm ../progress/*.enthonly
 	rm ../progress/*.avgfitonly
