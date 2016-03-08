@@ -54,6 +54,8 @@
 
 	WHERE IS THE PHYSICS PART
 
+	color real glycolysis in the networks shown!!!
+
 	\section*{Definitions put it in a box}
 	
 	\begin{framed}
@@ -497,6 +499,9 @@ These similarity indices are then summarized using the Inverse Participation Rat
 
 \textbf{Initial simulations, 100\% mutation rate, very diverse populations}
 
+\subsection{Test simulation}
+\label{sub:test_simulation}
+
 \begin{figure}[htpb]
 	\centering
 	\includegraphics[width=1\linewidth]{trunk_glyc_init.pdf}
@@ -504,8 +509,16 @@ These similarity indices are then summarized using the Inverse Participation Rat
 	\label{fig:truncglycinit}
 \end{figure}
 
+The first pair of simulations we run were started from the subset of the reactions appearing in glycolysis that only use chemical compounds that appear in our list of compounds, starting from Dihydoxyacetone phosphate (DHAP) and ending in Pyruvate. This reaction network is shown on Figure \ref{fig:truncglycinit}. This is the trunk of the glycolytic pathway with the addition of reaction $416$ at the beginning of the MN, and the removal of the ATP producing reaction $633$, in exchange for $1069$. Reaction $416$ transforms DHAP, one of the products of the upper part of glycolysis into G3P, the other product of the upper part, and the starting metabolite of glycolysis. $1016$ fulfills a similar role to $663$, but instead of creating ATP from ADP it discards the phosphate group it SHEDS from 1,3 biphosphorglycerate.
 
-The first pair of simulations we run were started from the subset of the reactions appearing in glycolysis that only use chemical compounds that appear in our list of compounds, starting from Dihydoxyacetone phosphate and ending in Pyruvate. This reaction network is shown on Figure \ref{fig:truncglycinit}. This is the trunk of the glycolytic pathway with an additional reaction ($416$ at the beginning of it), and the removal of the ATP producing reaction $633$, in exchange for $1069$, that fulfills a similar role, but instead of creating ATP from ADP it discards the phosphate group it SHEDS from 1,3 biphosphorglycerate. The ATP flux of this network is $0.5$, with the limiting reaction being $883$, that has a free energy change of $1.71$ eV at the conditions given by Table \ref{environmentTable}. This is a good initial network as it has plenty of potential to improve, eg by "rediscovering" reaction $633$, or finding completely new paths from the nutrient of the MN to the end product. For the sake of brevity we shall refer to this simulation as Simulation $1$.
+The initial ATP flux of this network is $0.5$, with the limiting reaction being $883$, that has a free energy change of $1.71$ eV at the conditions given by Table \ref{environmentTable}. This is a good initial network as it has plenty of potential to improve, eg by "rediscovering" reaction $633$, or finding completely new paths from the nutrient of the MN to the end product. For the sake of brevity we shall refer to this simulation as Simulation $1$.
+
+The fitness cost of having a reaction within the MN was set to $k_{reac}=0.001$ with the rate of point mutations as $P_{point}=1$ in order to have as much change and improvements as possible. The fitness function used here was the flux of ADP to ATP conversion minus $k_{reac}$ times the number of reactions in the MN.
+
+When simulating, we started with 20 identical, uniform populations, the program to simulate each of them used a different seed for the PRNG, therefore the populations evolved differently, and independently from one another. Not all the 20 populations finish the simulation due to technical difficulties. Of these we generally show diagnostic plots for 3 typical populations, unless there is a specific population we discuss. 
+
+
+
 
 \begin{figure}[htpb]
 	\centering
@@ -514,11 +527,15 @@ The first pair of simulations we run were started from the subset of the reactio
 	\label{fig:simulation1}
 \end{figure}
 
-The fitness cost of having a reaction within the MN was set to $k_{reac}=0.001$ with the rate of point mutations as $P_{point}=0.01$ giving an expected $1$ mutation per generation. The fitness function used here was the flux of ADP to ATP conversion minus $k_{reac}$ times the number of reactions in the MN.
+TALK ABOUT DIFFERENT WRITEOUT SIZE FOR DIFFERENT PROBS
 
-When simulating, we started with 20 identical, uniform populations, the program to simulate each of them used a different seed for the PRNG, therefore the populations evolved differently, and independently from one another. Not all the 20 populations finish the simulation due to technical difficulties. Of these we generally show diagnostic plots for 3 typical populations, unless there is a specific population we discuss. 
+The fitness of the best network, and the average fitness of $3$ typical populations of Simulation 1 as a function of the number of generations since the initial network is shown on the first two graphs of Figure \ref{fig:simulation1}. We normally save the summary statistics every $100$ generations, but keep the values of these summary statistics for the INTERMITTENT generations in-memory. If there was a significant improvement in the fitness of the population we write the intermittent steps out too, so the transition of the population can be observed. The number of generations a significant fitness improvement takes to spread in the population is on the order of $10$, therefore it remains invisible on a plot whose $x$ axis is on the order of $10^5-10^6$ such as Figure \ref{fig:simulation1}. The first and second pair of  graphs are therefore very similar. In consequent diagrams we shall show only one graph of each pair.
 
-The fitness of the best network, and the average fitness of $3$ typical populations of Simulation 1 as a function of the number of generations since the initial network is shown on the first two graphs of Figure \ref{fig:simulation1}. We normally save the summary statistics every $10000$ generations ($\sim 10$ s), but keep the values of these summary statistics for the INTERMITTENT generations in-memory. If there was a significant improvement in the fitness of the population we write the intermittent steps out too, so the transition of the population can be observed. The number of generations a significant fitness improvement takes to spread in the population is on the order of $10$, therefore it remains invisible on a plot whose $x$ axis is on the order of $10^6-10^7$ such as Figure \ref{fig:simulation1}. The first two graphs are therefore very similar. Most populations have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed UNIFORMLY and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on the last two graphs of Figure \ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. 
+All populations in Simulation 1 have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed approximately uniformly and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on graphs 3 and 4 of Figure \ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. The number of used reactions (those with non-zero flux through them in the optimal steady state solution) are shown on the last pair of graphs, for the best network and for the average network. The reaction network with ATP production of $0.5$ uses $\sim 6$ reactions, to produce $1$ ATP it needs $\sim 10$, and for $1.5$ ATP it needs $14$. 
+
+\subsection{examining The probability of the mutations}
+\label{sub:the_probability_of_the_mutations}
+
 
 
 The entropies of the $3$ populations are shown in the middle graph of Figure \ref{fig:simulation1}. The only significant jumps in the entropies can be identified with the improvements in the popoulations, and the steady value of entropy is $\sim -360$. CAN IT??? DOES THIS MATTER? This can correspond to $3$ approximately equal sized sub-population, all of them having $\sim 33$ reactions, as then $S$ would be $3\times 33 \ln \left( 33 \right)=-349.7$
