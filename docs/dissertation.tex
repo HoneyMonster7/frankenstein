@@ -537,6 +537,7 @@ When simulating, we started with 20 identical, uniform populations, the program 
 
 TALK ABOUT DIFFERENT WRITEOUT SIZE FOR DIFFERENT PROBS
 
+\textbf{FORMULA FOR FIXATION TIME}
 The fitness of the best network, and the average fitness of $3$ typical populations of Simulation 1 as a function of the number of generations since the initial network is shown on the first two graphs of Figure \ref{fig:simulation1}. We normally save the summary statistics every $100$ generations, but keep the values of these summary statistics for the INTERMITTENT generations in-memory. If there was a significant improvement in the fitness of the population we write the intermittent steps out too, so the transition of the population can be observed. The number of generations a significant fitness improvement takes to spread in the population is on the order of $10$, therefore it remains invisible on a plot whose $x$ axis is on the order of $10^5-10^6$ such as Figure \ref{fig:simulation1}. The first and second pair of  graphs are therefore very similar. In consequent diagrams we shall show only one graph of each pair.
 
 All populations in Simulation 1 have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed approximately uniformly and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on graphs 3 and 4 of Figure \ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. The number of used reactions (those with non-zero flux through them in the optimal steady state solution) are shown on the last pair of graphs, for the best network and for the average network. The reaction network with ATP production of $0.5$ uses $\sim 6$ reactions, to produce $1$ ATP it needs $\sim 10$, and for $1.5$ ATP it needs $14$. 
@@ -608,85 +609,11 @@ Too simple goal function
 
 \section{Discussion}
 \label{sec:discussion}
+\textbf{Small population, graph of network at 3 times
 
-	\textbf{SORT THIS OUT}
+	\textbf{About FBA, need more}
 	This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it we make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
 
-%	\iffalse
-%	
-%	\subsection{Simulation not needed}
-%	
-%	To simulate evolution on a computer we need three things: replication, mutation and competition. Algorithms empowered by the evolutionary principles \cite{evolutionaryalgorithms} are used every day now to find optimal solutions to problems in all fields of science. These algorithms need a function for which to optimize the given system, called the goal function. The goal function of real-world cells is rather complex, with goals reaching from growth to reproduction. Translating these goals to the language of mathematics and computers is not an easy task. \cite{complexfeatures} sets the execution of more complex logical operations as a goal for the digital organisms in question. \cite{evolutioncomplex} use the import of precursors and their procession to more complex molecules as the goal function. 
-%	
-%	In my simulations we consider the rate of ADP-ATP conversion as the goal function after \cite{BartekLower}, however later we plan to experiment with different goal functions that also consider the amount of carbon products produced (that can be used for building the cell). 
-%	
-%	\section{trol}
-%	The core of the energy producing metabolic pathways of organisms are very similar, for all three domains of life, however there are many pathways that are chemically viable.  The throughput of these pathways greatly influences the fitness of any given organism. 
-%	
-%	Cells usually convert their input material into precursor molecules, which are then converted into the biomass of the cell and energy. This method is robust in terms of input molecules, as described in \cite{latent} the ability to synthesize all biomass from a single source of carbon and energy enables the cell to use molecules similar to the original. Eg. if the cell is capable of processing glucose, using the same enzymatic pathways it is also capable of processing 40 other similar molecules.  In \cite{latent} the authors examine how an evolutionary advantage can originate from an exaptation. 
-%	
-%	  
-%	Most modern cells use the the Embden-Meyerhof-Parnas (EMP) pathway for the upper part of the glycotic  pathway, while some prokaryotes use the Entner-Doudoroff (ED) pathway \cite{EDpathway}. The trunk of the pathway however is highly conserved and so are the enzymes used \cite{latent}. 
-%	
-%	The similarity can occur for a variety of reasons, it can be due to the current pathways being the most optimal one given the set of constraints posed by the environment of the cells as described in \cite{theoretical}, \cite{central}. It can also occur because of historical reasons \cite{historical}. In this article the authors examine whether chemically viable metabolic pathways are connected in the sense of being able to mutate (using one-reaction mutations) from one pathway to an other while preserving viability. They find that in all but the simplest metabolisms this is possible.
-%	
-%	In \cite{theoretical} it is found that the metabolic network of modern cell (the EMP pathway) is optimized to provide the highest possible ATP production flux, while maintaining a high kinetic efficiency. 
-%	
-%	The central carbon metabolism of the E. coli. bacteria is examined in \cite{central}. This converts sugars into metabolic precursors which are then in turn converted to the biomass of the cell, and energy. The authors try to find a simplifying principle for the structure of the metabolic network, and find that it can be considered as a minimal walk (in terms of enzymatic steps) between any pair of the 12 metabolic precursors for the biomass of the cell, and the one that is responsible for the ATP balance. In addition the enzymatic distance between the precursors and the input sugars is also minimized suggesting that the pathway used is optimal in this sense. 
-%	
-%	There are exceptions of this similarity, as mentioned in \cite{strategy} the glucose metabolism of procaryotic cells shows a great variety. The canonical pathway used by most organisms is the EMP pathway producing 2 ATP molecules for every glucose consumed, but the alternative Entner-Doudoroff (ED) pathway which only produces 1 ATP per glucose is still viable, as it requires much less enzymatic proteins than the EMP pathway to achieve the same glucose conversion rate. This is thought to present an evolutionary advantage that makes up for the reduced ATP production rate. 
-%	
-%	\subsection{Computational approach}
-%	
-%	Apart from the analytic work done in the field, with the increase of processing power simulations became a valuable tool in modelling metabolic networks. Simulations can be exhaustive (looking through all the chemically feasible reaction chains), or simulating evolution. 
-%	
-%	According to Daniel Dennett "... evolution will occure whenever and wherever three conditions are met: replication, variation (mutation), and differential fitness (competition)". REFERENCE THIS 
-%	Simulating the evolution of metabolic networks is a difficult task even for today's computers. To accurately calculate efficiencies in different environments we would have to implement chemistry as a whole. To make the problems more manageable artificial chemistries are considered in some cases \cite{artificialreview} \cite{artificialshort}.
-%	
-%
-%	Charles Darwin having discovered evolution \cite{darwin} realized that the highly  sophisticated organs such as the eye must have evolved through many steps. In \cite{latent} the authors argue that as other complex structures (such as feathers for flight) have evolved non-adaptively as exaptations, as byproducts of evolution of other functions. In \cite{complexfeatures} the authors consider simple digital organisms that can obtain energy by performing logic functions. The organisms are provided an environment where they can reproduce and mutate, and the more complex logical function they perform, the more energy they receive. They find that although to get to the most complex (and most energy yielding) operations many mutations are needed, once it is present, it provides such value that offsprings that don't have it are quickly eliminated by the competition. Supports the claims of \cite{latent}.
-%	
-%	These metabolic networks shows resemblance to highly error tolerant scale-free networks \cite{largescale} that have some highly connected nodes (compounds) which take part in many reactions. The networks are tolerant to random errors (removal of reactions or molecules). Similar conclusions are drawn in \cite{complexfeatures} which also examines the modularity property of metabolic networks by simulating artificial organisms living on a 2D surface, operating on artificial molecules. They find that gene-pairs that when removed individually do not influence the performance of the organism greatly, but when removed together  they are lethal, occur within strongly interconnected modules. The functions of these modules are separable, this contributes to their error-tolerance. Both of these articles mention the small world \cite{smallworld} property of the networks, meaning that they are "highly clustered, like regular lattices, yet have small characteristic path lengths, like random graphs." This property makes them similar to social networks of humans. 
-%	
-%	In \cite{computationalframework} the authors "employ an artificial chemistry that views chemical reactions graph rewriting operations and utilizes a toy-version of quantum chemistry to derive thermodynamic parameters." 
-%	
-	
-%\section{Sentences that don't fit anywhere}
-%\label{sec:sentences_that_don_t_fit_anywhere}
-%
-%This way, depending on the specific needs of the cell the direction of reactions can be reversed, eg. in the case of glycosis (processing sugars to energy and simpler molecules)- glyconeogenesis (producing sugars by using energy and simpler molecules).
-%
-%
-%	LOWER The reason for these similarities is yet to be discovered, but the two most common hypothesis  are : 
-%	\begin{enumerate}[label=(\alph*)]
-%	\item the best possible metabolic network has been found, evolution finished the optimization and there is no possible further improvement (Global maximum found) \cite{theoretical} \cite{latent} \cite{strategy}, or 
-%	\item there is a better solution but to get there cells have to evolve through such suboptimal states, that are outcompeted by the current metabolic networks. (Local maximum found) FIND SOURCE HERE
-%	\end{enumerate} 
-%	 \cite{historical} reasons that (b) is unlikely, as they find that  "most viable metabolisms can be transformed into one another by single viability-preserving reaction changes."  
-%	
-%	PICTURE? we can imagine two reactions with equal free energies at the substrates and products, one transitioning smooth from substrate to product, the other having a large energy barrier between. Clearly the one with the barrier would not (or much more rarely) happen in a cell than the smooth transitioning. This is simplification is balanced by the fact that cells can use enzymes to act as catalysts to these reactions lowering such energy barriers. Should they need cells can also raise such barriers to otherwise smoothly transitioning reactions to stop them from occurring. 
-%
-%
-%
-%
-%\subsection{Random number generation}
-%\label{sub:Random number generation}
-%
-%Good quality random numbers $\rightarrow$ mt19937 Mersenne Twister. Reproducibility is important $\rightarrow$ seeds always known. 
-%
-%As one of the main components of the process of evolution is the random mutations when cells divide, we will need to use random numbers in the program. Generating true random numbers is a cumbersome process, that uses an inherently random physical process (eg. thermal or atmospheric noise, radioactive decay counts, or quantum phenomena \cite{truerandom}) to produce random numbers. For most applications however it suffices to use Pseudo Random Number Generators (PRNG-s) to generate numbers that appear random, in a sense that they pass certain tests of randomness \cite[]{randomtests}. These PRNG-s use an initial value called seed (or multiple initial values), the knowledge of which allows anyone to calculate any element of the series of pseudorandom numbers. In applications where there is need for the unpredictability of the series (eg. cryptography) the seed(s) is chosen using a process that is considered to be random (eg. the time held by the computer's clock in nanoseconds, or the movement of the mouse under a sufficiently long time).
-%
-%In our case there is no need for such unpredictability, on the contrary, we would like the evolutions of populations to be reproducible (either by ourselves, for error checking, or by other researchers), however we would like to simulate multiple populations of cells with different underlying random numbers (to be independent from each other). This is easy to achieve, by using consecutive integers as seeds for the different parallel runs, and noting these numbers in the files produced by the program. This way if we start two populations using the same seed (and the same initial conditions) the results of the two simulations will be identical. 
-%
-%PRNG-s generate use the seeds to initialize their internal state, which is a set of bits the generator uses and changes whenever it produces a new pseudorandom number. As the internal state consists of a finite number of bits, given enough pseudorandom numbers are requested from the generator, the outputs will start to repeat themselves. The number of pseudorandom numbers we can get from a PRNG without repetition is called it's period. The default PRNG in C++ (\texttt{rand()}) has a period of $2^{32}$. As we would like to simulate the populations of cells for more than $2^{32}$ reproductions, we use the Mersenne Twister \cite{mersennetwister} generator, provided by the Boost C++ Libraries \cite{boostlibraries}. This generator is fast, provides high-quality pseudorandom numbers and has a period of $2^{19937}-1$, and will therefore provide more than enough random numbers for our simulations. In addition the Boost implementation is capable of producing both integers, and reals on given intervals. 
-%
-%
-%	After they are read in from a file substrates are stored in a substrate object that store the index of the molecule, the free energy of creation, the name, the chemical formula, the charge, and a list of reactions it is involved in. This list is generated when reading in the reactions from the file provided.
-%	
-%	Reactions are stored in reaction objects that store the index, the substrates  (starting compounds), the products  (final compounds), the free energy change at standard conditions, the free energy change at the current conditions (calculated later), and the neighbouring reactions (calculated later) of the reaction. The free energy change of reactions is recalculated at the beginning of each run as described in Section \ref{sub:The free energy change}
-%
-%	The original idea was to store the reaction network as a Graph object provided by the Boost Graph Library \cite{boostlibraries}. This was a feature rich graph implementation that allowed searching for neighbouring reactions that can be added (EXPLAINED LATER), however as it uses sophisticated methods (TALK ABOUT TEMPLATES?) to store the  graphs and therefore for the evolution of a single organism it could only calculate approximately 2 generations per second. 
-%	\fi
 	\bibliography{dissertation}
 	\bibliographystyle{plainnat}
 \end{document}
