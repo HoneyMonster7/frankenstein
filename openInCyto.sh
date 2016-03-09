@@ -7,7 +7,7 @@ fi
 
 sed "s/longerLog/$1/g" cytoscript.sh > tmpcytoscript.sh 
 
-for i in `seq 1 10` ; do
+for i in `seq 1 11` ; do
 
 tar -zxf $1/response.$i.tar.gz --wildcards -C $1 --strip=2 "*job$i/CP10/*job"$i"CP10NR1cell.xgmml"
 
