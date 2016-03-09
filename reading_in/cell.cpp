@@ -726,7 +726,7 @@ double cell::calcThroughput(){
 	//nad_red->nad_ox
 	glp_set_col_bnds(lp,listSize+4,GLP_DB,-40.0,40.0);
 	//adding/removing phosphate
-	glp_set_col_bnds(lp,listSize+4,GLP_DB,-40.0,40.0);
+	glp_set_col_bnds(lp,listSize+5,GLP_DB,-40.0,40.0);
 
 
 	//add imaginary reaction here:
