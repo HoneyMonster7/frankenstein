@@ -539,18 +539,51 @@ TALK ABOUT DIFFERENT WRITEOUT SIZE FOR DIFFERENT PROBS
 
 The fitness of the best network within $3$ typical populations of Simulation 1 and the average fitness of those populations are shown as a function of the number of generations since the initial network on the first two graphs of Figure~\ref{fig:simulation1}. We normally save the summary statistics every $100$ generations, but keep the values of these summary statistics for the INTERMITTENT generations in-memory. If there was a significant improvement in the fitness of the population we write the intermittent steps out too, so the transition of the population can be observed. 
 
-A section of such data is shown on Figure~\ref{fig:fixation} from SIMULATION 2, that has a lower mutation rate than Simulation 1. The expected time of fixation, the time it takes for a cell with fitness advantage $s$ to take over a population where cell's have fitness $1$ is calculated as $T \approx \frac{s+2}{s}\ln N$. \cite{barteklecture} In the population shown on Figure~\ref{fig:fixation} the original population has a fitness of $0.48$ and the fitness of the mutant is $0.98$, therefore the fitness advantage is $s=2$, giving us the time for fixation as $T\approx \frac{2+2}{2}\ln 100 \approx 9.21$. This coincides with the observed time of fixation, the time it takes for the average fitness of the population to "catch up" with the fitness of the best cell. We plot a population from SIMULATION 2 rather than SIMULATION 1, as the calculation of the aformentioned formula uses the assumption that no mutations happen while the given advantage is fixed in the population. This assumption is approximately true in Simulation 2 where the expected number of mutations per generation is $1$, as opposed to $100$ in Simulation 1.
+A section of such data is shown on Figure~\ref{fig:fixation} from Simulation 2, that has a lower mutation rate than Simulation 1. The expected time of fixation, the time it takes for a cell with fitness advantage $s$ to take over a population where cell's have fitness $1$ is calculated as $T \approx \frac{s+2}{s}\ln N$. \cite{barteklecture} In the population shown on Figure~\ref{fig:fixation} the original population has a fitness of $0.48$ and the fitness of the mutant is $0.98$, therefore the fitness advantage is $s\approx2$, giving us the time for fixation as $T\approx \frac{2+2}{2}\ln 100 \approx 9.21$. This coincides with the observed time of fixation, the time it takes for the average fitness of the population to "catch up" with the fitness of the best cell. We plot a population from Simulation 2 rather than SIMULATION 1, as the calculation of the aformentioned formula uses the assumption that no mutations happen while the given advantage is fixed in the population. This assumption is approximately true in Simulation 2 where the expected number of mutations per generation is $1$, as opposed to $100$ in Simulation 1.
 
 \begin{figure}[htpb]
 	\centering
 	\includegraphics[width=0.8\linewidth]{fixation.pdf}
-	\caption{Extract of summary statistics of Population POPULATIONNR of SIMULATION 2 showing the fixation of a beneficial mutation}
+	\caption{Extract of summary statistics of Population 1 of Simulation 2 showing the fixation of a beneficial mutation}
 	\label{fig:fixation}
 \end{figure}
 
-As such fixations remain invisible on a plot whose $x$ axis is on the order of $10^5-10^6$ such as Figure~\ref{fig:simulation1}, the first and second pair of graphs are very similar. In consequent diagrams we shall show only one graph of each pair.
+As such fixations remain invisible on a plot whose $x$ axis is on the order of $10^5-10^6$ such as Figure~\ref{fig:simulation1}, the first and second pair of graphs are very similar. In consequent diagrams we shall show only one graph of each pair (fitness, total number of reactions, and number of used reactions).
 
 All populations in Simulation 1 have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed approximately uniformly and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on graphs 3 and 4 of Figure~\ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. The number of used reactions (those with non-zero flux through them in the optimal steady state solution) are shown on the last pair of graphs on Figure~\ref{fig:simulation1}, for the best network and for the average network. The reaction network with ATP production of $0.5$ uses $\sim 6$ reactions, to produce $1$ ATP it needs $\sim 10$, and for $1.5$ ATP it needs $14$. 
+
+The used reactions of the best performing network of Population 3 of Simulation 1 are shown on Figure~\ref{fig:trunk_glyc_final_job1}. The network found alternative pathways to bypass the restrictions imposed by the bounds on the reaction fluxes. The two longer alternative pathways (to the left) meet at phosphoenolpyruvate, and there they diverge again, one converting an previously produced AMP (adenosin monophosphate SPELLING?) to ATP while the other converting ADP to ATP. We observe similar meeting and diverging paths in the simulations that follow. 
+
+
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{trunk_glyc_final_job1.pdf}
+	\caption{Reactions with nonzero flux in the fittest network at the end of the Simulation 1 in Population 3}
+	\label{fig:trunk_glyc_final_job1}
+\end{figure}
+
+An overview of the MN-s is shown on Figure~\ref{fig:init-mid-final} at three points in time, the beginning of the simulation (left), at the midpoint, after $1.5 10^5$ generations, and the final stage. The disconnected nodes at the bottom of the left plot are yet unused internal metabolites. Note the small disconnected components of the middle and the left plots. These are a result of the mutation method implemented in our program, described in Section \ref{sub:implementing evolution}. 
+
+On the middle and left images of Figure~\ref{fig:init-mid-final} some nodes can be observed around which the network appears to be centered. To examine this we plot the node degree distribution of the final MN on Figure~\ref{fig:nodedegreedistro}. We find a small number of highly connected nodes (Hubs) and many less connected ones. One might call this a scale free network, therefore we fitted a power law distribution of the form $P(n)=n^{-\gamma}$, shown on Figure~\ref{fig:nodedegreedistro}. We found the parameter estimates to be $\gamma=1.236$. Similar distributions can be found when examining final networks of other simulations. 
+
+
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{init-mid-final.png}
+	\caption{Overview of the best performing metabolic network of Population 3 of Simulation 1 at three stages of it's evolution, at the start of the simulation, at the midpoint, and at the end}
+	\label{fig:init-mid-final}
+\end{figure}
+
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{nodedegreedistro.pdf}
+	\caption{Node degree distribution of the final network of Population 3 of Simulation 1 with a power law distribution fitted}
+	\label{fig:nodedegreedistro}
+\end{figure}
+
 
 \subsection{examining The probability of the mutations}
 \label{sub:the_probability_of_the_mutations}
@@ -577,12 +610,6 @@ The fittest network of Population 1 at the end of the simulation is shown on Fig
 	\label{fig:IPR_firstrun}
 \end{figure}
 
-\begin{figure}[htpb]
-	\centering
-	\includegraphics[width=1\linewidth]{trunk_glyc_final_job1.pdf}
-	\caption{Reactions with nonzero flux in the fittest network at the end of the simulation in Population 1}
-	\label{fig:trunk_glyc_final_job1}
-\end{figure}
 
 
 
