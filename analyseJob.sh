@@ -6,12 +6,13 @@ onlyused=0
 numberneeded=0
 fittnessgraph=0
 onlylastcp=0
+averaging=1
 
 junkForLastCPStays=0
 
 optionsforchecker=""
 
-while getopts ":bj:hun:fls" opt; do
+while getopts ":bj:hun:flsa" opt; do
 
 	#things to do: 
 
@@ -50,6 +51,10 @@ while getopts ":bj:hun:fls" opt; do
 		s)
 			echo "-s was triggered. Junk stays for CP10."
 			junkForLastCPStays=1
+			;;
+		a)
+			echo "-a was triggered. No averaging of fitness"
+			averaging=0
 			;;
 		b)
 			echo "-b was triggered"
@@ -106,6 +111,8 @@ if [ ! -d $jobtoan ]; then
 	echo "$jobtoan folder doesn't exist. "
 	exit 1
 fi
+
+./moveUnfinished.sh $jobtoan
 
 #echo "jobtoan is $jobtoan within there we have $(ls $jobtoan | grep tar.gz)"
 needToUntar=$(ls $jobtoan | grep tar.gz| sort -nt. -k2,2)
@@ -328,14 +335,25 @@ for jobfile in `ls ../*.fitt `; do
 	#echo "job$job" > "../$job.enthavg"
 	#echo "job$job" 
 
+	if [[ "$averaging" != 1 ]]; then
+		cat "../progress/$job.fittonly" >> "../progress/$job.fittavg"
+		cat "../progress/$job.enthonly" >> "../progress/$job.enthavg"
+		cat "../progress/$job.avgfitonly" >> "../progress/$job.avgfitavg"
+		cat "../progress/$job.netsizeonly" >> "../progress/$job.netsizeavg"
+		cat "../progress/$job.avgnetsizeonly" >> "../progress/$job.avgnetsizeavg"
+		cat "../progress/$job.bestusedonly" >> "../progress/$job.bestusedavg"
+		cat "../progress/$job.avgusedonly" >> "../progress/$job.avgusedavg"
+	else
+
 		../../movAvg/movAvg 100 "../progress/$job.fittonly" >> "../progress/$job.fittavg"
 		../../movAvg/movAvg 100 "../progress/$job.enthonly" >> "../progress/$job.enthavg"
 		../../movAvg/movAvg 100 "../progress/$job.avgfitonly" >> "../progress/$job.avgfitavg"
 		../../movAvg/movAvg 100 "../progress/$job.netsizeonly" >> "../progress/$job.netsizeavg"
 		../../movAvg/movAvg 100 "../progress/$job.avgnetsizeonly" >> "../progress/$job.avgnetsizeavg"
-		../../movAvg/movAvg 100 "../progress/$job.bestusedonly" >> "../progress/$job.bestusedavg"
+		#../../movAvg/movAvg 100 "../progress/$job.bestusedonly" >> "../progress/$job.bestusedavg"
+		cat "../progress/$job.bestusedonly" >> "../progress/$job.bestusedavg"
 		../../movAvg/movAvg 100 "../progress/$job.avgusedonly" >> "../progress/$job.avgusedavg"
-
+	fi
 	
 	paste ../progress/$job.numbersonly ../progress/$job.fittavg ../progress/$job.enthavg ../progress/$job.avgfitavg ../progress/$job.netsizeavg ../progress/$job.avgnetsizeavg ../progress/$job.bestusedavg ../progress/$job.avgusedonly| grep ^[0-9] > ../progress/$job.progress
 

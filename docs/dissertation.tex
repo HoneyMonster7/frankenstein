@@ -523,7 +523,7 @@ The initial ATP flux of this network is $0.5$, with the limiting reaction being 
 
 The fitness cost of having a reaction within the MN was set to $k_{reac}=0.001$ with the rate of point mutations as $P_{point}=1$ in order to have as much change and improvements as possible. The fitness function used here was the flux of ADP to ATP conversion minus $k_{reac}$ times the number of reactions in the MN.
 
-When running the simulations, we started with 20 identical, uniform populations, and provided a different seed for the pseudorandom-number generators used, therefore the populations evolved independently from one another. Not all the 20 populations finish the simulation due to technical difficulties. Of those that did, we generally show diagnostic plots for 3 typical populations that showed some improvement during the simulation.
+When running the simulations, we started with 20 identical, uniform populations with $100$ cells each, and provided a different seed for the pseudorandom-number generators used, therefore the populations evolved independently from one another. Not all the 20 populations finish the simulation due to technical difficulties. Of those that did, we generally show diagnostic plots for 3 typical populations that showed some improvement during the simulation.
 
 
 
@@ -550,12 +550,21 @@ A section of such data is shown on Figure~\ref{fig:fixation} from SIMULATION 2, 
 
 As such fixations remain invisible on a plot whose $x$ axis is on the order of $10^5-10^6$ such as Figure~\ref{fig:simulation1}, the first and second pair of graphs are very similar. In consequent diagrams we shall show only one graph of each pair.
 
-All populations in Simulation 1 have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed approximately uniformly and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on graphs 3 and 4 of Figure~\ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. The number of used reactions (those with non-zero flux through them in the optimal steady state solution) are shown on the last pair of graphs, for the best network and for the average network. The reaction network with ATP production of $0.5$ uses $\sim 6$ reactions, to produce $1$ ATP it needs $\sim 10$, and for $1.5$ ATP it needs $14$. 
+All populations in Simulation 1 have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed approximately uniformly and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on graphs 3 and 4 of Figure~\ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. The number of used reactions (those with non-zero flux through them in the optimal steady state solution) are shown on the last pair of graphs on Figure~\ref{fig:simulation1}, for the best network and for the average network. The reaction network with ATP production of $0.5$ uses $\sim 6$ reactions, to produce $1$ ATP it needs $\sim 10$, and for $1.5$ ATP it needs $14$. 
 
 \subsection{examining The probability of the mutations}
 \label{sub:the_probability_of_the_mutations}
 
+The first pair of simulations were run to examine the effect of the mutation probability on the patterns of evolution. The initial MN and the goal function of these simulations was the same as for Simulation 1. The probability of point mutation was set to $p_{point}=0.01$ with the cost of reaction $k_{reaction}=0.001$ for Simulation 2, and for Simulation 3 $p_{point}=0.1$ with $k_{reac}=0.01$. The populations again consisted of $100$ cells each, giving the expected number of mutations per generation to be $1$ and $10$ for Simulations 2 and 3 respectively. 
 
+Diagnostic plots for $3$ typical populations are shown on Figure~\ref{fig:simulation2}.
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{simulation2.pdf}
+	\caption{Diagnostic plots of 3 typical populations of Simulation 2}
+	\label{fig:simulation2}
+\end{figure}
 
 The entropies of the $3$ populations are shown in the middle graph of Figure~\ref{fig:simulation1}. The only significant jumps in the entropies can be identified with the improvements in the popoulations, and the steady value of entropy is $\sim -360$. CAN IT??? DOES THIS MATTER? This can correspond to $3$ approximately equal sized sub-population, all of them having $\sim 33$ reactions, as then $S$ would be $3\times 33 \ln \left( 33 \right)=-349.7$
 
