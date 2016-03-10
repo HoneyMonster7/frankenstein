@@ -538,7 +538,18 @@ When simulating, we started with 20 identical, uniform populations, the program 
 TALK ABOUT DIFFERENT WRITEOUT SIZE FOR DIFFERENT PROBS
 
 \textbf{FORMULA FOR FIXATION TIME}
-The fitness of the best network, and the average fitness of $3$ typical populations of Simulation 1 as a function of the number of generations since the initial network is shown on the first two graphs of Figure \ref{fig:simulation1}. We normally save the summary statistics every $100$ generations, but keep the values of these summary statistics for the INTERMITTENT generations in-memory. If there was a significant improvement in the fitness of the population we write the intermittent steps out too, so the transition of the population can be observed. The number of generations a significant fitness improvement takes to spread in the population is on the order of $10$, therefore it remains invisible on a plot whose $x$ axis is on the order of $10^5-10^6$ such as Figure \ref{fig:simulation1}. The first and second pair of  graphs are therefore very similar. In consequent diagrams we shall show only one graph of each pair.
+The fitness of the best network, and the average fitness of $3$ typical populations of Simulation 1 as a function of the number of generations since the initial network is shown on the first two graphs of Figure \ref{fig:simulation1}. We normally save the summary statistics every $100$ generations, but keep the values of these summary statistics for the INTERMITTENT generations in-memory. If there was a significant improvement in the fitness of the population we write the intermittent steps out too, so the transition of the population can be observed. 
+
+A section of such data is shown on Figure \ref{fig:fixation} from SIMULATION 2, that has a lower mutation rate than Simulation 1. The expected time of fixation, the time it takes for a cell with fitness advantage $s$ to take over a population where cell's have fitness $1$ is calculated as $T \approx \frac{s+2}{s}\ln N$. In the population shown on Figure \ref{fig:fixation} the original population has a fitness of $0.48$ and the fitness of the mutant is $0.98$, therefore the fitness advantage is $s=2$, giving us the time for fixation as $T\approx \frac{2+2}{2}\ln 100 \approx 9.21$. Which is coincides with the observed time of fixation, the time it takes for the average fitness of the population to "catch up" with the fitness of the best cell. We plot a population from SIMULATION 2 rather than SIMULATION 1, as the calculation of the aformentioned formula uses the assumption that no mutations happen while the given advantage is fixed in the population. 
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{fixation.pdf}
+	\caption{Extract of summary statistics of Population POPULATIONNR of SIMULATION 2 showing the fixation of a beneficial mutation}
+	\label{fig:fixation}
+\end{figure}
+
+As such fixations remain invisible on a plot whose $x$ axis is on the order of $10^5-10^6$ such as Figure \ref{fig:simulation1}, the first and second pair of graphs are very similar. In consequent diagrams we shall show only one graph of each pair.
 
 All populations in Simulation 1 have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed approximately uniformly and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on graphs 3 and 4 of Figure \ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. The number of used reactions (those with non-zero flux through them in the optimal steady state solution) are shown on the last pair of graphs, for the best network and for the average network. The reaction network with ATP production of $0.5$ uses $\sim 6$ reactions, to produce $1$ ATP it needs $\sim 10$, and for $1.5$ ATP it needs $14$. 
 
@@ -614,6 +625,7 @@ Too simple goal function
 	\textbf{About FBA, need more}
 	This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it we make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
 
-	\bibliography{dissertation}
-	\bibliographystyle{plainnat}
+\bibliography{dissertation}
+\bibliographystyle{plainnat}
+
 \end{document}
