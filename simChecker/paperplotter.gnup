@@ -67,13 +67,13 @@ set multiplot layout (NROFCOLS-2),1 columnsfirst title ;
 		dx = floor((XMAX-XMIN+0.5)/ntics*10.)/10.
 		set xtics dx
 		set format x "%.1t*10^{%S}";
-		#set title "Fittness of the best organism in each population"
+		#set title "Fitness of the best organism in each population"
 		#plot for [file in linefiles] file.'.progress' u 1:2 with lines title 'Population '.file
 
 		dy = floor((AFITMAX-AFITMIN)/ntics*10.)/10.
 		set ytics dy
 
-		set title "Average fittness of the  population"
+		set title "Average fitness of the  population"
 		plot for [file in linefiles] file.'.progress' u 1:4 with lines title 'Population '.file
 
 
