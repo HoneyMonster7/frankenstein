@@ -10,11 +10,12 @@ set key outside
 NROFCOLS=`head -n1 1.progress| awk '{print NF}'`
 
 # t: top margin in pixels
-t = 75.0
+t = 0
 # b: key height in pixels (bottom margin)
-b = 300.0
+b = 50
 # h: height of output in pixels
-h = 150.0*(NROFCOLS-3) + t + b
+#h = 200.0*(NROFCOLS-2) + t + b
+h = 200.0*(NROFCOLS-3) + t + b
 
 set terminal svg size 800, h enhanced background rgb 'white' 
 set macro
@@ -48,13 +49,14 @@ if (NROFCOLS > 7 ) {
 
 	print 'we shouldnt be here'
 	AUSEDMIN=5;
-	AUSEMAX=system('cat 1.progress 2.progress 3.progress | datamash max 8')
+	AUSEDMAX=system('cat 1.progress 2.progress 3.progress | datamash max 8')
 	print 'we shouldnt be here'
 }
 YLABS="unset ylabel; set ylabel 'Fittness' "
 XLABS="unset xlabel; set xlabel 'Generations'"
 
-	set multiplot layout NROFCOLS,1 columnsfirst title ;
+#	set multiplot layout (NROFCOLS-1),1 columnsfirst title ;
+set multiplot layout (NROFCOLS-2),1 columnsfirst title ;
 
 	unset key
 
@@ -65,13 +67,13 @@ XLABS="unset xlabel; set xlabel 'Generations'"
 		dx = floor((XMAX-XMIN+0.5)/ntics*10.)/10.
 		set xtics dx
 		set format x "%.1t*10^{%S}";
-		#set title "Fittness of the best organism in each population"
+		#set title "Fitness of the best organism in each population"
 		#plot for [file in linefiles] file.'.progress' u 1:2 with lines title 'Population '.file
 
 		dy = floor((AFITMAX-AFITMIN)/ntics*10.)/10.
 		set ytics dy
 
-		set title "Average fittness of the  population"
+		set title "Average fitness of the  population"
 		plot for [file in linefiles] file.'.progress' u 1:4 with lines title 'Population '.file
 
 
@@ -85,12 +87,13 @@ XLABS="unset xlabel; set xlabel 'Generations'"
 
 		set yrange [*:*]
 
-		#dy = floor((BNETMAX-BNETMIN)/ntics*10.)/10.
-		#set ytics BNETMIN,dy,BNETMAX
-		#set yrange [:BNETMAX]
+#nex 5 lines to be commented
+#	dy = floor((BNETMAX-BNETMIN)/ntics*10.)/10.
+#		set ytics BNETMIN,dy,BNETMAX
+#		set yrange [:BNETMAX]
 
-		#set title "Size of the reaction network of the best organism in each population"
-		#plot for [file in linefiles] file.'.progress' u 1:5 with lines title 'Population '.file
+#		set title "Size of the reaction network of the best organism in each population"
+#		plot for [file in linefiles] file.'.progress' u 1:5 with lines title 'Population '.file
 
 
 		dy = floor((ANETMAX-ANETMIN)/ntics*10.)/10.
@@ -119,6 +122,7 @@ XLABS="unset xlabel; set xlabel 'Generations'"
 				plot for [file in linefiles] file.'.progress' u 1:8 with lines title 'Population '.file
 		}
 
+	NROFCOLS=NROFCOLS
 #set tmargin at screen (NROFCOLS,NROFCOLS,h,t,b)
 	set bmargin at screen 0
 	set key center center

@@ -3,6 +3,10 @@ vizmap load file file=frankenstyle.xml
 vizmap apply styles=Frankenstyle
 layout apply preferred
 
+network load file file=longerLog/job11CP10NR1cell.xgmml
+vizmap apply styles=Frankenstyle
+layout apply preferred
+
 network load file file=longerLog/job10CP10NR1cell.xgmml
 vizmap apply styles=Frankenstyle
 layout apply preferred

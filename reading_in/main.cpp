@@ -218,41 +218,41 @@ int main(int argc, char **argv)
 
 
 	std::string fileName="initial";
-		trialcell.printXGMML(fileName);
+	trialcell.printXGMML(fileName);
 
-		std::cout<<"Adding&deleting tests."<<std::endl;
-		for (int k=0; k<2000; k++){
-			//for testing
-			//std::cout<<"Current reactions:";
-			//std::vector<int> currentreacs=trialcell.getReacs();
-			//for(auto i:currentreacs){std::cout<<i<<" ";}
-			//std::cout<<k<<", "<<std::endl;
-			if (k%1000 ==0){
-				std::cout<<k<<" iterations done..."<<std::endl;
-				std::cout<<"Performance is; "<<trialcell.getPerformance()<<std::endl;
-			}
+	std::cout<<"Adding&deleting tests."<<std::endl;
+	for (int k=0; k<2000; k++){
+		//for testing
+		//std::cout<<"Current reactions:";
+		//std::vector<int> currentreacs=trialcell.getReacs();
+		//for(auto i:currentreacs){std::cout<<i<<" ";}
+		//std::cout<<k<<", "<<std::endl;
+		if (k%1000 ==0){
+			std::cout<<k<<" iterations done..."<<std::endl;
+			std::cout<<"Performance is; "<<trialcell.getPerformance()<<std::endl;
+		}
 		trialcell.mutate(generator);
 		//trialcell.printHumanReadable(compoundVList);
 
 		//trialcell.calcThroughput();
-		}
-		std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
+	}
+	std::cout<<"Final fitness is: "<<trialcell.getPerformance()<<std::endl;
 
 
-		//std::vector<int> needMore, needLess, currentReactions;
-		//int targetCompound = 54; //target is pyruvate - 54
+	//std::vector<int> needMore, needLess, currentReactions;
+	//int targetCompound = 54; //target is pyruvate - 54
 
-		//needLess.emplace_back((int)-6);
-		//needMore.emplace_back((int)-7);
-		//currentReactions.emplace_back(11790);
-		//reacVector[11790].printReaction();
+	//needLess.emplace_back((int)-6);
+	//needMore.emplace_back((int)-7);
+	//currentReactions.emplace_back(11790);
+	//reacVector[11790].printReaction();
 
-		// this is the pathfinding algorithm, not used now
-		//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, actualFilename);
+	// this is the pathfinding algorithm, not used now
+	//cell::findThePaths(needMore, needLess, currentReactions, targetCompound, reacVector, substrateVector, actualFilename);
 
-		//if both mutations happen, we have to calculate the the throughput twice, therefore there is no need to use the inclusion exclusion principle's formula here
+	//if both mutations happen, we have to calculate the the throughput twice, therefore there is no need to use the inclusion exclusion principle's formula here
 		double probabilityOfAnyMutation=cell::probabilityOfMutation+cell::probabilityOfHorizontalGenetransfer*0.05;
-		int numberOfMutationsToSimulate=50000000;
+	int numberOfMutationsToSimulate=50000000;
 
 		double dcheckpointLenght=(numberOfMutationsToSimulate/probabilityOfAnyMutation)/(10*numberOfCells);
 		double genPerWriteout=1000000*cell::probabilityOfMutation;
