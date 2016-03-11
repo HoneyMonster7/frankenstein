@@ -127,7 +127,7 @@
 
 
 
-	In this project we will examine whether the high degree of conservedness (CONSERVATIVITY?) of MN-s is an inherent feature of their evolution. To do so we will evolve populations of metabolic networks using an algorithm resembling biological evolution. We restrict the networks to simplified yet realistic subset of organic molecules and a toy model of chemistry. We will EXAMINE the reproducibility of evolution, i.e. whether the same MN-s emerge if the "TAPE OF LIFE" is played again. 
+	In this project we will examine whether the high degree of conservedness (CONSERVATIVITY?) of MN-s is an inherent feature of their evolution. To do so we will evolve populations of metabolic networks using an algorithm resembling biological evolution. We restrict the networks to simplified yet realistic subset of organic molecules and a toy model of chemistry. We will EXAMINE the reproducibility of evolution, i.e. whether the same MN-s and patterns of evolution emerge if the tape of life is played again. 
 
 	In the following sections we will explain how MN-s can be modelled mathematically as graphs, and how biological evolution can be simulated on a computer, and why this project is of interest to a physicist.
 
@@ -175,6 +175,10 @@ When organisms need to store energy they use the pathway of glyconeogenesis that
 
 	ABOUT MATHEMATICAL MODELS OF BIOLOGICAL EVOLUTION $\rightarrow$ physics relevance chapter
 
+	One of the largest problems in the mathematical modeling of biological evolution is the complexity of the fitness landscape. The fitness landscape is the function mapping the set of reactions in the metabolic network to a real number --- the fitness of the MN. It's true form is not known therefore first toy landscapes were used to test phenomena, later simplified empirical landscapes were used. Recently the mapping of real fitness landscapes was started which confirm previous assumptions about the simplified model \cite{fitnesslandscape}. 
+
+	We will consider a realistic fitness landscape depending on the steady state of flux through our MN-s. 
+
 	The first mathematical models of biological evolution considered toy fitness landscapes 
 
 	TO BE DELETED:Gene duplication is a specific type of error made when copying the genetic material of the cell, resulting in a part of the genetic material to appear twice in the copy \cite{geneduplication}. This is the main source of new genetic material in eukaryotes \cite{horizontalgenetransfer}. Gene duplication is particularly important in light of the modularity of the networks. The robustness of the modules can originate from gene duplication, when a function inside a module is duplicated, and later one copy is evolved to fulfil the function slightly differently. Even if one copy is changed, deleted or (perhaps only temporarily) dysfunctional due to a point mutation the other copy can compensate for this \cite{duplicaterole} \cite{complexfeatures}. 
@@ -197,16 +201,20 @@ When organisms need to store energy they use the pathway of glyconeogenesis that
 	
 	\subsection{Evolution in the eyes of a physicist}\label{chap:whereisphysics}
 
+	Statistical physics makes very good predictions about sytems where the number of particles is on the order of Avogadro's number, when these systems are in equlibrium OR are closed. Living organisms are neither closed systems, nor are they in equilibrium. In order to maintain their non-equilibrium state they must obtain non-equilibrium materials --- food or other nutrients --- from it's environment. If they fail to do so they reach equilibrium, or in other words die. \cite{irreversibility}
+
+	Out of equilibrium systems are an actively researched area in statistical physics, and numerous concepts of it can be applied to biology. 
+	
 	One of the first people to quantitatively examine evolutionary processes R. A. Fisher wrote that [the theorem of natural selection] "bears some remarkable resemblances to the second law of thermodynamics." \cite{fisherevolution}. Both systems of statistical physics and evolving populations consist of a large number of particles (organisms) following relatively simple rules, based on probabilities. Due to the probabilistic nature of these systems exact solutions are very difficult to reach if even possible, and so one can only predict the behaviour of the whole system. Stochastic methods originally developed in statistical physics play a crucial role in modelling the evolution of populations \cite{stochasticblythe}. In this work we will use such a method, the Moran process \cite{moranprocess} to simulate the evolution of populations, but an other example for such model is the Wright-Fisher model \cite{mathematicalpopgen}.
 
-
+"
 	The Moran process 
 
-	Our model resembling biological evolution corresponds to a random walk in the space of available MN-s, that tries to optimize the fittness of our networks. The fitness landscape is the function mapping the set of reactions in the metabolic network to a real number --- the fitness of the MN.  It is a very complicated function with many local minima and it is not known if the global optimum is accessible from every point in the space of all MN-s (while transitioning through viable MN-s). \cite{historical} considered MN-s over a large set of chemical reactions and found that in all but the simplest cases the global optimum could be reached. Stochastic methods such as our model of evolution are successful in getting out of local minima, however can also be prone to oscillations around the global minimum 
+	Our model resembling biological evolution corresponds to a random walk in the space of available MN-s, that tries to optimize the fittness of our networks. The fitness landscape is a very complicated function with many local minima and it is not known if the global optimum is accessible from every point in the space of all MN-s (while transitioning through viable MN-s). \cite{historical} considered MN-s over a large set of chemical reactions and found that in all but the simplest cases the global optimum could be reached. Stochastic methods such as our model of evolution are successful in getting out of local minima, however can also be prone to oscillations around the global minimum 
 
 	The process of biological evolution is an optimization process iwth inherently random elements. As such It is well suited to traverse a rugged fitness landscape in search of a global optimum, however unlike most stochastic optimization algorithms it can not easily traverse large obstacles in the fitness landscape. This is simply because if an organism becomes considerably less fit than it's peers it will be quickly eliminated. 
 
-	Our work uses the well known formula to calculate the Gibbs free energy for our reactions in specific thermodynamic conditions. This formula uses the Gibbs free energy of reactions in standard conditions, which we got from experimental results where available, and estimated \cite{BartekLower} where not. The fully quantum mechanical calculation of the free energy changes of reactions is feasible and could lead to more accurate answers using the same evolutionary methods described in this paper. Such a calculation of thousands of Gibbs free energies would be a job worthy of it's own project, therefore we do not purue it in this work. 
+	Our work uses the well known formula to calculate the Gibbs free energy for our reactions in specific thermodynamic conditions. This formula uses the Gibbs free energy of reactions in standard conditions, which we got from experimental results where available, and estimated \cite{BartekLower} where not. The fully quantum mechanical calculation of the free energy changes of reactions is feasible and could lead to more accurate answers using the same evolutionary methods described in this paper. Such a calculation of thousands of Gibbs free energies would be a job worthy of it's own project, therefore we do not pursue it in this work. 
 
 	Stochastic processes when modelling the evolution - Moran process  (it is a reversible Markov chain) - which distribution it draws from - partition functions, random walks on the fitness landscape - stochastic optimization. 
 
@@ -522,7 +530,7 @@ These similarity indices are then summarized using the Inverse Participation Rat
 
 	An important component of a Monte Carlo simulation is the source of pseudorandom numbers. In our program we use the Mersenne Twister \cite{mersennetwister} generator, provided by the boost C++ libraries \cite{boostlibraries}. This generator is fast, provides high-quality pseudorandom numbers and has a period of $2^{19937}-1$, and will therefore provide more than enough pseudorandom numbers for our simulations.
 
-	To speed up calculations we simulated multiple populations parellely on different computers. In order for every population to be different, we used different initial values to seed the pseudorandom number generator. For the sake of reproducibility these seeds are noted with the output of the simulations. 
+	To speed up calculations we performed multiple parallel simulatinos of populations on different computers. In order for every population to be different, we used different initial values to seed the pseudorandom number generator. For the sake of reproducibility these seeds are noted with the output of the simulations. 
 
 
 \section{Results}
@@ -703,6 +711,17 @@ Too simple goal function
 \section{Discussion}
 \label{sec:discussion}
 \textbf{Small population, graph of network at 3 times}
+
+In this work we have considered the effects of the rate of mutation and the goal function on the patterns of evolution in our model. 
+
+\textbf{Discussion of probability examination rsults}
+The authors of \cite{predictability} note that crucial parameters for modeling evolution, such as the frequency of beneficial mutations are not known. 
+
+The main limitations of our model are due to the small population size, the restrictions on the chemistry and the simplifications introduced by using flux balance analysis. 
+
+The populations of simple organisms, that our MN-s model are usually substantial. A $1$ ml liquid sample of bacterial colonies can contain bacteria in excess of $10^9$ \cite{barteklecture}. The probability of the fixation of a neutral mutation is inversly proportional to the population size, thus for such large populations it is very unlikely. In our populations with size $N=100$ approximately one in every hundred mutations fix in the population. This aides the emergence of beneficial mutations, since only a set of unused reactions can contribure to a fitness advantage. For example in Simulation 2 the MN-s need 4 additional reaction to produce more ATP. $3$ of these reactions must fix in the population as a netural one, and stay dormant until the last reaction can fix too. Note that the disappearance of one of the $3$ unused reactions constitutes a neutral mutation too, therefore the disappearance of a reaction that could later be useful is also possible.
+
+Although we have not examined the effect of population size in our model the program could easily be extended to accomodate a larger population. Existing research suggests that in case of larger populations the patterns of evolution become more deterministic with larger populations \cite{predictability}
 
 	\textbf{About FBA, need more}
 	This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it we make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
