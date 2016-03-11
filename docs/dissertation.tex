@@ -58,12 +58,31 @@
 
 	Personal statement
 
-	\section{Personal statement}
+	\newpage
+	\section*{Personal statement}
+	I spent the first two weeks reading literature suggested by my supervisor, and getting familiar with C++, as I was not familiar with it before. 
+	I started developing the simulation software in early October, I received initial help and advice from my friend familiar with C++, who helped me resolving bugs throughout the project. 
 
+	I originally used the Boost graph library to store the reaction network, using this I could simulate simple trial networks at the end of October. It became apparent then that the functionality provided by Boost comes at a large performance cost, so in the first few weeks of November I changed the program to use vectors instead of the Boost concepts. I later implemented a pre-calculation of the reaction neighbour-list substantially speeding up the calculation. 
+	In the last week of November I implemented outputting the reaction networks into the XGMML file format that Cytoscape can read for visualisation of the networks. 
+
+	Over the winter break I attempted creating an algorithm that would execute a Depth first search through all reactions in order to find alternative pathways to start the MN from, unfortunately this was very ineffective, so I used a subsection of normal glycolysis as the initial network. Over the break I also read articles in the field and I started drafting the report itself. 
+
+	In January I started running the first simulations with the modified trunk of the glycolytic pathway as the initial network. I also implemented the scripts necessary to run the simulation parallely in multiple computers in the physics cplab, and collecting the results of them. 
+	As the simulation results started to flow in, I started to create analysis tools for them, plotting relevant quantities. The log file the simulation outputs while running changed and expanded during this time. 
+
+	In February I implemented an index-based population, where instead of 100 metabolic networks I only store 100 references to types of metabolic networks. This was a performance boost for the simulations with a low mutation rate, as the iterations when no mutations happened could be calculated nearly instantly, since the flux balance analysis problem wasn't necessary to solve in these cases. 
+
+	In February and March I run into problems with the IT infrastructure at the simulating machines, slowing down the progress. I have also had simulations that were started with bad parameters. These errors were fixed when discovered. 
+
+	I started writing the report in January, and worked on it continuously, however the majority of the work on it was done in March. 
+
+	The project's github page REFERENCE and the commit history there serves as diary of the project. 
+	\newpage
 	\section*{Definitions put it in a box}
-	
+
 	\begin{framed}
-		
+
 	Metabolite: a chemical compound produced in the metabolic network
 
 	Nutrient: chemical compound(s) a cell consumes in order to provide itself with energy and materials.
@@ -594,13 +613,37 @@ On the middle and left images of Figure~\ref{fig:init-mid-final} some nodes can 
 
 The first pair of simulations were run to examine the effect of the mutation probability on the patterns of evolution. The initial MN and the goal function of these simulations was the same as for Simulation 1. The probability of point mutation was set to $p_{point}=0.01$ with the cost of reaction $k_{reaction}=0.001$ for Simulation 2, and for Simulation 3 $p_{point}=0.1$ with $k_{reac}=0.01$. The populations again consisted of $100$ cells each, giving the expected number of mutations per generation to be $1$ and $10$ for Simulations 2 and 3 respectively. 
 
-Diagnostic plots for $3$ typical populations are shown on Figure~\ref{fig:simulation2}.
+Diagnostic plots for $3$ typical populations are shown on Figure~\ref{fig:simulation2} and Figure~\ref{fig:simulation3}.
+
+Both simulations evolved the populations of MN-s for $6\times 10^7$ generations. This meant that Simulation 3 had 10 times more mutations than Simulation 2. 
+
+Simulation 2 evolved the populations through approximately $600 000$ mutations, and of the populations completed the run $\sim 28 \%$ had no improvement in their fitness $\sim 55 \%$ had an improvement of $\sim 0.5$, and $16 \%$ have improved by $\sim 1$. The discovery of a new pathway to produce ATP increases the fitness function by $0.5$, but after such an improvement the MN-s usually GATHER a larger amount of unused reactions, in this case about $70$ reactions. This lowers the fitness function by $70 k_{reac}=0.07$. The number of unused reactions fluctuates WIDELY around $\sim 110$ for a network with fitness $\sim 1$, and around $\sim 150$ for a cell with fitness $\sim 1.4$. The number of reactions necessary for a fitness increase is $6$ ($11$ reactions in total), and the other increase could be achieved using an additional $4$ reactions ($15$ reactions in total). Thus only $\sim 10\%$ of the reactions are used within a MN.  The entropy of the population fluctuates around $\sim -360$ which can correspond to a population of $\sim 80$ identical cells, and a few mutants that are different from them. This can be observed on the similarity matrix of the final networks NOT SHOWN HERE
+
+
 
 \begin{figure}[htpb]
 	\centering
 	\includegraphics[width=0.8\linewidth]{simulation2.pdf}
-	\caption{Diagnostic plots of 3 typical populations of Simulation 2}
+	\caption{Diagnostic plots of 3 typical populations of Simulation 2 TAKE CARE OF ENTROY TYPO}
 	\label{fig:simulation2}
+\end{figure}
+
+Simulation 3 had $10$ times more mutations than Simulation 2. Even though the number of reactions in the MN-s was smaller, due to a higher $k_{reac}$ value the populations of Simulation 3 improved further than those of Simulation 2. Here there were no simulations that did not improve, $\sim 16\%$ made $1$ improvement, $79\%$ made 2, and $5\%$ ($1$ population) made $3$ improvements in their ATP production. After an improvement the networks gain reactions here too, but they only gain $\sim 15$ networks after a single improvement. The total number of used reactions required for an improvement is similar to that of Simulation 2, but in this case the proportion of reactions used by the MN is $\sim 50\%$. The entropy of the populations fluctuates less wildly than that of Simulation 2, around $\sim -200$. This can correspond to $\sim 7$ approximately equal sized subpopulations, and a few lone mutants. This can be observed in the similarity matrix of the simulation shown on Figure~\ref{fig:simmatrix_sim3}. The used reactions are identical within almost every reaction within a population, and they show a rather large degree of similarity between populations too. When considering the whole metabolic network we can see that the populations themselves are diverse, but within a population networks only differ from each other by a handful of reactions. 
+
+
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{simulation3.pdf}
+	\caption{Diagnostic plots of 3 typical populations of Simulation 3 REMAKE THIS}
+	\label{fig:simulation3}
+\end{figure}
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{simmatrix_sim3.png}
+	\caption{Similarity matrix of 3 populations of Simulation 3. Similarity indices calculated for used reactions are shown above the diagonal, while those calculated for the whole MN are below the diagonal}
+	\label{fig:simmatrix_sim3}
 \end{figure}
 
 The entropies of the $3$ populations are shown in the middle graph of Figure~\ref{fig:simulation1}. The only significant jumps in the entropies can be identified with the improvements in the popoulations, and the steady value of entropy is $\sim -360$. CAN IT??? DOES THIS MATTER? This can correspond to $3$ approximately equal sized sub-population, all of them having $\sim 33$ reactions, as then $S$ would be $3\times 33 \ln \left( 33 \right)=-349.7$
