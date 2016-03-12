@@ -62,7 +62,7 @@ set key outside
 YLABS="unset ylabel; set ylabel 'Fittness'"
 XLABS="unset xlabel; set xlabel 'Generations'"
 
-set multiplot layout 4,1 columnsfirst title "Average fittness of the population"
+set multiplot layout 4,1 columnsfirst title "Average fitness of the population"
 
 @YLABS; @XLABS
 

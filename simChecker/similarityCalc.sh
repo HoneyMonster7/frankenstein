@@ -73,8 +73,8 @@ do
 
 	echo "$alljnkname $fittness $numberofcell" >> fittness.list
 
-	echo $alljnkname |grep 'job[1-3]CP10'>> columns.all.list
-	echo $usedjnkname |grep 'job[1-3]CP10'>> columns.used.list
+	echo $alljnkname |grep 'job[1-5]CP10'>> columns.all.list
+	echo $usedjnkname |grep 'job[1-5]CP10'>> columns.used.list
 	echo -n "$alljnkname " | sed 's/CP10//g' | sed 's/cell.all.jnk//g' >> rows.list
 
 
@@ -83,8 +83,8 @@ do
 done
 
 
-cat fittness.list |grep 'job[1-4]CP10'| sort -nr -k2 | awk '{print $1}' > columns.all.list.ordered
-cat fittness.list | grep 'job[1-4]CP10'|sort -nr -k2 | awk '{print $1}'| sed 's/all/used/g'  > columns.used.list.ordered
+cat fittness.list |grep 'job[1-5]CP10'| sort -nr -k2 | awk '{print $1}' > columns.all.list.ordered
+cat fittness.list | grep 'job[1-5]CP10'|sort -nr -k2 | awk '{print $1}'| sed 's/all/used/g'  > columns.used.list.ordered
 #these two below don't work for some reason...
 sed 's/cell.all.jnk//g' fittness.list | awk '{print $1}' | tr '\r\n' ' ' > newrows.all.list
 grep Fittness *.xgmml | cut -d \" -f6 | sort -nr > fittnessbulk.list
