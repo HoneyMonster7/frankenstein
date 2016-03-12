@@ -228,8 +228,50 @@ Previous author's restrictions on artificial chemistries. Should this go to Intr
 
 \textbf{EXTRACT OF DATA TABLES}
 
-	A set of compounds and reactions (as used by \cite[]{BartekLower}) was provided for the project by Bartlomiej Waclaw the project supervisor. The list of compounds consisted of 1966 CHOPN molecules (containing only carbon, hydrogen, oxygen, phosphor and nitrogen) of at most 4 carbon atoms, along with 13 so called internal metabolites (compounds that are not necessarily CHOPN molecules fitting the previous criteria, but they are essential to the reactions in the MN-s, listed in Table \ref{environmentTable}). 	There are 11790 reactions of the at most 4 carbon compounds in the database used along with the reactants, the products and the free energy change of the reaction at standard conditions. The free energy changes are later calculated for arbitrary conditions as discussed in Section \ref{sub:The free energy change}
+	A set of compounds and reactions (as used by \cite[]{BartekLower}) was provided for the project by Bartlomiej Waclaw the project supervisor. The list of compounds consisted of 1966 CHOPN molecules of at most 4 carbon atoms, along with 13 so called internal metabolites. CHOPN molecules are containing only carbon, hydrogen, oxygen, phosphor and nitrogen.  Internal metabolites arecompounds that are not necessarily CHOPN molecules fitting the previous criteria, but are essential to the reactions in the MN-s. The concentrations of the most important internal metabolites is listed in Table \ref{environmentTable}).  In Table~\ref{tab:compounds} we show an extract of the list of compounds.
+	
 
+	\begin{table}[htpb]
+		\centering
+		\begin{tabular}{ccccc}
+			Compund ID &  \begin{tabular}[c]{@{}c@{}}Free energy \\ of formation \\ $\Delta G_0$ (eV) \end{tabular} & Chemical formula &  Name     & Charge \\ \hline
+			-7         & -2292.39             & ATP           &    ---             & -4     \\
+			-6         & -1424.91             & ADP           &      ---           & -2     \\
+		...	&                      &               &                 &        \\
+			-1         & -155.758             & H$_2$O           & water           & 0      \\
+			0          & 62.6568              & CH$_3$-CH$_2$(OH)   & ethanol         & 0      \\
+			1          & -247.929             & CH$_2$-COOH      & acetate         & -1     \\
+			2          & 23.8646              & CH$_2$-CHO       & acetaldehyde    & 0      \\
+			3          & -833.15              & CH$_2$-CH$_2$p      & ---             & -2     \\
+			4          & -1107.16             & CH$_2$-COp       & acetylphosphate & -2     \\
+			5          & 10.21                & CH$_2$-CO(NH$_2$)   & ---             & -2     \\
+		...	&                      &               &                 &       
+		\end{tabular}
+		\caption{Extract of the data file containing the compounds used CHECK UNITS OF G}
+		\label{tab:compounds}
+	\end{table}
+
+	There are 11790 reactions of the at most 4 carbon compounds in the database used along with the ID of the compounds and the products and the free energy change of the reaction at standard conditions. An extract of the list of reactions is shown in Table~\ref{tab:reacs}. The free energy changes are later calculated for arbitrary conditions as discussed in Section \ref{sub:The free energy change}
+
+	\begin{table}[htpb]
+		\centering
+		\begin{tabular}{ccc}
+			$\Delta G_0$ UNITS & Compounds & Products \\ \hline
+			-28.3268           & 0,-7      & 3,-6     \\
+			8.24999            & 1,-7      & 4,-6     \\
+			-16.561            & 1,-7,-10  & 5,-6,-8  \\
+			-7.83516           & 3,-1      & 0,-8     \\
+			-41.6634           & 6         & 2,-1     \\
+			-4.66344           & 6         & 38,-1    \\
+			42.0077            & 7,-3      & 14,-4    \\
+			257.103            & 7         & 50,-1    \\
+			-25.83             & 8,-7      & 20,-6    \\
+			...                &           &         
+		\end{tabular}
+		\caption{Extract of the data file containing the reactions CHECK UNITS}
+		\label{tab:reacs}
+	\end{table}
+	
 	Our program simulates the evolution of MN-s restricted to the metabolites and reactions provided. This is a realistic constraint as the TRUNK PICTURE? of the glycolytic pathway consists of such molecules.
 
 	In our model we assume that the direction of a reaction is determined only by it's free energy change as defined under the physiological circumstances of the simulation. It is also assumed that given two reactions, both with free energy change larger (or smaller) than some pre-defined limit $l$ the maximal flux through both reactions is the same. This is not necessarily the case in real cells. Apart from the free energy difference, the speed and direction of the reaction can be influenced by the free energy landscape between the initial and final states, also by the cell via the use of enzymes. 
