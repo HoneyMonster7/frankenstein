@@ -574,16 +574,17 @@ The used reactions of the best performing network of Population 3 of Simulation 
 
 An overview of the MN-s is shown on Figure~\ref{fig:init-mid-final} at three points in time, the beginning of the simulation (left), at the midpoint, after $1.5 10^5$ generations, and the final stage. The disconnected nodes at the bottom of the left plot are yet unused internal metabolites. Note the small disconnected components of the middle and the left plots. These are a result of the mutation method implemented in our program, described in Section \ref{sub:implementing evolution}. 
 
-On the middle and left images of Figure~\ref{fig:init-mid-final} some nodes can be observed around which the network appears to be centered. To examine this we plot the node degree distribution of the final MN on Figure~\ref{fig:nodedegreedistro}. We find a small number of highly connected nodes (Hubs) and many less connected ones. One might call this a scale free network, therefore we fitted a power law distribution of the form $P(n)=n^{-\gamma}$, shown on Figure~\ref{fig:nodedegreedistro}. We found the parameter estimates to be $\gamma=1.236$. Similar distributions can be found when examining final networks of other simulations. 
-
-
-
 \begin{figure}[htpb]
 	\centering
 	\includegraphics[width=1\linewidth]{init-mid-final.png}
 	\caption{Overview of the best performing metabolic network of Population 3 of Simulation 1 at three stages of it's evolution, at the start of the simulation, at the midpoint, and at the end}
 	\label{fig:init-mid-final}
 \end{figure}
+
+On the middle and left images of Figure~\ref{fig:init-mid-final} some nodes can be observed around which the network appears to be centered. To examine this we plot the node degree distribution of the final MN on Figure~\ref{fig:nodedegreedistro}. We find a small number of highly connected nodes (Hubs) and many less connected ones. One might call this a scale free network, therefore we fitted a power law distribution of the form $P(n)=n^{-\gamma}$, shown on Figure~\ref{fig:nodedegreedistro}. We found the parameter estimates to be $\gamma=1.236$. Similar distributions can be found when examining final networks of other simulations. 
+
+
+
 
 
 \begin{figure}[htpb]
@@ -593,6 +594,12 @@ On the middle and left images of Figure~\ref{fig:init-mid-final} some nodes can 
 	\label{fig:nodedegreedistro}
 \end{figure}
 
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{simmatrix_firstjob.png}
+	\caption{Similarity matrix of the first 3 populations of Simulation 1}
+	\label{fig:simmatrix_firstjob}
+\end{figure}
 
 \subsection{examining The probability of the mutations}
 \label{sub:the_probability_of_the_mutations}
@@ -648,12 +655,6 @@ The fittest network of Population 1 at the end of the simulation is shown on Fig
 
 The IPR plots of the first few populations are shown on Figure~\ref{fig:IPR_firstrun}, the plots of the not-shown populations are very similar to this one. The leftmost plot shows the IPR of the similarity indices of each cell compared to the best network. There is some variation in the reactions within the MN-s due to the random mutations, however when looking at the middle plot showing the IPR for the similarity indices calculated using the reactions with nonzero fluxes, there is very little variation. This is due to the fact that once a network evolves, there is generally only a small amount of minor changes can occur with the used reactions. 
 
-\begin{figure}[htpb]
-	\centering
-	\includegraphics[width=1\linewidth]{simmatrix_firstjob.png}
-	\caption{Similarity matrix of the first 5 populations of Simulation 1}
-	\label{fig:simmatrix_firstjob}
-\end{figure}
 
 The similarity indices for this simulation are shown on Figure~\ref{fig:simmatrix_firstjob}, for all the reactions in the MN-s above the diagonal, and for the reactions with nonzero flux below it. 
 
@@ -677,10 +678,13 @@ Diagnostic plots for $3$ populations are shown on Figure~\ref{fig:simulationmult
 \begin{figure}[htpb]
 	\centering
 	\includegraphics[width=1\linewidth]{multisink_finalnet.pdf}
-	\caption{The best performing network at the end of Simulation 6}
+	\caption{The best performing network at the end of Simulation 6. The reactions used by real glycolysis have been coloured yellow. }
 	\label{fig:multi}
 \end{figure}
 
+We show one of the fittest networks at the end of this simulation on Figure~\ref{fig:multi}. The network has abandodned the DHAP source, instead using only G3P. This is a phenomena appearing in all the populations. The flux through the reactions is shown on the figure by the different thickness of the arrows. The thinner ones symbolize reactions with flux $0.5$, while the thick ones mean a flux of $1$. It is important to note how interlinked the network is.  While there are 3 pathways leading away from G3P, and there are also $3$ leading in to pyruvate, these pathways are very connected. The pathways starting with reaction $883$ meets with the one starting with $879$ at phosphoenolpyruvate. Also the paths starting with $879$ and $877$ DIVIDE? DIVERGE? and meet at glycerate. 
+
+When comparing the similarity matrices of the populations we find that the diversity within a population is small, much like on Figure~\ref{fig:simmatrix_sim3}. The networks with $3$ improvements show a large degree of similarity in the used reactions $\sim 0.8$. Of those with only $2$ improvements, there is a pair where the used reactions are identical, and many of them have a a moderate amount of similarity between them $\sim 0.6$. If we look at the whole list of reactions, any pair of networks show a very small degree of similarity $\sim 0.1-0.2$. This is expected, as the unused reactions are more or less random. 
 
 \subsection{Similar networks reached in parallel runs}
 \label{sub:similar_networks_reached_in_paralell_runs}
