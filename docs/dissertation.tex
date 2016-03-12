@@ -561,14 +561,14 @@ As such fixations remain invisible on a plot whose $x$ axis is on the order of $
 
 All populations in Simulation 1 have improved their fitness by increasing the ADP ATP conversion rate by $0.5$ or $1$. The times of improvements are distributed approximately uniformly and after any jump-improvement in all curves we can observe a slight decline in fitness. This phenomena is due to the MN-s gaining access to more and more reactions (of which few are only used), as can be seen on graphs 3 and 4 of Figure~\ref{fig:simulation1}. Observe that the increases in the number of reactions in the MN-s start to increase when the fitness increases. The number of used reactions (those with non-zero flux through them in the optimal steady state solution) are shown on the last pair of graphs on Figure~\ref{fig:simulation1}, for the best network and for the average network. The reaction network with ATP production of $0.5$ uses $\sim 6$ reactions, to produce $1$ ATP it needs $\sim 10$, and for $1.5$ ATP it needs $14$. 
 
-The used reactions of the best performing network of Population 3 of Simulation 1 are shown on Figure~\ref{fig:trunk_glyc_final_job1}. The network found alternative pathways to bypass the restrictions imposed by the bounds on the reaction fluxes. The two longer alternative pathways (to the left) meet at phosphoenolpyruvate, and there they diverge again, one converting an previously produced AMP (adenosin monophosphate SPELLING?) to ATP while the other converting ADP to ATP. We observe similar meeting and diverging paths in the simulations that follow. 
+The used reactions of the best performing network of Population 3 of Simulation 1 are shown on Figure~\ref{fig:trunk_glyc_final_job1}. The network found alternative pathways to bypass the restrictions imposed by the bounds on the reaction fluxes. The two longer alternative pathways (to the left) meet at phosphoenolpyruvate, and there they diverge again, one converting an previously produced AMP (adenosin monophosphate SPELLING?) to ATP while the other converting ADP to ATP. We observe similar meeting and diverging paths in the simulations that follow. In real glycolysis 3-phosphorglycerate is isomerized to 2-phosphorglycerate, this network therefore performs almost all reactions that real glycolysis does, but not in a single path. 
 
 
 
 \begin{figure}[htpb]
 	\centering
-	\includegraphics[width=1\linewidth]{trunk_glyc_final_job1.pdf}
-	\caption{Reactions with nonzero flux in the fittest network at the end of the Simulation 1 in Population 3}
+	\includegraphics[width=1\linewidth]{trunk_glyc_final_job1_colored.pdf}
+	\caption{Reactions with nonzero flux in the fittest network at the end of the Simulation 1 in Population 3. The reactions of real glycolysis have been coloured yellow. }
 	\label{fig:trunk_glyc_final_job1}
 \end{figure}
 
@@ -658,12 +658,35 @@ The IPR plots of the first few populations are shown on Figure~\ref{fig:IPR_firs
 The similarity indices for this simulation are shown on Figure~\ref{fig:simmatrix_firstjob}, for all the reactions in the MN-s above the diagonal, and for the reactions with nonzero flux below it. 
 
 
+\subsection{Multiple sources and sinks}
+\label{sub:multiple_sources_and_sinks}
+
+Real cells import a variety of nutrients from their environment, and most of their MN-s can run on multiple similar compounds \cite{latent}. To test how the presence of multiple sources influences the process of evolution of our networks, we performed simulations of networks that had access to $2$ nutrients. To be able to compare the resulting networks with our previous simulations, the initial network was, as previously, the modified trunk of glcolysis, shown on Figure~\ref{fig:truncglycinit}. The two sources used for this network were DHAP as before, and G3P. These two molecules are the end products of the upper glycolytic pathway. They enter the lower part by DHAP being converted into G3P, and the two G3P molecules undergo the same trunk pathway. The sink of the simulation was Pyruvate, as before, with the goal function rewarding ATP production only. The simulation was run using $P_{point}=0.01$ and $k_{reac}=0.001$. We relaxed the condition on the flux of phosphate, allowing the cell to take phosphate up, or dispose of it. This allows the cell to remove phosphate by other means than the ADP $\rightarrow$ ATP conversion. Interestingly this was not used by the cells. We call this run Simulation 6 SIMNAMING!!!
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{simulationmultisource.pdf}
+	\caption{Diagnostic plots for 3 populations of Simulation 6}
+	\label{fig:simulationmultisource}
+\end{figure}
+
+Diagnostic plots for $3$ populations are shown on Figure~\ref{fig:simulationmultisource}. All of the populations that finished the simulation made at least $2$ improvements in their ATP production. These first two improvements appeared rather early in the simulation, with the last population to obtain them being Population~$2$. These two improvements increase the number of used reactions to $10$, and the networks acquire $\sim 200$ reactions in total.  Approximately $22\%$ of the simulations made $3$ improvements, and $11\%$ made $4$ improvements. The number of reactions necessary for the $3$ improvement network is $14$, and with $17$ reactions the system can produce $4$ improvements. The entropies of the populations are similar to the previous simulatinons. 
+
+
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{multisink_finalnet.pdf}
+	\caption{The best performing network at the end of Simulation 6}
+	\label{fig:multi}
+\end{figure}
+
+
 \subsection{Similar networks reached in parallel runs}
 \label{sub:similar_networks_reached_in_paralell_runs}
 If mutations happen with 100$\%$ then rather fast improvement to best network. Very diverse populations in terms of available reactions, but somewhat similar within a single run. Different runs very different available reactions. For the nonzero flux reactions within a run is almost completely homogeneous, and lots of similarity between runs too. 
 
-If the mutation probabilities decrease improvements become more difficult.
-
+If the mutation probabilities decrease improvements become more difficult. 
 \subsection{Changing nutrients of the network}
 \label{sub:changing_nutrients_of_the_network}
 
