@@ -1,5 +1,7 @@
 \documentclass[10pt,a4paper]{article}
-\usepackage[latin1]{inputenc}
+%\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
+
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
@@ -19,11 +21,16 @@
 	
 	
 	\maketitle
+
 	
 	\begin{abstract}
 		
 	\end{abstract}
 	
+	\cleardoublepage
+	\pagenumbering{gobble}
+	\tableofcontents
+
 	\section*{TODO}
 	\label{sec:todo}
 	
@@ -56,14 +63,11 @@
 
 	color real glycolysis in the networks shown!!!
 
-	Personal statement
 
 	\newpage
 	\section*{Personal statement}
 	I spent the first two weeks reading literature suggested by my supervisor, and getting familiar with C++, as I was not familiar with it before. 
-	I started developing the simulation software in early October, I received initial help and advice from my friend familiar with C++, who helped me resolving bugs throughout the project. 
-
-	I originally used the Boost graph library to store the reaction network, using this I could simulate simple trial networks at the end of October. It became apparent then that the functionality provided by Boost comes at a large performance cost, so in the first few weeks of November I changed the program to use vectors instead of the Boost concepts. I later implemented a pre-calculation of the reaction neighbour-list substantially speeding up the calculation. 
+	I started developing the simulation software in early October. 	I originally used the Boost graph library to store the reaction network, this way I could simulate simple trial networks at the end of October. It became apparent then that the functionality provided by Boost comes at a large performance cost, so in the first few weeks of November I changed the program to use vectors and custom concepts instead of the ones Boost provided. I later implemented a pre-calculation of the reaction neighbour-list substantially speeding up the calculation. 
 	In the last week of November I implemented outputting the reaction networks into the XGMML file format that Cytoscape can read for visualisation of the networks. 
 
 	Over the winter break I attempted creating an algorithm that would execute a Depth first search through all reactions in order to find alternative pathways to start the MN from, unfortunately this was very ineffective, so I used a subsection of normal glycolysis as the initial network. Over the break I also read articles in the field and I started drafting the report itself. 
@@ -78,7 +82,8 @@
 	I started writing the report in January, and worked on it continuously, however the majority of the work on it was done in March. 
 
 	The project's github page REFERENCE and the commit history there serves as diary of the project. 
-	\newpage
+	\cleardoublepage
+	\pagenumbering{arabic}
 	\section*{Definitions put it in a box}
 
 	\begin{framed}
@@ -167,25 +172,19 @@ When organisms need to store energy they use the pathway of glyconeogenesis that
 	
 
 	Organisms need a way of passing down their genetic information to their offsprings. 
-	Most of them code their genetic material in the form of DNA. This uses 4 different base pairs to describe the genetic information necessary for the reproduction and functioning of the organism. When the organism multiplies this information must be doubled and passed on to the offsprings. A typical bacterial genome consists of $\sim 10^6$ base pairs, and the human genome has $3.4 \times 10^9$ base pairs. Even though a multitude of error correcting mechanisms are in place \cite{dnarepair}, errors are made (with an error rate of $10^{-7} - 10^{-8}$ for Escherichia coli \cite{dnaerrorrate}). These errors are most often point mutations that cause a small change in the genetic code of the organism --- in our model  corresponding to adding or removing a reaction from the MN of the cell.
+	Most of them code their genetic material in the form of DNA. This uses 4 different base pairs to describe the genetic information necessary for the reproduction and functioning of the organism. When the organism multiplies this information must be doubled and passed on to the offsprings. A typical bacterial genome consists of $\sim 10^6$ base pairs, and the human genome has $3.4 \times 10^9$ base pairs. Even though a multitude of error correcting mechanisms are in place \cite{dnarepair}, errors are made (with an error rate of $10^{-7} - 10^{-8}$ for Escherichia coli \cite{dnaerrorrate}). These errors are most often point mutations that cause a small change in the genetic code of the organism.
+	
+	The genome of our organisms consist of the list of reactions they are able to perform. This can be considered as a binary string of length $11790$, the number of reactions in our $4$ carbon network, with $0$ for those reactions that do not appear, and $1$ for those that do. In our model point mutations correspond to adding or removing a reaction from the MN of the cell.
 
-	Apart from random point mutations  the genetic information of our cells can also change by the process of horizontal gene transfer. This is a method allowing Bacteria and Archaea to exchange genetic material between cells. This is thought to be the main reason why bacteria can "learn" from each other eg. resistance to antibiotics \cite{horizontalAntibiotics}\cite{horizontalgenetransfer}. We will examine how the presence of Horizontal Gene Transfer influences the evolutionary process.
+	Apart from random point mutations  the genetic information of our cells can also change by the process of horizontal gene transfer. This is a method allowing Bacteria and Archaea to exchange genetic material between cells, and it is thought to be the main reason why bacteria can "learn" from each other eg. resistance to antibiotics \cite{horizontalAntibiotics}\cite{horizontalgenetransfer}. We will examine how the presence of Horizontal Gene Transfer influences the evolutionary process.
 
 	In real life cells use a variety of mechanisms to change the genetic information of cells such as gene duplication or gene insertion. We will not consider these in our model. 
 
-	ABOUT MATHEMATICAL MODELS OF BIOLOGICAL EVOLUTION $\rightarrow$ physics relevance chapter
 
-	One of the largest problems in the mathematical modeling of biological evolution is the complexity of the fitness landscape. The fitness landscape is the function mapping the set of reactions in the metabolic network to a real number --- the fitness of the MN. It's true form is not known therefore first toy landscapes were used to test phenomena, later simplified empirical landscapes were used. Recently the mapping of real fitness landscapes was started which confirm previous assumptions about the simplified model \cite{fitnesslandscape}. 
+	One of the largest problems in the mathematical modeling of biological evolution is the complexity of the fitness landscape. The fitness landscape is the function mapping the set of reactions in the metabolic network to a real number --- the fitness of the MN. It's true form is not known therefore first toy landscapes were used to test phenomena, later simplified empirical landscapes were used. Recently the mapping of real fitness landscapes was started which confirm previous assumptions about the simplified models \cite{fitnesslandscape}. 
 
 	We will consider a realistic fitness landscape depending on the steady state of flux through our MN-s. 
 
-	The first mathematical models of biological evolution considered toy fitness landscapes 
-
-	TO BE DELETED:Gene duplication is a specific type of error made when copying the genetic material of the cell, resulting in a part of the genetic material to appear twice in the copy \cite{geneduplication}. This is the main source of new genetic material in eukaryotes \cite{horizontalgenetransfer}. Gene duplication is particularly important in light of the modularity of the networks. The robustness of the modules can originate from gene duplication, when a function inside a module is duplicated, and later one copy is evolved to fulfil the function slightly differently. Even if one copy is changed, deleted or (perhaps only temporarily) dysfunctional due to a point mutation the other copy can compensate for this \cite{duplicaterole} \cite{complexfeatures}. 
-	
-	
-	
-	
 	\subsection{Artificial chemistries}
 	\label{sub:artificial_chemistries}
 
@@ -255,18 +254,18 @@ Previous author's restrictions on artificial chemistries. Should this go to Intr
 
 	\begin{table}[htpb]
 		\centering
-		\begin{tabular}{ccc}
-			$\Delta G_0$ UNITS & Compounds & Products \\ \hline
-			-28.3268           & 0,-7      & 3,-6     \\
-			8.24999            & 1,-7      & 4,-6     \\
-			-16.561            & 1,-7,-10  & 5,-6,-8  \\
-			-7.83516           & 3,-1      & 0,-8     \\
-			-41.6634           & 6         & 2,-1     \\
-			-4.66344           & 6         & 38,-1    \\
-			42.0077            & 7,-3      & 14,-4    \\
-			257.103            & 7         & 50,-1    \\
-			-25.83             & 8,-7      & 20,-6    \\
-			...                &           &         
+		\begin{tabular}{cccc}
+		Reaction ID &	$\Delta G_0$ UNITS & Compounds & Products \\ \hline
+		2 &	-28.3268           & 0,-7      & 3,-6     \\
+		4 &	8.24999            & 1,-7      & 4,-6     \\
+		5 &	-16.561            & 1,-7,-10  & 5,-6,-8  \\
+		10 &	-7.83516           & 3,-1      & 0,-8     \\
+		14 &	-41.6634           & 6         & 2,-1     \\
+		18 &	-4.66344           & 6         & 38,-1    \\
+		22 &	42.0077            & 7,-3      & 14,-4    \\
+		25 &	257.103            & 7         & 50,-1    \\
+		31 &	-25.83             & 8,-7      & 20,-6    \\
+		...&           &         
 		\end{tabular}
 		\caption{Extract of the data file containing the reactions CHECK UNITS}
 		\label{tab:reacs}
@@ -586,9 +585,8 @@ When running the simulations, we started with 20 identical, uniform populations 
 	\label{fig:simulation1}
 \end{figure}
 
-TALK ABOUT DIFFERENT WRITEOUT SIZE FOR DIFFERENT PROBS
 
-The fitness of the best network within $3$ typical populations of Simulation 1 and the average fitness of those populations are shown as a function of the number of generations since the initial network on the first two graphs of Figure~\ref{fig:simulation1}. We normally save the summary statistics every $100$ generations, but keep the values of these summary statistics for the INTERMITTENT generations in-memory. If there was a significant improvement in the fitness of the population we write the intermittent steps out too, so the transition of the population can be observed. 
+The fitness of the best network within $3$ typical populations of Simulation 1 and the average fitness of those populations are shown as a function of the number of generations since the initial network on the first two graphs of Figure~\ref{fig:simulation1}. We normally save the summary statistics every $10000$ mutations, in this case $100$ generations, but keep the values of these summary statistics for the INTERMITTENT generations in-memory. If there was a significant improvement in the fitness of the population we write the intermittent steps out too, so the transition of the population can be observed. 
 
 A section of such data is shown on Figure~\ref{fig:fixation} from Simulation 2, that has a lower mutation rate than Simulation 1. The expected time of fixation, the time it takes for a cell with fitness advantage $s$ to take over a population where cell's have fitness $1$ is calculated as $T \approx \frac{s+2}{s}\ln N$. \cite{barteklecture} In the population shown on Figure~\ref{fig:fixation} the original population has a fitness of $0.48$ and the fitness of the mutant is $0.98$, therefore the fitness advantage is $s\approx2$, giving us the time for fixation as $T\approx \frac{2+2}{2}\ln 100 \approx 9.21$. This coincides with the observed time of fixation, the time it takes for the average fitness of the population to "catch up" with the fitness of the best cell. We plot a population from Simulation 2 rather than SIMULATION 1, as the calculation of the aforementioned formula uses the assumption that no mutations happen while the given advantage is fixed in the population. This assumption is approximately true in Simulation 2 where the expected number of mutations per generation is $1$, as opposed to $100$ in Simulation 1.
 
@@ -614,6 +612,7 @@ The used reactions of the best performing network of Population 3 of Simulation 
 	\label{fig:trunk_glyc_final_job1}
 \end{figure}
 
+
 An overview of the MN-s is shown on Figure~\ref{fig:init-mid-final} at three points in time, the beginning of the simulation (left), at the midpoint, after $1.5 10^5$ generations, and the final stage. The disconnected nodes at the bottom of the left plot are yet unused internal metabolites. Note the small disconnected components of the middle and the left plots. These are a result of the mutation method implemented in our program, described in Section \ref{sub:implementing evolution}. 
 
 \begin{figure}[htpb]
@@ -623,7 +622,7 @@ An overview of the MN-s is shown on Figure~\ref{fig:init-mid-final} at three poi
 	\label{fig:init-mid-final}
 \end{figure}
 
-On the middle and left images of Figure~\ref{fig:init-mid-final} some nodes can be observed around which the network appears to be centered. To examine this we plot the node degree distribution of the final MN on Figure~\ref{fig:nodedegreedistro}. We find a small number of highly connected nodes (Hubs) and many less connected ones. One might call this a scale free network, therefore we fitted a power law distribution of the form $P(n)=n^{-\gamma}$, shown on Figure~\ref{fig:nodedegreedistro}. We found the parameter estimates to be $\gamma=1.236$. Similar distributions can be found when examining final networks of other simulations. 
+On the middle and left images of Figure~\ref{fig:init-mid-final} some nodes can be observed around which the network appears to be centered. To examine this we plot the node degree distribution of the final MN on Figure~\ref{fig:nodedegreedistro}. We find a small number of highly connected nodes (Hubs) and many less connected ones. One might call this a scale free network, therefore we fitted a power law distribution of the form $P(n)=n^{-\gamma}$, shown on Figure~\ref{fig:nodedegreedistro}. We found the parameter estimate to be $\gamma=1.236$. Similar distributions can be found when examining final networks of other simulations. 
 
 
 
@@ -636,6 +635,8 @@ On the middle and left images of Figure~\ref{fig:init-mid-final} some nodes can 
 	\label{fig:nodedegreedistro}
 \end{figure}
 
+The similarity indices for this simulation are shown on Figure~\ref{fig:simmatrix_firstjob}, for all the reactions in the MN-s above the diagonal, and for the reactions with nonzero flux below it. The used reactions are very similar within the populations, but show a small degree of inter-population similarity. The red and purple stripes in the upper triangular part within Populations $2$ and $3$ show MN-s that use different reactions from the rest of the population. This is a mutation, either neutral or deleterious, that has spread to part of the population. We know the mutation is not beneficial, as if it was it would appear in the fitness plots of Figure~\ref{fig:simulation1}, and would quickly overtake the population with a high probability. When looking at the complete reaction network, the similarity becomes smaller within the populations, and disappears almost completely between populations. 
+
 \begin{figure}[htpb]
 	\centering
 	\includegraphics[width=1\linewidth]{simmatrix_firstjob.png}
@@ -643,10 +644,20 @@ On the middle and left images of Figure~\ref{fig:init-mid-final} some nodes can 
 	\label{fig:simmatrix_firstjob}
 \end{figure}
 
+The inverse proportionality ratio of for the similarity indices for used and all reactions within an MN, comparing each member of $3$ populations to the best performing network in the given population are shown on Figure~\ref{fig:IPRsim1} at each of the $10$ checkpoints. It shows that the set of reactions within populations is diverse, due to the very high mutation rate, however the used reactions are more similar in a population. The fitness values within a population are very similar, with the exception of Population $3$ at checkpoint $6$. This outlier value is most likely the effect of the population being overtaken by a mutation at the point of saving the checkpoint. The IPR plots of not shown populations are very similar to the shown ones. 
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{IPR_sim1.pdf}
+	\caption{Inverse participation ratio of the two similarity indices and the fitness of $3$ population of Simulation 1 at each checkpoint}
+	\label{fig:IPRsim1}
+\end{figure}
+
+
 \subsection{examining The probability of the mutations}
 \label{sub:the_probability_of_the_mutations}
 
-The first pair of simulations were run to examine the effect of the mutation probability on the patterns of evolution. The initial MN and the goal function of these simulations was the same as for Simulation 1. The probability of point mutation was set to $p_{point}=0.01$ with the cost of reaction $k_{reaction}=0.001$ for Simulation 2, and for Simulation 3 $p_{point}=0.1$ with $k_{reac}=0.01$. The populations again consisted of $100$ cells each, giving the expected number of mutations per generation to be $1$ and $10$ for Simulations 2 and 3 respectively. 
+The next pair of simulations were run to examine the effect of the mutation probability on the patterns of evolution. The initial MN and the goal function of these simulations was the same as for Simulation 1. The probability of point mutation was set to $p_{point}=0.01$ with the cost of reaction $k_{reaction}=0.001$ for Simulation 2, and for Simulation 3 $p_{point}=0.1$ with $k_{reac}=0.01$. The populations again consisted of $100$ cells each, giving the expected number of mutations per generation to be $1$ and $10$ for Simulations 2 and 3 respectively. 
 
 Diagnostic plots for $3$ typical populations are shown on Figure~\ref{fig:simulation2} and Figure~\ref{fig:simulation3}.
 
@@ -683,22 +694,9 @@ We also considered a simulation with $p_{point}=0.01$ and $k_{reac}=0.01$ but no
 	\label{fig:simmatrix_sim3}
 \end{figure}
 
-The fittest network of Population 1 at the end of the simulation is shown on Figure~\ref{fig:trunk_glyc_final_job1}. This network uses parts of the original network (reactions $416$ and $883$ for the beginning of the path on the left of the figure, and reaction $633$ was "rediscovered" by the network. 
-
-\begin{figure}[htpb]
-	\centering
-	\includegraphics[width=1\linewidth]{IPR_longerlog.pdf}
-	\caption{Inverse proportionality ratio plots of the first few populations}
-	\label{fig:IPR_firstrun}
-\end{figure}
 
 
 
-
-The IPR plots of the first few populations are shown on Figure~\ref{fig:IPR_firstrun}, the plots of the not-shown populations are very similar to this one. The leftmost plot shows the IPR of the similarity indices of each cell compared to the best network. There is some variation in the reactions within the MN-s due to the random mutations, however when looking at the middle plot showing the IPR for the similarity indices calculated using the reactions with nonzero fluxes, there is very little variation. This is due to the fact that once a network evolves, there is generally only a small amount of minor changes can occur with the used reactions. 
-
-
-The similarity indices for this simulation are shown on Figure~\ref{fig:simmatrix_firstjob}, for all the reactions in the MN-s above the diagonal, and for the reactions with nonzero flux below it. 
 
 
 \subsection{Multiple sources and sinks}
@@ -713,7 +711,7 @@ Real cells import a variety of nutrients from their environment, and most of the
 	\label{fig:simulationmultisource}
 \end{figure}
 
-Diagnostic plots for $3$ populations are shown on Figure~\ref{fig:simulationmultisource}. All of the populations that finished the simulation made at least $2$ improvements in their ATP production. These first two improvements appeared rather early in the simulation, with the last population to obtain them being Population~$2$. These two improvements increase the number of used reactions to $10$, and the networks acquire $\sim 200$ reactions in total.  Approximately $22\%$ of the simulations made $3$ improvements, and $11\%$ made $4$ improvements. The number of reactions necessary for the $3$ improvement network is $14$, and with $17$ reactions the system can produce $4$ improvements. The entropies of the populations are similar to the previous simulatinons. 
+Diagnostic plots for $3$ populations are shown on Figure~\ref{fig:simulationmultisource}. All of the populations that finished the simulation made at least $2$ improvements in their ATP production. These first two improvements appeared rather early in the simulation, with the last population to obtain them being Population~$2$. These two improvements increase the number of used reactions to $10$, and the networks acquire $\sim 200$ reactions in total.  Approximately $22\%$ of the simulations made $3$ improvements, and $11\%$ made $4$ improvements. The number of reactions necessary for the $3$ improvement network is $14$, and with $17$ reactions the system can produce $4$ improvements. The entropies of the populations are similar to the previous simulations. 
 
 
 
@@ -724,9 +722,9 @@ Diagnostic plots for $3$ populations are shown on Figure~\ref{fig:simulationmult
 	\label{fig:multi}
 \end{figure}
 
-We show one of the fittest networks at the end of this simulation on Figure~\ref{fig:multi}. The network has abandodned the DHAP source, instead using only G3P. This is a phenomena appearing in all the populations. The flux through the reactions is shown on the figure by the different thickness of the arrows. The thinner ones symbolize reactions with flux $0.5$, while the thick ones mean a flux of $1$. It is important to note how interlinked the network is.  While there are 3 pathways leading away from G3P, and there are also $3$ leading in to pyruvate, these pathways are very connected. The pathways starting with reaction $883$ meets with the one starting with $879$ at phosphoenolpyruvate. Also the paths starting with $879$ and $877$ DIVIDE? DIVERGE? and meet at glycerate. 
+We show one of the fittest networks at the end of this simulation on Figure~\ref{fig:multi}. The network has abandoned the DHAP source, instead using only G3P. This is a phenomena appearing in all the populations. The flux through the reactions is shown on the figure by the different thickness of the arrows. The thinner ones symbolize reactions with flux $0.5$, while the thick ones mean a flux of $1$. It is important to note how interlinked the network is.  While there are 3 pathways leading away from G3P, and there are also $3$ leading in to pyruvate, these pathways are very connected. The pathways starting with reaction $883$ meets with the one starting with $879$ at phosphoenolpyruvate. Also the paths starting with $879$ and $877$ DIVIDE? DIVERGE? and meet at glycerate. 
 
-When comparing the similarity matrices of the populations we find that the diversity within a population is small, much like on Figure~\ref{fig:simmatrix_sim3}. The networks with $3$ improvements show a large degree of similarity in the used reactions $\sim 0.8$. Of those with only $2$ improvements, there is a pair where the used reactions are identical, and many of them have a a moderate amount of similarity between them $\sim 0.6$. If we look at the whole list of reactions, any pair of networks show a very small degree of similarity $\sim 0.1-0.2$. This is expected, as the unused reactions are more or less random. 
+When comparing the similarity matrices of the populations we find that the diversity within a population is small, much like on Figure~\ref{fig:simmatrix_sim3}. The networks with $3$ improvements show a large degree of similarity in the used reactions $\sim 0.8$. Of those with only $2$ improvements, there is a pair where the used reactions are identical, and many of them have a moderate amount of similarity between them $\sim 0.6$. If we look at the whole list of reactions, any pair of networks show a very small degree of similarity $\sim 0.1-0.2$. This is expected, as the unused reactions are more or less random. 
 
 \subsection{Similar networks reached in parallel runs}
 \label{sub:similar_networks_reached_in_paralell_runs}
@@ -744,7 +742,6 @@ If the mutation probabilities decrease improvements become more difficult.
 
 
 \subsection{Limitations}
-\label{sub:limitations}
 Dynamics of chemical reactions ignored
 
 Restrictions in the types of mutations
@@ -762,7 +759,11 @@ Too simple goal function
 In this work we have considered the effects of the rate of mutation and the goal function on the patterns of evolution in our model. 
 
 \textbf{Discussion of probability examination results}
-The authors of \cite{predictability} note that crucial parameters for modeling evolution, such as the frequency of beneficial mutations are not known. 
+The authors of \cite{predictability} note that crucial parameters for modeling evolution, such as the frequency of beneficial mutations are not known. The rate of spontaneous mutations per genome per genome replication is approximately $0.01$ for higher eukaryotes \cite{mutationrate}. We have considered mutation rates comparable to this, but it is important to note that the genome of our organism are very short compared to that of real organisms.  
+
+\subsection{Limitations of our approach}
+\label{sub:limitations}
+
 
 The main limitations of our model are due to the small population size, the restrictions on the chemistry and the simplifications introduced by using flux balance analysis. 
 
@@ -771,18 +772,24 @@ The populations of simple organisms, that our MN-s model are usually substantial
 Although we have not examined the effect of population size in our model the program could easily be extended to accommodate a larger population. Existing research suggests that in case of larger populations the patterns of evolution become more deterministic with larger populations \cite{predictability}
 
 
-We restricted our cells to use a small but realistic set of possible molecules in their MN-s. As the lower part of the glycolytic pathway only utilizes molecules that are present within our network, this has probably not served as a limiting factor in modeling the evolution of the networks. We have performed test simulations using a larger set of molecules, using CHOPN molecules containing up to $5$ carbon atoms. The number of such compounds in our list is $12606$, and there are $100 835$ reactions between them. The results of these simulations were similar to those discussed in Section~\ref{sec:results}. This is likely the result of our nutrients being $3$ carbon molecules. In order for the networks to venture into the set of molecules containing $4$ or $5$ carbon molecules, they would have to obtain this carbon from the only source of carbon other than the nutrients,  CO$_2$. The release of CO$_2$ is an exotherm reaction, therefore it's capture would be endotherm, in other words requiring a large investment of energy. While the networks could invest this energy using ATP\footnote{ An example for this is reaction $182$ in our list of $4$ carbon reactions: pyruvate (CH3-CO-COOH) $+$ ATP $+$ CO$_2$ $\rightarrow$   oxaloacetate (COOH-CH2-CO-COOH) $+$ ADP $+$ Pi with $\Delta G_0=-8.825$ UNITS OF DELTAG}, the resulting network would probably not produce a net flow of ATP. 
+We restricted our cells to use a small but realistic set of possible molecules in their MN-s. As the lower part of the glycolytic pathway only utilizes molecules that are present within our network, this has probably not served as a limiting factor in modeling the evolution of the networks. We have performed test simulations using a larger set of molecules, using CHOPN molecules containing up to $5$ carbon atoms. The number of such compounds in our list is $12606$, and there are $100 835$ reactions between them. The results of these simulations were similar to those discussed in Section~\ref{sec:results}. This is likely the result of our nutrients being $3$ carbon molecules. In order for the networks to venture into the set of molecules containing $4$ or $5$ carbon molecules, they would have to obtain this carbon from the only source of carbon other than the nutrients,  CO$_2$. The release of CO$_2$ is an exothermic reaction, therefore it's capture would be endothermic, in other words requiring a large investment of energy. While the networks could invest this energy using ATP\footnote{ An example for this is reaction $182$ in our list of $4$ carbon reactions: pyruvate (CH3-CO-COOH) $+$ ATP $+$ CO$_2$ $\rightarrow$   oxaloacetate (COOH-CH2-CO-COOH) $+$ ADP $+$ Pi with $\Delta G_0=-8.825$ UNITS OF DELTAG}, the resulting network would probably not produce a net flow of ATP. 
 
-A more imprortant restriction was necessary to make in order to keep the flux calculations a linear programming problem. In such a problem one needs to provide boundaries for the parameters that are to be optimized, in our case the fluxes through reactions. These boundaries can be infinite, and can contain other fluxes, such as $v_1+v_2 < c$, but can only be linear functions of them. This forced us to determine the direction of every reaction depending only on it's Gibbs free energy change. In real chemical pathway only the overall change of the free energy needs to be negative, in other words parts of the path may have a positive $\Delta G$, if the rest of the path compensates for it by having a large enough negative $\Delta G$ value. In contrast our path has to have every reaction's $\Delta G$ as negative, (or not very positive for a reduced flux).
+A more important restriction was necessary to make in order to keep the flux calculations a linear programming problem. In such a problem one needs to provide boundaries for the parameters that are to be optimized, in our case the fluxes through reactions. These boundaries can be infinite, and can contain other fluxes, such as $v_1+v_2 < c$, but can only be linear functions of them. This forced us to determine the direction of every reaction depending only on it's Gibbs free energy change. In real chemical pathway only the overall change of the free energy needs to be negative, in other words parts of the path may have a positive $\Delta G$, if the rest of the path compensates for it by having a large enough negative $\Delta G$ value. Such a constraint would look like $\sum_{i=1}^N \Delta G \left( v_i \right)<0$, where $\Delta G \left( v_i \right)=\frac{-v_i}{|v_i|} \Delta G_i$, with $\Delta G_i$ being the free energy change of reaction $i$. Here $\Delta G \left( v_i \right)$ simply flips the sign of $\Delta G_i$ if the reaction is happening in the reverse direction, compared to the direction in the list of reactions. Such a constraint is non-linear due to the sign-taking, and therefore incompatible with the linear programming approach. In contrast our path has to have every reaction's $\Delta G$ as negative, (or not very positive for a reduced flux).
 Paths that require the investment of energy are not impossible in our network. The energy investment usually comes in the form of an ATP $\rightarrow$ ADP conversion, such as in case of the reaction shown on Figure~\ref{fig:freeEchangeFig}. 
 
-The rigid boundaries in FBA
+Flux balance analysis as implemented here also assumes that the maximal flux through each reaction can only be one of three cases, as described in Section~\ref{sub:The free energy change}. Using smoother maxima here, eg. calculating the maximal flux as a continuous function of the current free energy change could lead to more accurate results. The likelihood of a reaction happening not only depends on the difference of free energy between the initial compounds and the end products, but also on the free energy landscape between these two states. A reaction with a high potential barrier will be less likely to happen that one where the free energy change is a roughly monotonic function. 
+
 
 
 	\textbf{About FBA, need more}
 	This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it we make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
 
 	In all of our simulations with $k_{reac}=0.001$ we observed the large number of unused reactions in our metabolic networks. Some of these unused networks are part of the next potential improvement of the network. If the mutation rate is low, and the cost of reactions high the expected time until an improvement becomes very large. We observed this phenomena in the simulation with $p=0.01$ and $k_{reac}=0.01$ that produced no improvements during a similar time that was used for the other simulations. The genetic information of our molecules consists of the reactions they can produce. In a real cell the genetic information serves a variety of functions, including the coding of proteins that catalyse reactions. A large proportion of the DNA of higher eucaryotes does not code proteins, the estimate for the proportion of human DNA that codes proteins is $\sim 3\%$ \cite{junkdna}. This DNA is sometimes referred to as junk DNA, as it's function is not well understood. It's purpose can be redundancy, in case of the coding parts of the DNA are damaged. In our network some unused reactions can potentially serve as "backups" in case some of the currently used ones are removed. We would like to have tested this phenomena on the evolved networks, by calculating the fitness of the networks if one or more randomly chosen used reactions are removed. Unfortunately time did not allow this.  REPHRASE
+	
+	\section*{Acknowledgements}
+	
+	I would like to thank my supervisor Dr. Bartek Waclaw, for his time and guidance throughout the project; Máté Nagy who provided help and advice in setting up the program, and aided me in resolving difficult bugs throughout the project; and Ioan-Bogdan Magdau for his code calculating moving averages. 
+
 	
 	\bibliography{dissertation}
 \bibliographystyle{plainnat}

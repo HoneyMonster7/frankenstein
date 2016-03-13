@@ -32,7 +32,7 @@ plot for [col=1:5] 'completeIPR.used' using ($0+1):col with lines title columnhe
 #@YLABS; @XLABS
 #plot for [col=11:15] 'completeIPR.used' using ($0+1):col with lines title columnheader
 
-set title 'Fittness'
+set title 'Fitness'
 @YLABS; @XLABS
 plot for [col=1:5] 'completeIPR.fittness' using ($0+1):col with lines title columnheader
 
