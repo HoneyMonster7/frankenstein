@@ -76,6 +76,7 @@ while getopts ":bj:hun:flsa" opt; do
 			echo -e "\t -f outputs the fittness graphs too. at the moment it doesn't work together with the -u switch."
 			echo -e "\t -l extract and analyse the last checkpoint only"
 			echo -e "\t -s don't remove .jnk files for the last CP (replotting the SimMatrix)"
+			echo -e "\t -a no averaging"
 			exit 0
 			;;
 		\?)
