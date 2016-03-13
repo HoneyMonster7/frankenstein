@@ -82,21 +82,7 @@ Signature:\hspace*{8cm}Date:
 
 	Definitions in footnotes? - > in a box. Can't really do two columns - Appendix? smaller text at least font 9
 
-	Are the current compounds really 3 carbon??? There's many that have 4 carbon
-
-	Similarity matrix (partilly done)
-
 	Entropy (kindof done) - Inverse participation ratio  IPR find a citation
-
-	Extract of the data files fullnewreaction.dat and fullnewcompounds.dat into appendix
-
-	EMP ED pathways and the trunk of the glycolytic pathway - how are they related below above ?
-
-	More about biological evolution in intro - 1-2 sentences about it's importance
-
-	More simulations with different concentrations?
-
-	WHERE IS THE PHYSICS PART --- partially okay, need to iterate a few times
 
 	color real glycolysis in the networks shown!!!
 
@@ -731,7 +717,7 @@ Simulation 3 had $10$ times more mutations than Simulation 2. Even though the nu
 \end{figure}
 
 
-In an other simulation we have allowed the cells to exchange genetic material (reactions) with each other in a process resembling horizontal gene transfer \cite{horizontalgenetransfer}. When exchanging genetic material we observed that the number of successful horizontal gene transfers was very low $\sim 0.01$. A transfer between cells A and B is deemed successful when a randomly chosen reaction from the MN of B is not present in the MN of A, and so can be transferred. This reaction is then present in both A and B. The small success rate for this transfer is due to the high degree of similarity within populations, as shown on Figure~\ref{fig:simmatrix_sim3}.
+In an other simulation we have allowed the cells to exchange genetic material (reactions) with each other in a process resembling horizontal gene transfer \cite{horizontalgenetransfer}. When exchanging genetic material we observed that the number of successful horizontal gene transfers was very low $\sim 0.01$. A transfer between cells A and B is deemed successful when a randomly chosen reaction from the MN of B is not present in the MN of A, and so can be transferred. This reaction is then present in both A and B. The small success rate for this transfer is due to the high degree of similarity within populations, as shown on Figure~\ref{fig:simmatrix_sim3}. The effects of horizontal gene transfer could be studied in a simulation setup where two populations evolve separately, with the only interaction between them being a small possibility of horizontal gene transfer between cells in the different populations. CONCLUSIONS? 
 
 We also considered a simulation with $p_{point}=0.01$ and $k_{reac}=0.01$ but none of the 20 populations produced any improvement after a similar simulation time as used above. 
 
@@ -741,12 +727,12 @@ We also considered a simulation with $p_{point}=0.01$ and $k_{reac}=0.01$ but no
 \subsection{Multiple sources and sinks}
 \label{sub:multiple_sources_and_sinks}
 
-Real cells import a variety of nutrients from their environment, and most of their MN-s can run on multiple similar compounds \cite{latent}. To test how the presence of multiple sources influences the process of evolution of our networks, we performed simulations of networks that had access to $2$ nutrients. To be able to compare the resulting networks with our previous simulations, the initial network was, as previously, the modified trunk of glcolysis, shown on Figure~\ref{fig:truncglycinit}. The two sources used for this network were DHAP as before, and G3P. These two molecules are the end products of the upper glycolytic pathway. They enter the lower part by DHAP being converted into G3P, and the two G3P molecules undergo the same trunk pathway. The sink of the simulation was Pyruvate, as before, with the goal function rewarding ATP production only. The simulation was run using $P_{point}=0.01$ and $k_{reac}=0.001$. We relaxed the condition on the flux of phosphate, allowing the cell to take phosphate up, or dispose of it. This allows the cell to remove phosphate by other means than the ADP $\rightarrow$ ATP conversion. Interestingly this was not used by the cells. We call this run Simulation 6 SIMNAMING!!!
+Real cells import a variety of nutrients from their environment, and most of their MN-s can run on multiple similar compounds \cite{latent}. To test how the presence of multiple sources influences the process of evolution of our networks, we performed simulations of networks that had access to $2$ nutrients. To be able to compare the resulting networks with our previous simulations, the initial network was, as previously, the modified trunk of glcolysis, shown on Figure~\ref{fig:truncglycinit}. The two sources used for this network were DHAP as before, and G3P. These two molecules are the end products of the upper glycolytic pathway. They enter the lower part by DHAP being converted into G3P, and the two G3P molecules undergo the same trunk pathway. The sink of the simulation was Pyruvate, as before, with the goal function rewarding ATP production only. The simulation was run using $P_{point}=0.01$ and $k_{reac}=0.001$. We relaxed the condition on the flux of phosphate, allowing the cell to take phosphate up, or dispose of it. This allows the cell to remove phosphate by other means than the ADP $\rightarrow$ ATP conversion. Interestingly this was not used by the cells. We call this run Simulation 4 SIMNAMING!!!
 
 \begin{figure}[htpb]
 	\centering
 	\includegraphics[width=1\linewidth]{simulationmultisource.pdf}
-	\caption{Diagnostic plots for 3 populations of Simulation 6}
+	\caption{Diagnostic plots for 3 populations of Simulation 4}
 	\label{fig:simulationmultisource}
 \end{figure}
 
@@ -757,7 +743,7 @@ Diagnostic plots for $3$ populations are shown on Figure~\ref{fig:simulationmult
 \begin{figure}[htpb]
 	\centering
 	\includegraphics[width=1\linewidth]{multisink_finalnet.pdf}
-	\caption{The best performing network at the end of Simulation 6. The reactions used by real glycolysis have been coloured yellow. }
+	\caption{The best performing network at the end of Simulation 4. The reactions used by real glycolysis have been coloured yellow. }
 	\label{fig:multi}
 \end{figure}
 
@@ -765,7 +751,37 @@ We show one of the fittest networks at the end of this simulation on Figure~\ref
 
 When comparing the similarity matrices of the populations we find that the diversity within a population is small, much like on Figure~\ref{fig:simmatrix_sim3}. The networks with $3$ improvements show a large degree of similarity in the used reactions $\sim 0.8$. Of those with only $2$ improvements, there is a pair where the used reactions are identical, and many of them have a moderate amount of similarity between them $\sim 0.6$. If we look at the whole list of reactions, any pair of networks show a very small degree of similarity $\sim 0.1-0.2$. This is expected, as the unused reactions are more or less random. 
 
+\subsection{The effect of goal functions}
+\label{sub:goalfuncs}
+
+The fitness of real cells is influenced by a variety of measures, including their energy and biomass output. To examine the effects of different fitness functions on their evolution we consider simulations where we reward the cells for a combination of their energy output and their biomass production. Due to hte limitations of the linear programming method used in flux balance analysis this combination can only be linear, $f_{goal}=a f_{energy}+ b f_{biomass}$ for some constants $a$ and $b$. A more realistic approach could be implemented using non-linear goal functions of the form $f_{goal}=\min \left( f_{energy},f_{biomass} \right)$. In this setup the cell has to produce both energy and biomass, which are requirements of reproduction.
+
+We performed simulations with equal weights for ATP and biomass (Pyruvate) production, $a=b=0.5$ in the above formula, and also ones with only rewarding biomass production ($a=0$, $b=1$). We run these simulations with DHAP and G3P as nutrients separately, and combined too. The combined results have shown very similar results to those when the only source was G3P, therefore we present the results of the G3P nutrient cases. As the nutrient of the network is phosphate containing, and the sink is not, we allow the network to take up or dispose of phosphate, as in the previous simulation. 
+
+Simulation 5 used $p_{point}=0.01$, and $k_{reac}=0.001$ as before. The nutrient of the network was G3P, and it's sink Pyruvate, with the rewarded flux in the goal function being Pyruvate production. We show diagnostic plots for $3$ populations of this simulation on Figure~\ref{fig:simulationpyruvonly}.
+
+Even though this simulation only considered $10^7$ generations, the networks have made significant improvements very rapidly. All the simulations reached at least $2$ improvements in the first $\sim 10\%$ of the simulation time. Approximately $30\%$ of the populations made $5$ improvements, producing a pyruvate flux of $3$, compared to the original $0.5$. The reaction networks gain unused reactions after each improvement as seen on the previous diagnostic plots, the networks with the most improvements have $\sim 250$ reactions at the end of the simulation, giving them a fitness value of $\sim 2.75$. The drop in the average number of reactions in Population 3 show an unusual pattern around generation $6.5\times 10^6$. This is most likely a MN containing less reactions gaining a reaction that increases it's fitness, and this cell spreading in the network. At the next improvement of the population $\sim 5\times10^5$ generations later the network starts to gain unused reactions again. 
+
+We can observe the number of reactions varying much smoother in this case than the previous simulations. The number of unused reactions is also much lower than the before, however this might be a results of the simulation lasting fewer generations than before.  The best networks use as much as $20$ reactions, and it is interesting to note that the shortest reaction, discovered by most networks very early, providing twice the original pyruvate flux is only $3$ reactions long. One of these paths is G3P $\rightarrow$ 3-phosphoglycerate $\rightarrow$ glycerate $\rightarrow$ pyruvate, with the phosphate being discarded at the middle reaction. 
+As in this case we did not reward ATP production, the networks rather discard the phosphate groups they shed from the nutrient, but the networks generally still produce a small amount of ATP. 
+
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{simulationpyruvonly.pdf}
+	\caption{Diagnostic plots for 3 populations of Simulation 5}
+	\label{fig:simulationpyruvonly}
+\end{figure}
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{simulationequalatppyruvate.pdf}
+	\caption{Diagnostic plots for 3 populations of Simulation 6, BETTER PIC IF SIMS FINISH}
+	\label{fig:simulationequalatppyruvate}
+\end{figure}
+
 \subsection{Similar networks reached in parallel runs}
+
 \label{sub:similar_networks_reached_in_paralell_runs}
 If mutations happen with 100$\%$ then rather fast improvement to best network. Very diverse populations in terms of available reactions, but somewhat similar within a single run. Different runs very different available reactions. For the nonzero flux reactions within a run is almost completely homogeneous, and lots of similarity between runs too. 
 
@@ -793,6 +809,9 @@ In this work we have considered the effects of the rate of mutation and the goal
 \textbf{Discussion of probability examination results}
 The authors of \cite{predictability} note that crucial parameters for modeling evolution, such as the frequency of beneficial mutations are not known. The rate of spontaneous mutations per genome per genome replication is approximately $0.01$ for higher eukaryotes \cite{mutationrate}. We have considered mutation rates comparable to this, but it is important to note that the genome of our organism are very short compared to that of real organisms.  
 
+
+
+
 \subsection{Limitations of our approach}
 \label{sub:limitations}
 
@@ -817,6 +836,10 @@ Flux balance analysis as implemented here also assumes that the maximal flux thr
 	This method is computationally fast and easy to implement, however it disregards most of the thermodynamic and chemical constraints on the speed of the reactions. By using it we make the assumption that all reactions happen at equal speeds, given the reactants are present the reaction will happen, and the direction of a reaction is defined by the free energy change at the specific conditions. It doesn't take into account the free energy landscape of the reaction, whether an energy barrier is blocking the reaction etc. (partially duplicate from section \ref{chap:whereisphysics}). The disregard of the energy barriers is justified by considering the cell's ability to lower such barriers using catalyst enzymes.
 
 	In all of our simulations with $k_{reac}=0.001$ we observed the large number of unused reactions in our metabolic networks. Some of these unused networks are part of the next potential improvement of the network. If the mutation rate is low, and the cost of reactions high the expected time until an improvement becomes very large. We observed this phenomena in the simulation with $p=0.01$ and $k_{reac}=0.01$ that produced no improvements during a similar time that was used for the other simulations. The genetic information of our molecules consists of the reactions they can produce. In a real cell the genetic information serves a variety of functions, including the coding of proteins that catalyse reactions. A large proportion of the DNA of higher eucaryotes does not code proteins, the estimate for the proportion of human DNA that codes proteins is $\sim 3\%$ \cite{junkdna}. This DNA is sometimes referred to as junk DNA, as it's function is not well understood. It's purpose can be redundancy, in case of the coding parts of the DNA are damaged. In our network some unused reactions can potentially serve as "backups" in case some of the currently used ones are removed. We would like to have tested this phenomena on the evolved networks, by calculating the fitness of the networks if one or more randomly chosen used reactions are removed. Unfortunately time did not allow this.  REPHRASE
+	
+	\section{Conclusions}
+	\label{sec:conclusions}
+	
 	
 	\section*{Acknowledgements}
 	

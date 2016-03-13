@@ -1,5 +1,6 @@
 
 linefiles=system('ls *.progress | sort -n |cut -d. -f1 | head -n 3')
+linefiles=system('echo "1\n2\n3"')
 linefiles2=system('ls *.progress | sort -n  |cut -d. -f1| tail -n +6 |head -n 5')
 linefiles3=system('ls *.progress | sort -n  |cut -d. -f1| tail -n +11 |head -n 5')
 linefiles4=system('ls *.progress | sort -n  |cut -d. -f1| tail -n +16 |head -n 5')
@@ -15,7 +16,7 @@ t = 0
 b = 50
 # h: height of output in pixels
 #h = 200.0*(NROFCOLS-2) + t + b
-h = 200.0*(NROFCOLS-3) + t + b
+h = 200.0*(NROFCOLS-4) + t + b
 
 set terminal svg size 800, h enhanced background rgb 'white' 
 set macro
@@ -56,7 +57,7 @@ YLABS="unset ylabel; set ylabel 'Fittness' "
 XLABS="unset xlabel; set xlabel 'Generations'"
 
 #	set multiplot layout (NROFCOLS-1),1 columnsfirst title ;
-set multiplot layout (NROFCOLS-2),1 columnsfirst title ;
+set multiplot layout (NROFCOLS-3),1 columnsfirst title ;
 
 	unset key
 
@@ -109,8 +110,8 @@ set multiplot layout (NROFCOLS-2),1 columnsfirst title ;
 		set ytics dy
 		set yrange [:BUSEDMAX]
 
-			set title "Number of reactions used in the MN of the best organism in each population"
-				plot for [file in linefiles] file.'.progress' u 1:7 with lines title 'Population '.file
+#set title "Number of reactions used in the MN of the best organism in each population"
+#plot for [file in linefiles] file.'.progress' u 1:7 with lines title 'Population '.file
 
 				dy = floor((AUSEDMAX-AUSEDMIN)/ntics*10.)/10.
 				set ytics dy
