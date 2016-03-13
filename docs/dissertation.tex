@@ -1,7 +1,7 @@
-\documentclass[10pt,a4paper]{article}
-%\usepackage[latin1]{inputenc}
+%
+\documentclass[a4paper,12pt]{article}
+\usepackage{head,fullpage,epsf,graphicx, amstext,url} 
 \usepackage[utf8]{inputenc}
-
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
@@ -10,26 +10,63 @@
 \usepackage{mathtools}
 \usepackage{framed}
 \usepackage[numbers]{natbib}
-
-
-%opening
-\title{Evolution of metabolic networks}
-\author{Balint Borgulya}
+\parindent=0pt
+\parskip=5pt
 
 \begin{document}
-	
-	
-	
-	\maketitle
+\epsfxsize=40mm
+\begin{minipage}[b]{110mm}
+	{\Huge\bf School of Physics \\and Astronomy
+		\vspace*{17mm}}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{40mm}
+	\makebox[40mm]{
+		\includegraphics[width=40mm]{UoEcrest.pdf}}
+\end{minipage}
+\par\noindent
+\vspace*{2cm}
+\begin{center}
+	\Large\bf Evolution of Metabolic Networks\\
+	\Large\bf MPhys Project  Report
+\end{center}
+\vspace*{1.5cm}
+\begin{center}
+	\bf Balint Borgulya\\
+	21th March 2016
+\end{center}
+\vspace*{5mm}
 
-	
-	\begin{abstract}
-		
-	\end{abstract}
-	
-	\cleardoublepage
-	\pagenumbering{gobble}
-	\tableofcontents
+
+
+\begin{abstract}
+	The abstract is a short concise outline of your 
+	project area, {\bf of no more than 100 words}.
+\end{abstract}
+
+\vspace*{1cm}
+
+\vspace*{3cm}
+Signature:\hspace*{8cm}Date:
+
+\vfill
+{\bf Supervisor:} Dr. Bartek Waclaw
+\newpage
+
+
+
+\setcounter{page}{1}
+\footruleheight{1pt}
+\headruleheight{1pt}
+\lfoot{\small School of Physics and Astronomy}
+\lhead{Review report}
+\rhead{- \thepage}
+\cfoot{}
+
+\cleardoublepage
+\tableofcontents
+
+
 
 	\section*{TODO}
 	\label{sec:todo}
@@ -81,9 +118,8 @@
 
 	I started writing the report in January, and worked on it continuously, however the majority of the work on it was done in March. 
 
-	The project's github page REFERENCE and the commit history there serves as diary of the project. 
+	The project's GitHub page \cite{owngithub} and the commit history there serves as diary of the project. 
 	\cleardoublepage
-	\pagenumbering{arabic}
 	\section*{Definitions put it in a box}
 
 	\begin{framed}
@@ -356,7 +392,7 @@ To simulate biological evolution on a computer we need three things: replication
 	
 The most elementary event in a population of our organisms is a reproduction, implemented using the Moran process \cite{moranprocess} 
 
-At every step of the Moran process a single member of the population is chosen to reproduce (with or without mutations) and an other member of the population dies, to keep the size of the population constant. At every such step the cell has some probability of mutating, both for a point mutation ($P_{point}$), and for horizontal gene transfer ($P_{HGT}$) from an other randomly chosen cell.  This process is a random walk in the space of all possible genes or MN-s allowed by the chemistry of the cells  This walk is then mapped to the fitness landscape using the goal function of the cells.
+At every step of the Moran process a single member of the population is chosen to reproduce (with or without mutations) and an other member of the population dies, to keep the size of the population constant. At every such step the cell has some probability of mutating, both for a point mutation ($P_{point}$), and for horizontal gene transferring a reaction ($P_{HGT}$) from an other randomly chosen cell.  This process is a random walk in the space of all possible genes or MN-s allowed by the chemistry of the cells  This walk is then mapped to the fitness landscape using the goal function of the cells.
 
 There are two contributions to the fitness measure of a cell, it's energy production, and the number of reactions in it's MN.  In the original goal function a fitness score of $1$ is awarded for every ADP $\rightarrow$ ATP executed by the cell. For every reaction in the MN the cell pays a small cost $k_{reac}$  from the fitness score of the cell. This is because cells usually control their reactions through the use of enzymes that they have to manufacture, and code in their genetic code. Should we not include this cost the cell's MN-s could grow without bounds until every reaction in our list would appear within them. This could then be considered a best network. Later we consider more complex goal functions that reward biomass production, at different weights compared to the energy production. 
 
@@ -580,7 +616,7 @@ When running the simulations, we started with 20 identical, uniform populations 
 
 \begin{figure}[htpb]
 	\centering
-	\includegraphics[width=1\linewidth]{simulation1.pdf}
+	\includegraphics[width=0.8\linewidth]{simulation1.pdf}
 	\caption{Diagnostic plots for 3 typical populations of Simulation 1}
 	\label{fig:simulation1}
 \end{figure}
@@ -684,7 +720,7 @@ When visualizing the final networks of this simulation pathways similar to those
 
 Simulation 3 had $10$ times more mutations than Simulation 2. Even though the number of reactions in the MN-s was smaller, due to a higher $k_{reac}$ value the populations of Simulation 3 improved further than those of Simulation 2. Here there were no simulations that did not improve, $\sim 16\%$ made $1$ improvement, $79\%$ made 2, and $5\%$ ($1$ population) made $3$ improvements in their ATP production. After an improvement the networks gain reactions here too, but they only gain $\sim 15$ networks after a single improvement. The total number of used reactions required for an improvement is similar to that of Simulation 2, but in this case the proportion of reactions used by the MN is $\sim 50\%$. The entropy of the populations fluctuates less wildly than that of Simulation 2, around $\sim -200$. This can correspond to $\sim 7$ approximately equal sized subpopulations, and a few lone mutants. This can be observed in the similarity matrix of the simulation shown on Figure~\ref{fig:simmatrix_sim3}. The used reactions are identical within almost every reaction within a population, and they show a rather large degree of similarity between populations too. When considering the whole metabolic network we can see that the populations themselves are diverse, but within a population networks only differ from each other by a handful of reactions. 
 
-We also considered a simulation with $p_{point}=0.01$ and $k_{reac}=0.01$ but none of the 20 populations produced any improvement after a similar simulation time as used above. 
+
 
 
 \begin{figure}[htpb]
@@ -695,6 +731,9 @@ We also considered a simulation with $p_{point}=0.01$ and $k_{reac}=0.01$ but no
 \end{figure}
 
 
+In an other simulation we have allowed the cells to exchange genetic material (reactions) with each other in a process resembling horizontal gene transfer \cite{horizontalgenetransfer}. When exchanging genetic material we observed that the number of successful horizontal gene transfers was very low $\sim 0.01$. A transfer between cells A and B is deemed successful when a randomly chosen reaction from the MN of B is not present in the MN of A, and so can be transferred. This reaction is then present in both A and B. The small success rate for this transfer is due to the high degree of similarity within populations, as shown on Figure~\ref{fig:simmatrix_sim3}.
+
+We also considered a simulation with $p_{point}=0.01$ and $k_{reac}=0.01$ but none of the 20 populations produced any improvement after a similar simulation time as used above. 
 
 
 
@@ -731,14 +770,7 @@ When comparing the similarity matrices of the populations we find that the diver
 If mutations happen with 100$\%$ then rather fast improvement to best network. Very diverse populations in terms of available reactions, but somewhat similar within a single run. Different runs very different available reactions. For the nonzero flux reactions within a run is almost completely homogeneous, and lots of similarity between runs too. 
 
 If the mutation probabilities decrease improvements become more difficult. 
-\subsection{Changing nutrients of the network}
-\label{sub:changing_nutrients_of_the_network}
 
-\subsection{Multiple output (possibly changing)}
-\label{sub:multiple_output_possibly_changing_}
-
-\subsection{Horizontal gene transfer}
-\label{sub:horizontal_gene_transfer}
 
 
 \subsection{Limitations}
@@ -788,7 +820,7 @@ Flux balance analysis as implemented here also assumes that the maximal flux thr
 	
 	\section*{Acknowledgements}
 	
-	I would like to thank my supervisor Dr. Bartek Waclaw, for his time and guidance throughout the project; Máté Nagy who provided help and advice in setting up the program, and aided me in resolving difficult bugs throughout the project; and Ioan-Bogdan Magdau for his code calculating moving averages. 
+	I would like to thank my supervisor Dr. Bartek Waclaw, for his time and guidance throughout the project; Máté Nagy who provided help and advice in setting up the program, and continued aiding me in resolving difficult bugs; and Ioan-Bogdan Magdau for his code calculating moving averages. 
 
 	
 	\bibliography{dissertation}
