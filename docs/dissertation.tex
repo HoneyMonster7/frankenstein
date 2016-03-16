@@ -642,7 +642,7 @@ On the middle and left images of Figure~\ref{fig:init-mid-final} some central no
 	\label{fig:nodedegreedistro}
 \end{figure}
 
-The similarity indices for this simulation are shown on Figure~\ref{fig:simmatrix_firstjob}, for all the reactions in the MN-s above the diagonal, and for the reactions with nonzero flux below it. The used reactions are very similar within the populations, but show a small degree of inter-population similarity. The red and purple stripes in the upper triangular part within Populations $2$ and $3$ show MN-s that use different reactions from the rest of the population. This is a mutation, either neutral or deleterious, that has spread to part of the population. We know the mutation is not beneficial, as if it was it would appear in the fitness plots of Figure~\ref{fig:simulation1}, and would quickly overtake the population with a high probability. When looking at the complete reaction network, the similarity becomes smaller within the populations, and disappears almost completely between populations. 
+The similarity indices for this simulation are shown on Figure~\ref{fig:simmatrix_firstjob}, for all the reactions in the MN-s above the diagonal, and for the reactions with nonzero flux below it. Note that in every population we have $100$ cells, and therefore in this figure we show $300 \times 300 = 9000$ similarity indices.  The used reactions are very similar within the populations, but show a small degree of inter-population similarity. The red and purple stripes in the upper triangular part within Populations $2$ and $3$ show MN-s that use different reactions from the rest of the population. This is a mutation, either neutral or deleterious, that has spread to part of the population. We know the mutation is not beneficial, as if it was it would appear in the fitness plots of Figure~\ref{fig:simulation1}, and would quickly overtake the population with a high probability. When looking at the complete reaction network, the similarity becomes smaller within the populations, and disappears almost completely between populations. 
 
 \begin{figure}[htpb]
 	\centering
@@ -670,7 +670,7 @@ Diagnostic plots for $3$ typical populations are shown on Figure~\ref{fig:simula
 
 Both simulations evolved the populations of MN-s for $6\times 10^7$ generations. This meant that Simulation 3 had $\sim10$ times more mutations than Simulation 2. 
 
-Simulation 2 evolved the populations through approximately $600 000$ mutations, and of the populations that completed the run $\sim 28 \%$ had no improvement in their fitness $\sim 55 \%$ had an improvement of $\sim 0.5$, and $16 \%$ have improved by $\sim 1$. The discovery of a new pathway to produce ATP increases the fitness function by $0.5$, but after such an improvement the MN-s usually gather a large amount of unused reactions, in this case about $70$ reactions. This lowers the fitness function by $70\times k_{reac}=0.07$. The number of unused reactions fluctuates wildly around $\sim 110$ for a network with fitness $\sim 1$, and around $\sim 150$ for a cell with fitness $\sim 1.4$. The number of reactions necessary for a fitness increase is $6$ ($11$ reactions in total), and the other increase could be achieved using an additional $4$ reactions ($15$ reactions in total). Overall $\sim 10\%$ of the reactions are used within a MN.  The entropy of the population fluctuates around $\sim -360$ which can correspond to a population of $\sim 80$ identical cells, and a few mutants that are different from them. This can be observed on the similarity matrix of the final networks NOT SHOWN HERE
+Simulation 2 evolved the populations through approximately $600 000$ mutations, and of the populations that completed the run $\sim 28 \%$ had no improvement in their fitness $\sim 55 \%$ had an improvement of $\sim 0.5$, and $16 \%$ have improved by $\sim 1$. The discovery of a new pathway to produce ATP increases the fitness function by $0.5$, but after such an improvement the MN-s usually gather a large amount of unused reactions, in this case about $70$ reactions. This lowers the fitness function by $70\times k_{reac}=0.07$. The number of unused reactions fluctuates wildly around $\sim 110$ for a network with fitness $\sim 1$, and around $\sim 150$ for a cell with fitness $\sim 1.4$. The number of reactions necessary for a fitness increase is $6$ ($11$ reactions in total), and the other increase could be achieved using an additional $4$ reactions ($15$ reactions in total). Overall $\sim 10\%$ of the reactions are used within a MN.  The entropy of the population fluctuates around $\sim -360$ which can correspond to a population of $\sim 80$ identical cells, and a few mutants that are different from them. This can be observed on the similarity matrix of the final networks shown on Figure~\ref{fig:simmatrix_sim2}. We can see that the populations are homogeneous, with very few different cells even when every reaction is considered (below diagonal). The used reactions are similar between populations $1$ and $3$. The similarity considering all reactions is very low between the populations. 
 The IPR plots of the populations are similar to those shown for Simulation 1, with even less variation in the case of used reactions. 
 
 When visualizing the final networks of this simulation pathways similar to those at the end of Simulation 1 emerge. The networks have again "rediscovered" reaction $633$, and found alternative pathways to produce ATP. The alternative pathways are longer than the original glycolysis, and in the fittest networks they run in pairs. These pairs of pathways run from DHAP to pyruvate, but they meet at intermediate compounds, in some cases more than once. In some cases we find one of these pathways not producing any net ATP, but they contribute to the other part of the pair by providing nutrients to it (eg. phosphate). When considering the node degree distribution of the resulting networks the results are similar to those shown on Figure~\ref{fig:nodedegreedistro}. 
@@ -679,13 +679,13 @@ When visualizing the final networks of this simulation pathways similar to those
 \begin{figure}[htpb]
 	\centering
 	\includegraphics[width=0.8\linewidth]{simulation2.pdf}
-	\caption{Diagnostic plots of 3 typical populations of Simulation 2 TAKE CARE OF ENTROY TYPO}
+	\caption{Diagnostic plots of 3 typical populations of Simulation 2}
 	\label{fig:simulation2}
 \end{figure}
 
 \begin{figure}[htpb]
 	\centering
-	\includegraphics[width=0.8\linewidth]{simmatrix_sim2.png}
+	\includegraphics[width=1\linewidth]{simmatrix_sim2.png}
 	\caption{Similarity matrix of the $3$ populations of Simulation 2}
 	\label{fig:simmatrix_sim2}
 \end{figure}
@@ -704,8 +704,8 @@ Simulation 3 had $10$ times more mutations than Simulation 2. Even though the nu
 
 \begin{figure}[htpb]
 	\centering
-	\includegraphics[width=0.8\linewidth]{simmatrix_sim3.png}
-	\caption{Similarity matrix of 3 populations of Simulation 3. Similarity indices calculated for used reactions are shown above the diagonal, while those calculated for the whole MN are below the diagonal}
+	\includegraphics[width=1\linewidth]{simmatrix_sim3.png}
+	\caption{Similarity matrix of 3 populations of Simulation 3.}
 	\label{fig:simmatrix_sim3}
 \end{figure}
 
@@ -824,6 +824,8 @@ An important differnece between the first and second three simulations is that f
 %We have considered test runs using  $6$ carbon CHOPN molecules, using the complete glycolytic pathway from glucose to pyruvate as the initial network. In this setup neither the nutrient nor the sink of the network contains phosphate, therefore when performing this simulation we used the full form of the ATP hydrolysis reaction. The phosphate disposed in the hydrolysis is used in the upper (investment) part of glycolysis. Unfortunately the $6$ carbon network was provided in the late phase of the project, not allowing enough time to run sufficient simulations with it. 
 
 
+
+DISCUSSION OF COMPLEX GOAL FUNCTION HERE
 
 
 \subsection{Limitations of our approach}
