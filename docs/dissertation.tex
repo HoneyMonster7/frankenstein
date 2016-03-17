@@ -7,6 +7,10 @@
 \usepackage{amssymb}
 \usepackage{enumitem}
 \usepackage{graphicx}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{titlesec}
+\usepackage[titletoc,toc,title]{appendix}
 \usepackage{mathtools}
 \usepackage{framed}
 \usepackage[numbers]{natbib}
@@ -204,7 +208,7 @@ Signature:\hspace*{8cm}Date:
 	\label{sub:artificial_chemistries}
 
 
-	When modelling metabolic networks one often has to make simplifications both in theoretical and computational research. These simplifications occur in defining the chemistry the cells can use, the goal function of cells, the environment the cells live in, as well as the anatomy of the cells themselves. %SIMPLIFICATION SECTION IN METHODS? GOALS IN SIMULATION, CHEMISTRY BELOW, CELLS BELOW
+	When modelling metabolic networks one often has to make simplifications both in theoretical and computational research. These simplifications occur in defining the chemistry the cells can use, the objective function of cells, the environment the cells live in, as well as the anatomy of the cells themselves. %SIMPLIFICATION SECTION IN METHODS? GOALS IN SIMULATION, CHEMISTRY BELOW, CELLS BELOW
 	
 	Modelling the intricacies of chemistry is a hopeless task with today's computers, the fully quantum mechanical treatment of even a few thousand atoms is beyond the capabilities of supercomputers. To overcome this barrier artificial chemistries are often used, that simplify the rules, but grasp some important concept of chemistry. \cite{artificialreview} describes some of these methods used. \cite{evolutioncomplex} use linear molecules consisting of 3 possible  artificial atoms (called "1", "2", and "3" with the numbers showing how many bonds an atom can make with other atoms) to construct a metabolic network of organisms, and examine how they evolve. \cite{computationalframework} considers "chemical reactions as graph rewriting operations, and uses a toy-version of quantum chemistry to derive thermodynamic parameters". % MORE ON PREVIOUSLY USED METHODS HERE
 	
@@ -671,7 +675,7 @@ Diagnostic plots for $3$ typical populations are shown on Figure~\ref{fig:simula
 Both simulations evolved the populations of MN-s for $6\times 10^7$ generations. This meant that Simulation 3 had $\sim10$ times more mutations than Simulation 2. 
 
 Simulation 2 evolved the populations through approximately $600 000$ mutations, and of the populations that completed the run $\sim 28 \%$ had no improvement in their fitness $\sim 55 \%$ had an improvement of $\sim 0.5$, and $16 \%$ have improved by $\sim 1$. The discovery of a new pathway to produce ATP increases the fitness function by $0.5$, but after such an improvement the MN-s usually gather a large amount of unused reactions, in this case about $70$ reactions. This lowers the fitness function by $70\times k_{reac}=0.07$. The number of unused reactions fluctuates wildly around $\sim 110$ for a network with fitness $\sim 1$, and around $\sim 150$ for a cell with fitness $\sim 1.4$. The number of reactions necessary for a fitness increase is $6$ ($11$ reactions in total), and the other increase could be achieved using an additional $4$ reactions ($15$ reactions in total). Overall $\sim 10\%$ of the reactions are used within a MN.  The entropy of the population fluctuates around $\sim -360$ which can correspond to a population of $\sim 80$ identical cells, and a few mutants that are different from them. This can be observed on the similarity matrix of the final networks shown on Figure~\ref{fig:simmatrix_sim2}. We can see that the populations are homogeneous, with very few different cells even when every reaction is considered (below diagonal). The used reactions are similar between populations $1$ and $3$. The similarity considering all reactions is very low between the populations. 
-The IPR plots of the populations are similar to those shown for Simulation 1, with even less variation in the case of used reactions. 
+The IPR plots of the populations are similar to those shown for Simulation 1, with even less variation in the case of used reactions. An IPR plot similar to this simulation is shown on Figure~\ref{fig:iprsim5}. 
 
 When visualizing the final networks of this simulation pathways similar to those at the end of Simulation 1 emerge. The networks have again "rediscovered" reaction $633$, and found alternative pathways to produce ATP. The alternative pathways are longer than the original glycolysis, and in the fittest networks they run in pairs. These pairs of pathways run from DHAP to pyruvate, but they meet at intermediate compounds, in some cases more than once. In some cases we find one of these pathways not producing any net ATP, but they contribute to the other part of the pair by providing nutrients to it (eg. phosphate). When considering the node degree distribution of the resulting networks the results are similar to those shown on Figure~\ref{fig:nodedegreedistro}. 
 
@@ -717,7 +721,7 @@ We also considered a simulation with $p_{point}=0.01$ and $k_{reac}=0.01$ but no
 
 
 
-\subsection{Multiple sources and sinks}
+\subsection{Multiple sources}
 \label{sub:multiple_sources_and_sinks}
 
 Real cells import a variety of nutrients from their environment, and most of their \mbox{MN-s} can use multiple similar compounds to produce their end products \cite{latent}. To test how the presence of multiple sources influences the process of evolution of our networks, we performed simulations of networks that had access to $2$ nutrients. To be able to compare the resulting networks with our previous simulations, the initial network was, as previously, the modified trunk of glcolysis, shown on Figure~\ref{fig:truncglycinit}. The two sources used for this network were DHAP as before, and G3P. These two molecules are the end products of the upper glycolytic pathway. They enter the lower part by DHAP being converted into G3P, and the two G3P molecules undergo the same trunk pathway. The sink of the simulation was pyruvate, as before, with the objective function rewarding ATP production only. The simulation was run using $p_{point}=0.01$ and $k_{reac}=0.001$. We relaxed the steady state condition on the flux of phosphate, allowing the cell to take phosphate up, or dispose of it. This allows the cell to remove phosphate by other means than the ADP $\rightarrow$ ATP conversion. Interestingly this was not used by the cells. We call this run Simulation 4.
@@ -742,7 +746,7 @@ Diagnostic plots for $3$ populations are shown on Figure~\ref{fig:simulationmult
 
 We show one of the fittest networks at the end of this simulation on Figure~\ref{fig:multi}. The network has abandoned the DHAP source, instead using only G3P. This is a phenomena appearing in all the populations. The flux through the reactions is shown on the figure by the different thickness of the arrows. The thinner ones symbolize reactions with flux $0.5$, while the thick ones mean a flux of $1$. It is important to note how interlinked the network is.  While there are 3 pathways leading away from G3P, and there are also $3$ leading in to pyruvate, these pathways are very connected. The pathways starting with reaction $883$ meets with the one starting with $879$ at phosphoenolpyruvate, and the paths starting with $879$ and $877$  diverge and meet at glycerate. 
 
-When comparing the similarity matrices of the populations we find that the diversity within a population is small, much like on Figure~\ref{fig:simmatrix_sim3}. The networks with $3$ improvements show a large degree of similarity in the used reactions $\sim 0.8$. Of those with only $2$ improvements, there is a pair where the used reactions are identical, and many of them have a moderate amount of similarity between them $\sim 0.6$. If we look at the whole list of reactions, any pair of networks show a very small degree of similarity $\sim 0.1-0.2$. This is expected, as the unused reactions are random, their presence or absence provides no fitness advantage or disadvantage to the cell other than the reaction cost for each reaction. 
+When comparing the similarity matrices of the populations we find that the diversity within a population is small, much like on Figure~\ref{fig:simmatrix_sim3}. The networks with $3$ improvements show a large degree of similarity in the used reactions $\sim 0.8$. Of those with only $2$ improvements, there is a pair where the used reactions are identical, and many of them have a moderate amount of similarity between them $\sim 0.6$. If we look at the whole list of reactions, any pair of networks show a very small degree of similarity $\sim 0.1-0.2$. This is expected, as the unused reactions are random, their presence or absence provides no fitness advantage or disadvantage to the cell other than the reaction cost for each reaction. The IPR plots of this simulations are not shown here, as they are very similar to those shown for the next simulation on Figure~\ref{fig:iprsim5}. 
 
 \subsection{The effect of objective functions}
 \label{sub:goalfuncs}
@@ -753,7 +757,21 @@ We performed simulations with equal weights for ATP and biomass (pyruvate) produ
 
 Simulation 5 used $p_{point}=0.01$, and $k_{reac}=0.001$ as before. The nutrient of the network was G3P and DHAP, and its sink pyruvate, with the rewarded flux in the objective function being pyruvate production only. We show diagnostic plots for $3$ populations of this simulation on Figure~\ref{fig:simulationpyruvonly}.
 
-Even though this simulation only considered $10^7$ generations, the networks have made significant improvements very rapidly. Every population achieved a fitness value $\sim 2$ in the first $\sim 10\%$ of the simulation time. Approximately $15\%$ of the populations made $6$ improvements, producing a pyruvate flux of $4$, compared to the original $0.5$. The reaction networks gain unused reactions after each improvement as seen on the previous diagnostic plots, the networks with the most improvements have $\sim 500$ reactions at the end of the simulation, giving them a fitness value of $\sim 3.5$. The MN-s rate of obtaining new reactions appears to be smoother than for the simulations before, and the number of reactions in the networks fluctuates less. The fittest networks use $\sim 30$ reactions at the end of the simulation, but Population 1 uses up to $40$ reactions at one stage of its evolution. It is interesting to note that the increase in the number of used reactions does not come with a fitness advantage in this case, meaning the network most likely lost a reaction (due to a mutation) and it could find an alternative, but longer path to produce the same pyruvate flux as before. Such a mutation has spread in a population multiple times during the simulation as we can see on the last graph of Figure~\ref{fig:simulationpyruvonly}. Closer examination of the log file produced by the population shows that the phenomena doesn't always spread in the population, sometimes it only affects the best cell.  
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{simulationpyruvonly.pdf}
+	\caption{Diagnostic plots for 3 populations of Simulation 5}
+	\label{fig:simulationpyruvonly}
+\end{figure}
+
+Even though this simulation only considered $10^7$ generations, the networks have made significant improvements very rapidly. Every population achieved a fitness value $\sim 2$ in the first $\sim 10\%$ of the simulation time. Approximately $15\%$ of the populations made $6$ improvements, producing a pyruvate flux of $4$, compared to the original $0.5$. The reaction networks gain unused reactions after each improvement as seen on the previous diagnostic plots, the networks with the most improvements have $\sim 500$ reactions at the end of the simulation, giving them a fitness value of $\sim 3.5$. The MN-s rate of obtaining new reactions appears to be smoother than for the simulations before, and the number of reactions in the networks fluctuates less. The fittest networks use $\sim 30$ reactions at the end of the simulation, but Population 1 uses up to $40$ reactions at one stage of its evolution. It is interesting to note that the increase in the number of used reactions does not come with a fitness advantage in this case, meaning the network most likely lost a reaction (due to a mutation) and it could find an alternative, but longer path to produce the same pyruvate flux as before. Such a mutation has spread in a population multiple times during the simulation as we can see on the last graph of Figure~\ref{fig:simulationpyruvonly}. Closer examination of the log file produced by the population shows that the phenomena doesn't always spread in the population, sometimes it only affects the best cell. We show the IPR plots for the $3$ populations on Figure~\ref{fig:iprsim5}. The populations are more similar than those with a higher mutation rate. This can be ovserved in all thee graphs. The populations are almost completely homogeneous in therms of used reactions, and they are more similar (smaller IPR value) in terms of all the reacitons and the fitness values. 
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=1\linewidth]{iprsim5.pdf}
+	\caption{IPR plots of 3 populations of Simulation 5}
+	\label{fig:iprsim5}
+\end{figure}
 
 It is interesting to note that the shortest reaction, discovered by most networks very early, providing twice the original pyruvate flux is only $3$ reactions long. One such  path is G3P $\rightarrow$ 3-phosphoglycerate $\rightarrow$ glycerate $\rightarrow$ pyruvate, with the phosphate being discarded at the middle reaction. 
 As in this case we did not reward ATP production, the networks rather discard the phosphate groups they shed from the nutrient, but some of the networks generally still produce a small amount of ATP, while other consume a small amount. 
@@ -762,12 +780,6 @@ Most of the populatios abandon the DHAP source early in the simulation, and use 
 
 
 
-\begin{figure}[htpb]
-	\centering
-	\includegraphics[width=0.8\linewidth]{simulationpyruvonly.pdf}
-	\caption{Diagnostic plots for 3 populations of Simulation 5}
-	\label{fig:simulationpyruvonly}
-\end{figure}
 
 Simulation $6$ was setup using the same parameters as Simulation $5$ except for its objective function, which in this case was an equal weighted combination of ATP and pyruvate production. The simulation has again been run for $10^7$ generations. Even though this is shorter than Simulation $2$, the networks have shown rapid  improvement, and the runtime of the two simulations was approximately equal. This is due to the networks of Simulation $6$ growing much larger than those of Simulation $2$. 
 
@@ -798,7 +810,7 @@ We show the fittest network of this simulation on Figure~\ref{fig:sim6network}. 
 
 In this work we have considered the effects of the rate of mutation and the objective function on the patterns of evolution in our model. We have found similar evolutionary patterns when we modified the rates of mutation, but iprovements appeared later when we decreased it. We found more diverse networks appeared if we used multiple sources, but this might be a result of a poor choice of our original source. When we considered more complex objective functions the number of improvements increased and the resulting networks became even more complex. 
 
-\subsection{The effect of mutation rate}
+\subsubsection*{The effect of mutation rate}
 \label{sub:on_the_effect_of_the_probability_of_mutation}
 
 
@@ -810,7 +822,7 @@ We find that the fitness cost of reactions also influences the improvement patte
 
 In our model we found no difference in the evolution of the networks depending on the presence or absence of horizontal gene transfer. This is most likely the effect of our very homogeneous populations. 
 
-\subsection{The effect of multiple sinks and goal functions}
+\subsubsection*{The effect of multiple sinks and different objective functions}
 \label{sub:the_effect_of_multiple_sinks}
 
 When we allowed our organisms to use multiple molecules as sources while keeping the objective function as before we observed the networks abandoning the initial source DHAP in favour of G3P. This influenced the evolutionary patterns shown by the populations by allowing more and faster improvements in the fitness of the cells. This is most likely the effect of G3P being better suited to serve as a nutrient than DHAP, but further simulations with different nutrients would need to be performed to confirm this.
@@ -825,14 +837,16 @@ An important differnece between the first and second three simulations is that f
 
 
 
-DISCUSSION OF COMPLEX GOAL FUNCTION HERE
+When we reward multiple processes in the objective function of cells their evolution can take smaller steps at one time. By allowing them to exchange phosphate with their envrionment we decouple the process of ATP production from biomass (pyruvate) production. This allows the cells to develop a pathway that does only one of the two goals giving the process greater flexibility. The resulting networks are more complex than previously, with two lightly connected sub-networks, for the two sources. Such a network could function as a module within the glycolytic pathway providing a high degree of redundancy to it. The upper part of glycolysis produces DHAP and G3P, these coudl be processed using the network shown on Figure~\ref{fig:sim6network}. In case of the loss of reactions in either substrates network a larger flux could be used by the other network by using the reaction DHAP $\rightleftharpoons$ G3P, keeping the performance of the cell intact. 
 
+The pair of reactions shown in red on Figure~\ref{fig:sim6network} play  a role somewhat similar to the 
+citric acid cycle, in the sense that they conserve the carbon containing molecules within themselves and use a circular patway. In contrast to the citric acid cycle that is driven by the energy releases during the oxydization of pyruvate, our cycle is fuelled by the reduction of the partaking compounds via NAD$^+$ (Nad\_ox on the figure). 
 
 \subsection{Limitations of our approach}
 \label{sub:limitations}
 
 
-The main limitations of our model are due to the small population size, the restrictions on the chemistry and the simplifications introduced by using flux balance analysis. 
+The main limitations of our model arise due to the small population size, the restrictions on the chemistry and the simplifications introduced by using flux balance analysis. 
 
 The populations of simple organisms, that our MN-s model are usually substantial. The probability of the fixation of a neutral mutation is inversely proportional to the population size, thus for such large populations it is very unlikely. In our populations with size $N=100$ approximately one in every hundred mutations fix in the population. This aides the emergence of beneficial mutations, since only a set of unused reactions can contribute to a fitness advantage. For example in Simulation 2 the MN-s need 4 additional reaction to produce more ATP. $3$ of these reactions must fix in the population as a neutral one, and stay dormant until the last reaction can fix too. Thus smaller populations might be able to increase their fitness faster than large ones. This claim is supported by \cite{smallpopulation}. 
 Although we have not examined the effect of population size in our model the program could easily be extended to accommodate a larger population. Existing research suggests that in case of larger populations the patterns of evolution become more deterministic with larger populations \cite{predictability}.
@@ -854,7 +868,7 @@ Flux balance analysis as implemented here also assumes that the maximal flux thr
 	%\subsection{Further research GET RID OF SECTION }
 	%\label{sub:further_research_get_rid_of_section_}
 	
-	Further research in the area could consider the effects of different environmental variables, such as temperature, acidity and the concentration of metabolites. Our code can be easily adapted to use different environments. The effects of sample size could be analyzed by considering larger populations, with the same mutation rates as we did, however in case of a larger population the mutation rates can be further decreased to closer approximate that of real cells. 
+	Further research in the area could consider the effects of different environmental variables, such as temperature, acidity and the concentration of metabolites. Our code can be easily adapted to use different environments. The effects of sample size could be analyzed by considering larger populations, with the same mutation rates as we did, however in case of a larger population the mutation rates can be further decreased to closer approximate that of real cells. The evolution of the networks could be examined in a dynamically changing environment, for example varying nutrient availability or physiological conditions. Simple examples of such dynamic environments could be simulated using our software with slight modifications. 
 	
 	
 	\section*{Acknowledgements}
@@ -865,4 +879,28 @@ Flux balance analysis as implemented here also assumes that the maximal flux thr
 	\bibliography{dissertation}
 \bibliographystyle{plainnat}
 
+\titleformat{\section}{\large\bfseries}{\appendixname~\thesection .}{0.5em}{}
+\lstdefinestyle{myCustomMatlabStyle}{
+  language=c++,
+  numbers=left,
+  stepnumber=1,
+  numbersep=10pt,
+  tabsize=4,
+  showspaces=false,
+  showstringspaces=false,
+  breaklines=true
+}
+
+\lstset{basicstyle=\tiny,style=myCustomMatlabStyle}
+%\begin{appendices}
+%	\appendix
+%	
+%	\section{Elso appendix}
+%	\label{sec:elso_appendix}
+%	
+%	
+%	\lstinputlisting[language=c++]{../reading_in/main.cpp}
+%	\lstinputlisting[language=c++]{../reading_in/cell.h}
+%	\lstinputlisting[language=c++]{../reading_in/cell.cpp}
+%\end{appendices}
 \end{document}
